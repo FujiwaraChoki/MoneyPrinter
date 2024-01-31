@@ -1,0 +1,8 @@
+g4f
+wheel
+requests
+moviepy
+termcolor
+flask
+flask-cors
+playsound
