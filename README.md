@@ -24,7 +24,7 @@ If you need help, open [ENV.md](ENV.md) for more information.
 ## Usage
 
 1. Copy the `.env.example` file to `.env` and fill in the required values
-1. Open `http://localhost:8080` in your browser
+1. Open `http://localhost:3000` in your browser
 1. Enter a topic to talk about
 1. Click on the "Generate" button
 1. Wait for the video to be generated
