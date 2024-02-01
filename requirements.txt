@@ -6,3 +6,4 @@ termcolor
 flask
 flask-cors
 playsound
+Pillow==9.5.0
