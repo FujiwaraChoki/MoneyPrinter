@@ -5,3 +5,4 @@ output/*
 images/*
 *.zip
 temp/*
+.history
