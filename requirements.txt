@@ -1,4 +1,5 @@
 g4f
+setuptools
 wheel
 requests
 moviepy
