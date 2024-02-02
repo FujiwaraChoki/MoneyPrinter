@@ -4,8 +4,14 @@
 # version: 1.0
 # credits: https://github.com/oscie57/tiktok-voice
 
-import threading, requests, base64
+# --- MODIFIED VERSION --- #
+
 from playsound import playsound
+from typing import List
+
+import threading
+import requests
+import base64
 
 VOICES = [
     # DISNEY VOICES
