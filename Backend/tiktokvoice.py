@@ -74,7 +74,7 @@ TEXT_BYTE_LIMIT = 300
 
 
 # create a list by splitting a string, every element has n chars
-def split_string(string: str, chunk_size: int) -> list[str]:
+def split_string(string: str, chunk_size: int) -> List[str]:
     words = string.split()
     result = []
     current_chunk = ""
