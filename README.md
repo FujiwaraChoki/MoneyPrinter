@@ -10,11 +10,11 @@ cd MoneyPrinter/Backend
 pip install -r requirements.txt
 
 # Run the backend server
-python3 main.py
+python main.py
 
 # Run the frontend server
 cd ../Frontend
-python3 -m http.server 3000
+python -m http.server 3000
 ```
 
 See [`.env.example`](.env.example) for the required environment variables.
