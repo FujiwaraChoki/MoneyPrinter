@@ -82,7 +82,7 @@ def generate():
         # Let user know
         print(colored("[+] Script generated!\n\n", "green"))
 
-        print(colored(f"\t{script}", "light_cyan"))
+        print(colored(f"\t{script}", "cyan"))
 
         # Split script into sentences
         sentences = script.split(". ")
@@ -96,7 +96,7 @@ def generate():
             audio_clip = AudioFileClip(current_tts_path)
             paths.append(audio_clip)
 
-        # Combine all TTS files using moviepy
+        # Combine all TTEachS files using moviepy
         final_audio = concatenate_audioclips(paths)
         tts_path = f"../temp/{uuid4()}.mp3"
         final_audio.write_audiofile(tts_path)
