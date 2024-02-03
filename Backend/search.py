@@ -30,12 +30,13 @@ def search_for_stock_videos(query: str, api_key: str) -> List[str]:
     response = r.json()
 
     # Get first video url
+    video_urls = []
+    video_url = ""
     try:
         video_urls = response["videos"][0]["video_files"]
     except:
         print(colored("[-] No Videos found.", "red"))
         print(colored(response, "red"))
-    video_url = ""
 
     # Loop through video urls
     for video in video_urls:
