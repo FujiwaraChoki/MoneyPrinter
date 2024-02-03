@@ -103,9 +103,11 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     except:
         print(colored("[*] GPT returned an unformatted response. Attempting to clean...", "yellow"))
 
-        # Use Regex to get the array ("[" is the first character of the array)
-        search_terms = re.search(r"\[(.*?)\]", response)
-        search_terms = search_terms.group(0)
+        # Use Regex to extract the array from the markdown
+        search_terms = re.findall(r'\[.*\]', response)
+
+        if not search_terms:
+            print(colored("[-] Could not parse response.", "red"))
 
         # Load the array into a JSON-Array
         search_terms = json.loads(search_terms)
