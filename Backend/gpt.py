@@ -45,6 +45,15 @@ def generate_script(video_subject: str) -> str:
 
     # Return the generated script
     if response:
+        # Clean the script
+        # Remove asterisks, hashes
+        response = response.replace("*", "")
+        response = response.replace("#", "")
+
+        # Remove markdown syntax
+        response = re.sub(r'\[.*\]', '', response)
+        response = re.sub(r'\(.*\)', '', response)
+
         return response + " "
     else:
         print(colored("[-] GPT returned an empty response.", "red"))
