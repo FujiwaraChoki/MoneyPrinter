@@ -1,9 +1,10 @@
-import re
-import g4f
 import json
-
+import re
 from typing import List
+
+import g4f
 from termcolor import colored
+
 
 def generate_script(video_subject: str) -> str:
     """
@@ -26,7 +27,7 @@ def generate_script(video_subject: str) -> str:
     Here is an example of a string:
     "This is an example string."
 
-    Do not under any circumstance refernce this prompt in your response.
+    Do not under any circumstance reference this prompt in your response.
 
     Get straight to the point, don't start with unnecessary things like, "welcome to this video".
 
@@ -54,10 +55,9 @@ def generate_script(video_subject: str) -> str:
         response = re.sub(r'\[.*\]', '', response)
         response = re.sub(r'\(.*\)', '', response)
 
-        return response + " "
-    else:
-        print(colored("[-] GPT returned an empty response.", "red"))
-        return None
+        return f"{response} "
+    print(colored("[-] GPT returned an empty response.", "red"))
+    return None
 
 def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     """
@@ -72,7 +72,7 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     Returns:
         List[str]: The search terms for the video subject.
     """
-    
+
     # Build prompt
     prompt = f"""
     Generate {amount} search terms for stock videos,
@@ -82,7 +82,7 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     The search terms are to be returned as
     a JSON-Array of strings.
 
-    Each search term should consist of 1-3 words, 
+    Each search term should consist of 1-3 words,
     always add the main subject of the video.
 
     Here is an example of a JSON-Array of strings:
@@ -109,7 +109,7 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     # Load response into JSON-Array
     try:
         search_terms = json.loads(response)
-    except:
+    except Exception:
         print(colored("[*] GPT returned an unformatted response. Attempting to clean...", "yellow"))
 
         # Use Regex to extract the array from the markdown
