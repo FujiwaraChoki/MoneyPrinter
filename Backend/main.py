@@ -73,8 +73,8 @@ def generate():
             try:
                 saved_video_path = save_video(video_url)
                 video_paths.append(saved_video_path)
-            except:
-                print(colored("[-] Could not download video: " + video_url, "red"))
+            except Exception:
+                print(colored(f"[-] Could not download video: {video_url}", "red"))
 
         # Let user know
         print(colored("[+] Videos downloaded!", "green"))
@@ -125,7 +125,7 @@ def generate():
             }
         )
     except Exception as err:
-        print(colored("[-] Error: " + str(err), "red"))
+        print(colored(f"[-] Error: {str(err)}", "red"))
         return jsonify(
             {
                 "status": "error",

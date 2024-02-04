@@ -43,8 +43,8 @@ def generate_subtitles(audio_path: str) -> str:
         str: The path to the generated subtitles.
     """
     def equalize_subtitles(srt_path: str, max_chars: int = 10) -> None:
-      # Equalize subtitles
-      srt_equalizer.equalize_srt_file(srt_path, srt_path, max_chars)
+        # Equalize subtitles
+        srt_equalizer.equalize_srt_file(srt_path, srt_path, max_chars)
 
     aai.settings.api_key = ASSEMBLY_AI_API_KEY
 
@@ -121,8 +121,14 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str)
         str: The path to the final video.
     """
     # Make a generator that returns a TextClip when called with consecutive
-    generator = lambda txt: TextClip(txt, font=f"../fonts/bold_font.ttf", fontsize=100, color="#FFFF00",
-    stroke_color="black", stroke_width=5)
+    generator = lambda txt: TextClip(
+        txt,
+        font="../fonts/bold_font.ttf",
+        fontsize=100,
+        color="#FFFF00",
+        stroke_color="black",
+        stroke_width=5,
+    )
 
     # Burn the subtitles into the video
     subtitles = SubtitlesClip(subtitles_path, generator)
