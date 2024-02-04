@@ -1,7 +1,6 @@
 import json
 import re
 from typing import List
-
 import g4f
 from termcolor import colored
 
