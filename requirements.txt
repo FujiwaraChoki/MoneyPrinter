@@ -8,3 +8,7 @@ flask
 flask-cors
 playsound
 Pillow==9.5.0
+python-dotenv
+srt_equalizer
+platformdirs
+undetected_chromedriver

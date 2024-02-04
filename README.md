@@ -6,10 +6,13 @@ Create YouTube Shorts without any effort, simply by providing a video topic to t
 
 ```bash
 git clone https://github.com/FujiwaraChoki/MoneyPrinter.git
-cd MoneyPrinter/Backend
+cd MoneyPrinter
+
+# Install requirements
 pip install -r requirements.txt
 
 # Run the backend server
+cd Backend
 python main.py
 
 # Run the frontend server
