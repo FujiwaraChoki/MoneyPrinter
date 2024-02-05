@@ -77,21 +77,20 @@
         })
           .then((response) => response.json())
           .then((data) => {
+            alert(data.message);
             console.log(data);
           })
           .catch((error) => {
+            alert("An error occurred. Please try again later.");
             console.log(error);
           });
 
-        generateButton.disabled = false;
-        generateButton.innerHTML = "Generate";
-        generateButton.classList.remove("bg-red-500");
-        generateButton.classList.remove("hover:bg-red-700");
-        generateButton.classList.add("hover:bg-blue-700");
-        generateButton.classList.add("bg-blue-500");
-        generateButton.addEventListener("click", generateVideo);
-
+        // Hide cancel button
         cancelButton.classList.add("hidden");
+
+        // Enable generate button
+        generateButton.disabled = false;
+        generateButton.classList.remove("hidden");
       };
 
       const generateVideo = () => {
@@ -125,17 +124,13 @@
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
-            generateButton.disabled = false;
-            generateButton.innerHTML = "Generate";
-            generateButton.classList.remove("cursor-not-allowed");
-            generateButton.classList.add("hover:bg-blue-700");
-            generateButton.classList.add("bg-blue-500");
-            generateButton.classList.remove("bg-blue-300");
-
+            alert(data.message);
             // Hide cancel button after generation is complete
+            generateButton.disabled = false;
             cancelButton.classList.add("hidden");
           })
           .catch((error) => {
+            alert("An error occurred. Please try again later.");
             console.log(error);
           });
       };
