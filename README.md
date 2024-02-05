@@ -11,6 +11,9 @@ cd MoneyPrinter
 # Install requirements
 pip install -r requirements.txt
 
+# Copy .env.example and fill out values
+cp .env.example .env
+
 # Run the backend server
 cd Backend
 python main.py
