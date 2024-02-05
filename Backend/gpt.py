@@ -5,6 +5,7 @@ import json
 from typing import List
 from termcolor import colored
 
+
 def generate_script(video_subject: str) -> str:
     """
     Generate a script for a video, depending on the subject of the video.
@@ -59,6 +60,7 @@ def generate_script(video_subject: str) -> str:
         print(colored("[-] GPT returned an empty response.", "red"))
         return None
 
+
 def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     """
     Generate a JSON-Array of search terms for stock videos,
@@ -72,7 +74,7 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     Returns:
         List[str]: The search terms for the video subject.
     """
-    
+
     # Build prompt
     prompt = f"""
     Generate {amount} search terms for stock videos,
@@ -84,15 +86,14 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
 
     Each search term should consist of 1-3 words, 
     always add the main subject of the video.
-
+    
+    YOU MUST ONLY RETURN THE JSON-ARRAY OF STRINGS.
+    DO NOT RETURN ANYTHING ELSE. 
+    DO NOT RETURN THE SCRIPT.
+    
+    The search terms must be related to the subject of the video.
     Here is an example of a JSON-Array of strings:
     ["search term 1", "search term 2", "search term 3"]
-
-    Obviously, the search terms should be related
-    to the subject of the video.
-
-    ONLY RETURN THE JSON-ARRAY OF STRINGS.
-    DO NOT RETURN ANYTHING ELSE.
 
     For context, here is the full text:
     {script}
@@ -104,7 +105,7 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
         messages=[{"role": "user", "content": prompt}],
     )
 
-    print(response)
+    print(response.replace("```json", "").replace("```", "").strip())
 
     # Load response into JSON-Array
     try:
