@@ -26,7 +26,7 @@ def generate_script(video_subject: str) -> str:
     Here is an example of a string:
     "This is an example string."
 
-    Do not under any circumstance refernce this prompt in your response.
+    Do not under any circumstance reference this prompt in your response.
 
     Get straight to the point, don't start with unnecessary things like, "welcome to this video".
 
