@@ -102,7 +102,7 @@ def generate():
         final_audio.write_audiofile(tts_path)
 
         # Generate subtitles
-        subtitles_path = generate_subtitles(tts_path)
+        subtitles_path = generate_subtitles(sentences=sentences, audio_clips=paths)
 
         # Concatenate videos
         temp_audio = AudioFileClip(tts_path)
