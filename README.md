@@ -2,6 +2,8 @@
 
 Automate the creation of YouTube Shorts locally, simply by providing a video topic to talk about.
 
+> **Important**: Please make sure you look through existing/closed issues before opening your own. If it's just a question, please join our [discord](https://dsc.gg/fuji-community) and ask there.
+
 ## Installation
 
 ```bash
