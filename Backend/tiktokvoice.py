@@ -82,7 +82,7 @@ def split_string(string: str, chunk_size: int) -> List[str]:
         if (
             len(current_chunk) + len(word) + 1 <= chunk_size
         ):  # Check if adding the word exceeds the chunk size
-            current_chunk += " " + word
+            current_chunk += f" {word}"
         else:
             if current_chunk:  # Append the current chunk if not empty
                 result.append(current_chunk.strip())
@@ -133,7 +133,7 @@ def tts(
             print("Service available!")
         else:
             print(
-                f"Service not available and probably temporarily rate limited, try again later..."
+                "Service not available and probably temporarily rate limited, try again later..."
             )
             return
 
@@ -142,11 +142,11 @@ def tts(
         print("No voice has been selected")
         return
 
-    if not voice in VOICES:
+    if voice not in VOICES:
         print("Voice does not exist")
         return
 
-    if len(text) == 0:
+    if not text:
         print("Insert a valid text")
         return
 
@@ -204,4 +204,4 @@ def tts(
             playsound(filename)
 
     except Exception as e:
-        print("Error occurred while generating audio:", str(e))
+        print("Error occurred while generating audio:", e)
