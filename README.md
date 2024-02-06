@@ -1,6 +1,6 @@
 # MoneyPrinter
 
-Create YouTube Shorts without any effort, simply by providing a video topic to talk about.
+Automate the creation of YouTube Shorts locally, simply by providing a video topic to talk about.
 
 ## Installation
 
