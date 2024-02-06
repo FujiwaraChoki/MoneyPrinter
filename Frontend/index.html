@@ -1,85 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MoneyPrinter</title>
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>">
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>"
+    />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.0.2/tailwind.min.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.0.2/tailwind.min.css"
+    />
+  </head>
 
-<body class="bg-blue-100 min-h-screen justify-center p-40">
+  <body class="bg-blue-100 min-h-screen justify-center p-40">
     <h1 class="text-4xl text-center mb-4">MoneyPrinter</h1>
-    <p class="text-center text-gray-700">This Application is intended to automate the creation of YouTube Shorts.</p>
+    <p class="text-center text-gray-700">
+      This Application is intended to automate the creation of YouTube Shorts.
+    </p>
 
     <div class="flex justify-center mt-8">
-        <div class="flex flex-col space-y-4">
-            <label for="videoSubject" class="text-blue-600">Subject</label>
-            <input type="text" name="videoSubject" id="videoSubject"
-                class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500">
-            <button id="generateButton"
-                class="bg-blue-500 hover:bg-blue-700 duration-100 linear text-white px-4 py-2 rounded-md">Generate</button>
-        </div>
+      <div class="flex flex-col space-y-4">
+        <label for="videoSubject" class="text-blue-600">Subject</label>
+        <input
+          type="text"
+          name="videoSubject"
+          id="videoSubject"
+          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+        />
+        <button
+          id="generateButton"
+          class="bg-blue-500 hover:bg-blue-700 duration-100 linear text-white px-4 py-2 rounded-md"
+        >
+          Generate
+        </button>
+        <button
+          id="cancelButton"
+          class="bg-red-500 hover:bg-red-700 duration-100 linear text-white px-4 py-2 rounded-md hidden"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
 
     <footer class="flex justify-center mt-8">
-        <div class="flex flex-col space-y-4">
-            <p class="text-center text-gray-700">Made with ❤️ by
-                <a class="text-blue-600" target="href" href="https://github.com/FujiwaraChoki">
-                    Fuji Codes
-                </a>
-            </p>
-        </div>
+      <div class="flex flex-col space-y-4">
+        <p class="text-center text-gray-700">
+          Made with ❤️ by
+          <a
+            class="text-blue-600"
+            target="href"
+            href="https://github.com/FujiwaraChoki"
+          >
+            Fuji Codes
+          </a>
+        </p>
+      </div>
     </footer>
 
     <script>
-        const generateButton = document.querySelector('#generateButton')
+      const videoSubject = document.querySelector("#videoSubject");
+      const generateButton = document.querySelector("#generateButton");
+      const cancelButton = document.querySelector("#cancelButton");
 
-        generateButton.addEventListener('click', () => {
-            // Disable button and change text
-            generateButton.disabled = true
-            generateButton.innerHTML = "Generating..."
-            generateButton.classList.add('cursor-not-allowed')
-            generateButton.classList.remove('hover:bg-blue-700')
-            generateButton.classList.remove('bg-blue-500')
-            generateButton.classList.add('bg-blue-300')
+      const cancelGeneration = () => {
+        console.log("Canceling generation...");
+        // Send request to /cancel
+        fetch("http://localhost:8080/api/cancel", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert(data.message);
+            console.log(data);
+          })
+          .catch((error) => {
+            alert("An error occurred. Please try again later.");
+            console.log(error);
+          });
 
-            // Get values from input fields
-            const videoSubject = document.querySelector('#videoSubject').value
+        // Hide cancel button
+        cancelButton.classList.add("hidden");
 
-            const url = "http://localhost:8080/api/generate"
+        // Enable generate button
+        generateButton.disabled = false;
+        generateButton.classList.remove("hidden");
+      };
 
-            // Construct data to be sent to server
-            const data = {
-                videoSubject: videoSubject,
-            }
+      const generateVideo = () => {
+        console.log("Generating video...");
+        // Disable button and change text
+        generateButton.disabled = true;
+        generateButton.classList.add("hidden");
 
-            // Send the actual request to the server
-            fetch(url, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            }).then(response => response.json())
-                .then(data => {
-                    console.log(data)
-                    generateButton.disabled = false
-                    generateButton.innerHTML = "Generate"
-                    generateButton.classList.remove('cursor-not-allowed')
-                    generateButton.classList.add('hover:bg-blue-700')
-                    generateButton.classList.add('bg-blue-500')
-                    generateButton.classList.remove('bg-blue-300')
-                })
-                .catch(error => {
-                    console.log(error)
-                })
-        });
+        // Show cancel button
+        cancelButton.classList.remove("hidden");
+
+        // Get values from input fields
+        const videoSubjectValue = videoSubject.value;
+
+        const url = "http://localhost:8080/api/generate";
+
+        // Construct data to be sent to the server
+        const data = {
+          videoSubject: videoSubjectValue,
+        };
+
+        // Send the actual request to the server
+        fetch(url, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert(data.message);
+            // Hide cancel button after generation is complete
+            generateButton.disabled = false;
+            cancelButton.classList.add("hidden");
+          })
+          .catch((error) => {
+            alert("An error occurred. Please try again later.");
+            console.log(error);
+          });
+      };
+
+      generateButton.addEventListener("click", generateVideo);
+      cancelButton.addEventListener("click", cancelGeneration);
+
+      videoSubject.addEventListener("keyup", (event) => {
+        if (event.key === "Enter") {
+          generateVideo();
+        }
+      });
     </script>
-</body>
-
+  </body>
 </html>
