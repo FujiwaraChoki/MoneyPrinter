@@ -86,8 +86,8 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     always add the main subject of the video.
     
     YOU MUST ONLY RETURN THE JSON-ARRAY OF STRINGS.
-    DO NOT RETURN ANYTHING ELSE. 
-    DO NOT RETURN THE SCRIPT.
+    YOU MUST NOT RETURN ANYTHING ELSE. 
+    YOU MUST NOT RETURN THE SCRIPT.
     
     The search terms must be related to the subject of the video.
     Here is an example of a JSON-Array of strings:
