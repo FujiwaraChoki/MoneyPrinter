@@ -6,8 +6,7 @@ from termcolor import colored
 
 
 def generate_script(video_subject: str) -> str:
-    """
-    Generate a script for a video, depending on the subject of the video.
+    """    Generate a script for a video, depending on the subject of the video.
 
     Args:
         video_subject (str): The subject of the video.
@@ -60,8 +59,7 @@ def generate_script(video_subject: str) -> str:
 
 
 def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
-    """
-    Generate a JSON-Array of search terms for stock videos,
+    """    Generate a JSON-Array of search terms for stock videos,
     depending on the subject of a video.
 
     Args:
@@ -71,6 +69,14 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
 
     Returns:
         List[str]: The search terms for the video subject.
+
+    Raises:
+        Exception: If there is an issue with loading or parsing the response.
+            Note:
+
+    Examples:
+        Example usage of the function:
+        get_search_terms("nature", 5, "This is a script about nature and wildlife.")
     """
 
     # Build prompt
@@ -127,15 +133,14 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     return search_terms
 
 def generate_metadata(video_subject: str, script: str) -> Tuple[str, str, List[str]]:  
-    """  
-    Generate metadata for a YouTube video, including the title, description, and keywords.  
-  
-    Args:  
-        video_subject (str): The subject of the video.  
-        script (str): The script of the video.  
-  
-    Returns:  
-        Tuple[str, str, List[str]]: The title, description, and keywords for the video.  
+    """    Generate metadata for a YouTube video, including the title, description, and keywords.
+
+    Args:
+        video_subject (str): The subject of the video.
+        script (str): The script of the video.
+
+    Returns:
+        Tuple[str, str, List[str]]: The title, description, and keywords for the video.
     """  
   
     # Build prompt for title  

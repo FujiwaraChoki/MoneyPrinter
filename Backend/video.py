@@ -19,14 +19,17 @@ ASSEMBLY_AI_API_KEY = os.getenv("ASSEMBLY_AI_API_KEY")
 
 
 def save_video(video_url: str, directory: str = "../temp") -> str:
-    """
-    Saves a video from a given URL and returns the path to the video.
+    """    Saves a video from a given URL and returns the path to the video.
 
     Args:
         video_url (str): The URL of the video to save.
+        directory (str?): The directory where the video will be saved. Defaults to "../temp".
 
     Returns:
         str: The path to the saved video.
+
+    Raises:
+        Exception: If there is an error saving the video or if the video URL is invalid.
     """
     video_id = uuid.uuid4()
     video_path = f"{directory}/{video_id}.mp4"
@@ -37,14 +40,16 @@ def save_video(video_url: str, directory: str = "../temp") -> str:
 
 
 def __generate_subtitles_assemblyai(audio_path: str) -> str:
-    """
-    Generates subtitles from a given audio file and returns the path to the subtitles.
+    """    Generate subtitles from a given audio file and return the path to the subtitles.
 
     Args:
         audio_path (str): The path to the audio file to generate subtitles from.
 
     Returns:
-        str: The generated subtitles
+        str: The generated subtitles.
+
+    Raises:
+        SomeException: An explanation of when this exception is raised.
     """
 
     aai.settings.api_key = ASSEMBLY_AI_API_KEY
@@ -56,17 +61,26 @@ def __generate_subtitles_assemblyai(audio_path: str) -> str:
 
 
 def __generate_subtitles_locally(sentences: list[str], audio_clips: list[AudioFileClip]) -> str:
-    """
-    Generates subtitles from a given audio file and returns the path to the subtitles.
+    """    Generates subtitles from a given audio file and returns the path to the subtitles.
 
     Args:
-        sentences (list[str]): all the sentences said out loud in the audio clips
-        audio_clips (list[AudioFileClip]): all the individual audio clips which will make up the final audio track
+        sentences (list[str]): All the sentences said out loud in the audio clips.
+        audio_clips (list[AudioFileClip]): All the individual audio clips which will make up the final audio track.
+
     Returns:
-        str: The generated subtitles
+        str: The generated subtitles.
     """
 
     def convert_to_srt_time_format(total_seconds):
+        """        Convert total seconds to the SRT time format: HH:MM:SS,mmm
+
+        Args:
+            total_seconds (int): Total seconds to be converted
+
+        Returns:
+            str: SRT time format string in the format HH:MM:SS,mmm
+        """
+
         # Convert total seconds to the SRT time format: HH:MM:SS,mmm
         if total_seconds == 0:
             return "0:00:00,0"
@@ -89,19 +103,31 @@ def __generate_subtitles_locally(sentences: list[str], audio_clips: list[AudioFi
 
 
 def generate_subtitles(audio_path: str, sentences: list[str], audio_clips: list[AudioFileClip]) -> str:
-    """
-    Generates subtitles from a given audio file and returns the path to the subtitles.
+    """    Generates subtitles from a given audio file and returns the path to the subtitles.
 
     Args:
         audio_path (str): The path to the audio file to generate subtitles from.
-        sentences (list[str]): all the sentences said out loud in the audio clips
-        audio_clips (list[AudioFileClip]): all the individual audio clips which will make up the final audio track
+        sentences (list[str]): All the sentences said out loud in the audio clips.
+        audio_clips (list[AudioFileClip]): All the individual audio clips which will make up the final audio track.
 
     Returns:
         str: The path to the generated subtitles.
+
+    Raises:
+        ValueError: If ASSEMBLY_AI_API_KEY is not provided or is empty.
     """
 
     def equalize_subtitles(srt_path: str, max_chars: int = 10) -> None:
+        """        Equalize subtitles by adjusting the length of each subtitle line to be within the specified maximum character limit.
+
+        Args:
+            srt_path (str): The file path of the subtitles file.
+            max_chars (int): The maximum number of characters allowed in each subtitle line. Defaults to 10.
+
+        Returns:
+            None
+        """
+
         # Equalize subtitles
         srt_equalizer.equalize_srt_file(srt_path, srt_path, max_chars)
 
@@ -127,15 +153,17 @@ def generate_subtitles(audio_path: str, sentences: list[str], audio_clips: list[
 
 
 def combine_videos(video_paths: List[str], max_duration: int) -> str:
-    """
-    Combines a list of videos into one video and returns the path to the combined video.
+    """    Combines a list of videos into one video and returns the path to the combined video.
 
     Args:
-        video_paths (list): A list of paths to the videos to combine.
+        video_paths (List[str]): A list of paths to the videos to combine.
         max_duration (int): The maximum duration of the combined video.
 
     Returns:
         str: The path to the combined video.
+
+    Raises:
+        SomeException: If there is an error in combining the videos.
     """
     video_id = uuid.uuid4()
     combined_video_path = f"../temp/{video_id}.mp4"
@@ -167,8 +195,7 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
 
 
 def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str) -> str:
-    """
-    This function creates the final video, with subtitles and audio.
+    """    This function creates the final video, with subtitles and audio.
 
     Args:
         combined_video_path (str): The path to the combined video.
