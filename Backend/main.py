@@ -60,6 +60,11 @@ def generate():
 
         # Generate a script
         script = generate_script(data["videoSubject"])
+        voice = data["voice"]
+
+        if not voice:
+            print(colored("[!] No voice was selected. Defaulting to \"en_us_001\"", "yellow"))
+            voice = "en_us_001"
 
         # Generate search terms
         search_terms = get_search_terms(
@@ -115,8 +120,6 @@ def generate():
         # Let user know
         print(colored("[+] Script generated!\n\n", "green"))
 
-        print(colored(f"\t{script}", "cyan"))
-
         if not GENERATING:
             return jsonify(
                 {
@@ -142,7 +145,7 @@ def generate():
                     }
                 )
             current_tts_path = f"../temp/{uuid4()}.mp3"
-            tts(sentence, "en_us_006", filename=current_tts_path)
+            tts(sentence, voice, filename=current_tts_path)
             audio_clip = AudioFileClip(current_tts_path)
             paths.append(audio_clip)
 

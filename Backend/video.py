@@ -110,7 +110,7 @@ def generate_subtitles(audio_path: str, sentences: list[str], audio_clips: list[
     subtitles_path = f"../subtitles/{uuid.uuid4()}.srt"
 
     if ASSEMBLY_AI_API_KEY is not None and ASSEMBLY_AI_API_KEY != "":
-        print(colored("[+] Creating subtitles with assembly ai", "blue"))
+        print(colored("[+] Creating subtitles using AssemblyAI", "blue"))
         subtitles = __generate_subtitles_assemblyai(audio_path)
     else:
         print(colored("[+] Creating subtitles locally", "blue"))
