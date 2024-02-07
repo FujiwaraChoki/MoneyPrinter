@@ -4,6 +4,7 @@ from datetime import timedelta
 
 import requests
 import srt_equalizer
+import assemblyai as aai
 
 from typing import List
 from moviepy.editor import *
@@ -139,8 +140,14 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str)
         str: The path to the final video.
     """
     # Make a generator that returns a TextClip when called with consecutive
-    generator = lambda txt: TextClip(txt, font=f"../fonts/bold_font.ttf", fontsize=100, color="#FFFF00",
-                                     stroke_color="black", stroke_width=5)
+    generator = lambda txt: TextClip(
+        txt,
+        font="../fonts/bold_font.ttf",
+        fontsize=100,
+        color="#FFFF00",
+        stroke_color="black",
+        stroke_width=5,
+    )
 
     # Burn the subtitles into the video
     subtitles = SubtitlesClip(subtitles_path, generator)

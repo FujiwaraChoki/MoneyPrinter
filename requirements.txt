@@ -12,3 +12,5 @@ python-dotenv
 srt_equalizer
 platformdirs
 undetected_chromedriver
+assemblyai
+brotli

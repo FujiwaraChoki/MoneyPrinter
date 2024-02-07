@@ -1,6 +1,8 @@
 # MoneyPrinter
 
-Create YouTube Shorts without any effort, simply by providing a video topic to talk about.
+Automate the creation of YouTube Shorts locally, simply by providing a video topic to talk about.
+
+> **Important**: Please make sure you look through existing/closed issues before opening your own. If it's just a question, please join our [discord](https://dsc.gg/fuji-community) and ask there.
 
 ## Installation
 
@@ -10,6 +12,9 @@ cd MoneyPrinter
 
 # Install requirements
 pip install -r requirements.txt
+
+# Copy .env.example and fill out values
+cp .env.example .env
 
 # Run the backend server
 cd Backend

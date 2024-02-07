@@ -34,7 +34,7 @@ def search_for_stock_videos(query: str, api_key: str) -> List[str]:
     video_url = ""
     try:
         video_urls = response["videos"][0]["video_files"]
-    except:
+    except Exception:
         print(colored("[-] No Videos found.", "red"))
         print(colored(response, "red"))
 
