@@ -113,8 +113,16 @@ def generate_subtitles(audio_path: str, sentences: list[str], audio_clips: list[
         print(colored("[+] Creating subtitles using AssemblyAI", "blue"))
         subtitles = __generate_subtitles_assemblyai(audio_path)
     else:
-        print(colored("[+] Creating subtitles locally", "blue"))
-        subtitles = __generate_subtitles_locally(sentences, audio_clips)
+        #print(colored("[+] Creating subtitles locally", "blue"))
+        #subtitles = __generate_subtitles_locally(sentences, audio_clips)
+        print(colored("[-] Local subtitle generation has been disabled for the time being.", "red"))
+        continue_with_assemblyai = input(colored("Do you want to continue with AssemblyAI? (Y/n): ", "blue"))
+        if continue_with_assemblyai.lower() == "y":
+            ASSEMBLY_AI_API_KEY = input(colored("Enter your AssemblyAI API key: ", "magenta"))
+            subtitles = __generate_subtitles_assemblyai(audio_path)
+        else:
+            print(colored("[-] Exiting.", "red"))
+            sys.exit(1)
 
     with open(subtitles_path, "w") as file:
         file.write(subtitles)
