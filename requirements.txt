@@ -1,4 +1,4 @@
-g4f
+g4f==0.2.0.4
 setuptools
 wheel
 requests
