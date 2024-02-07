@@ -118,7 +118,7 @@ def generate():
         print(colored("[+] Videos downloaded!", "green"))
 
         # Let user know
-        print(colored("[+] Script generated!\n\n", "green"))
+        print(colored("[+] Script generated!\n", "green"))
 
         if not GENERATING:
             return jsonify(
