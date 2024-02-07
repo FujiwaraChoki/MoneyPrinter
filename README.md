@@ -46,7 +46,7 @@ Add your fonts to the `fonts/` folder, and load them by specifiying the font nam
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-## Start History
+## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=FujiwaraChoki/MoneyPrinter&type=Date)](https://star-history.com/#FujiwaraChoki/MoneyPrinter&Date)
 
