@@ -152,6 +152,9 @@
         const videoSubjectValue = videoSubject.value;
         const voiceValue = voice.value;
 
+        // Save the data to localStorage
+        localStorage.setItem('voiceValue', voiceValue);
+
         const url = "http://localhost:8080/api/generate";
 
         // Construct data to be sent to the server
@@ -191,6 +194,23 @@
           generateVideo();
         }
       });
+
+      // Load the data from localStorage on page load
+      document.addEventListener('DOMContentLoaded', (event) => {
+      const voiceSelect = document.getElementById('voice');
+      const storedVoiceValue = localStorage.getItem('voiceValue');
+
+        if (storedVoiceValue) {
+          voiceSelect.value = storedVoiceValue;
+        }
+      });
+
+      // When the voice select field changes, store the new value in localStorage.
+      document.getElementById('voice').addEventListener('change', (event) => {
+        localStorage.setItem('voiceValue', event.target.value);
+      });
     </script>
   </body>
 </html>
+
+
