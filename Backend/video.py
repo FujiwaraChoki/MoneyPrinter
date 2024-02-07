@@ -1,5 +1,7 @@
 import os
 import uuid
+from datetime import timedelta
+
 import requests
 import srt_equalizer
 import assemblyai as aai
@@ -14,6 +16,7 @@ from moviepy.video.tools.subtitles import SubtitlesClip
 load_dotenv("../.env")
 
 ASSEMBLY_AI_API_KEY = os.getenv("ASSEMBLY_AI_API_KEY")
+
 
 def save_video(video_url: str, directory: str = "../temp") -> str:
     """
@@ -32,7 +35,8 @@ def save_video(video_url: str, directory: str = "../temp") -> str:
 
     return video_path
 
-def generate_subtitles(audio_path: str) -> str:
+
+def __generate_subtitles_assemblyai(audio_path: str) -> str:
     """
     Generates subtitles from a given audio file and returns the path to the subtitles.
 
@@ -40,25 +44,79 @@ def generate_subtitles(audio_path: str) -> str:
         audio_path (str): The path to the audio file to generate subtitles from.
 
     Returns:
+        str: The generated subtitles
+    """
+
+    aai.settings.api_key = ASSEMBLY_AI_API_KEY
+    transcriber = aai.Transcriber()
+    transcript = transcriber.transcribe(audio_path)
+    subtitles = transcript.export_subtitles_srt()
+
+    return subtitles
+
+
+def __generate_subtitles_locally(sentences: list[str], audio_clips: list[AudioFileClip]) -> str:
+    """
+    Generates subtitles from a given audio file and returns the path to the subtitles.
+
+    Args:
+        sentences (list[str]): all the sentences said out loud in the audio clips
+        audio_clips (list[AudioFileClip]): all the individual audio clips which will make up the final audio track
+    Returns:
+        str: The generated subtitles
+    """
+
+    def convert_to_srt_time_format(total_seconds):
+        # Convert total seconds to the SRT time format: HH:MM:SS,mmm
+        if total_seconds == 0:
+            return "0:00:00,0"
+        return str(timedelta(seconds=total_seconds))[:-3].replace('.', ',')
+
+    start_time = 0
+    subtitles = []
+
+    for i, (sentence, audio_clip) in enumerate(zip(sentences, audio_clips), start=1):
+        duration = audio_clip.duration
+        end_time = start_time + duration
+
+        # Format: subtitle index, start time --> end time, sentence
+        subtitle_entry = f"{i}\n{convert_to_srt_time_format(start_time)} --> {convert_to_srt_time_format(end_time)}\n{sentence}\n"
+        subtitles.append(subtitle_entry)
+
+        start_time += duration  # Update start time for the next subtitle
+
+    return "\n".join(subtitles)
+
+
+def generate_subtitles(audio_path: str, sentences: list[str], audio_clips: list[AudioFileClip]) -> str:
+    """
+    Generates subtitles from a given audio file and returns the path to the subtitles.
+
+    Args:
+        audio_path (str): The path to the audio file to generate subtitles from.
+        sentences (list[str]): all the sentences said out loud in the audio clips
+        audio_clips (list[AudioFileClip]): all the individual audio clips which will make up the final audio track
+
+    Returns:
         str: The path to the generated subtitles.
     """
+
     def equalize_subtitles(srt_path: str, max_chars: int = 10) -> None:
         # Equalize subtitles
         srt_equalizer.equalize_srt_file(srt_path, srt_path, max_chars)
 
-    aai.settings.api_key = ASSEMBLY_AI_API_KEY
-
-    transcriber = aai.Transcriber()
-
-    transcript = transcriber.transcribe(audio_path)
-
     # Save subtitles
     subtitles_path = f"../subtitles/{uuid.uuid4()}.srt"
 
-    subtitles = transcript.export_subtitles_srt()
+    if ASSEMBLY_AI_API_KEY is not None and ASSEMBLY_AI_API_KEY != "":
+        print(colored("[+] Creating subtitles with assembly ai", "blue"))
+        subtitles = __generate_subtitles_assemblyai(audio_path)
+    else:
+        print(colored("[+] Creating subtitles locally", "blue"))
+        subtitles = __generate_subtitles_locally(sentences, audio_clips)
 
-    with open(subtitles_path, "w") as f:
-        f.write(subtitles)
+    with open(subtitles_path, "w") as file:
+        file.write(subtitles)
 
     # Equalize subtitles
     equalize_subtitles(subtitles_path)
@@ -66,7 +124,6 @@ def generate_subtitles(audio_path: str) -> str:
     print(colored("[+] Subtitles generated.", "green"))
 
     return subtitles_path
-
 
 
 def combine_videos(video_paths: List[str], max_duration: int) -> str:
@@ -97,7 +154,7 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
         # so we need to resize them
         clip = crop(clip, width=1080, height=1920, \
                     x_center=clip.w / 2, \
-                        y_center=clip.h / 2)
+                    y_center=clip.h / 2)
         clip = clip.resize((1080, 1920))
 
         clips.append(clip)
@@ -107,6 +164,7 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
     final_clip.write_videofile(combined_video_path, threads=3)
 
     return combined_video_path
+
 
 def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str) -> str:
     """
