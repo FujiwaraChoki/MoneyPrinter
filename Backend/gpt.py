@@ -32,7 +32,7 @@ def generate_script(video_subject: str) -> str:
 
     Obviously, the script should be related to the subject of the video.
 
-    ONLY RETURN THE RAW SCRIPT. DO NOT RETURN ANYTHING ELSE.
+    ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE.
     """
 
     # Generate script
