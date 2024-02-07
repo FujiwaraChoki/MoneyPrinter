@@ -11,7 +11,7 @@ from termcolor import colored
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from moviepy.config import change_settings
-
+# do not use this aap without understanding
 # Load environment variables
 load_dotenv("../.env")
 
