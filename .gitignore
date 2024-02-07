@@ -6,3 +6,7 @@ images/*
 *.zip
 temp/*
 .history
+subtitles/*
+/venv
+client_secret.json
+main.py-oauth2.json

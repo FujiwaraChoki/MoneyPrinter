@@ -30,6 +30,15 @@
           id="videoSubject"
           class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
         />
+        <label for="youtubeUploadToggle" class="flex items-center text-blue-600">
+          <input
+            type="checkbox"
+            name="youtubeUploadToggle"
+            id="youtubeUploadToggle"
+            class="mr-2"
+          />  
+          Automate YouTube Uploads  
+        </label>  
         <button
           id="generateButton"
           class="bg-blue-500 hover:bg-blue-700 duration-100 linear text-white px-4 py-2 rounded-md"
@@ -104,12 +113,15 @@
 
         // Get values from input fields
         const videoSubjectValue = videoSubject.value;
+        // Get value from toggle: automated youtube upload
+        const youtubeUpload = document.querySelector("#youtubeUploadToggle").checked;
 
         const url = "http://localhost:8080/api/generate";
 
         // Construct data to be sent to the server
         const data = {
           videoSubject: videoSubjectValue,
+          automateYoutubeUpload: youtubeUpload,
         };
 
         // Send the actual request to the server
