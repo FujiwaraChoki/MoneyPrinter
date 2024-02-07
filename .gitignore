@@ -7,3 +7,4 @@ images/*
 *.zip
 *.srt
 .history
+.DS_Store
