@@ -33,7 +33,16 @@ GENERATING = False
   
 # Generation Endpoint  
 @app.route("/api/generate", methods=["POST"])  
-def generate():  
+def generate():
+    """    Generate a video based on the provided data and optionally upload it to YouTube.
+
+    Returns:
+        JSON: A JSON response containing the status of the video generation process and the path to the generated video.
+
+    Raises:
+        Exception: An error occurred during the video generation process.
+    """
+  
     try:  
         # Set global variable  
         global GENERATING  
@@ -227,7 +236,16 @@ def generate():
             }  
         )  
 @app.route("/api/cancel", methods=["POST"])  
-def cancel():  
+def cancel():
+    """    Cancel the video generation process.
+
+    This function cancels the video generation process and returns a JSON response
+    indicating the status and message of the cancellation.
+
+    Returns:
+        dict: A dictionary containing the status and message of the cancellation.
+    """
+  
     print(colored("[!] Received cancellation request...", "yellow"))  
       
     global GENERATING  

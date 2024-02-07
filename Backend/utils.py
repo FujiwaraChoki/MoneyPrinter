@@ -4,14 +4,16 @@ from termcolor import colored
 
 
 def clean_dir(path: str) -> None:
-    """
-    Removes every file in a directory
+    """    Removes every file in a directory
 
     Args:
         path (str): Path to directory
 
     Returns:
         None
+
+    Raises:
+        OSError: If the directory does not exist or cannot be accessed
     """
     if not os.path.exists(path):
         os.mkdir(path)

@@ -61,7 +61,18 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 VALID_PRIVACY_STATUSES = ("public", "private", "unlisted")  
   
   
-def get_authenticated_service():  
+def get_authenticated_service():
+    """    Get an authenticated service for the YouTube API.
+
+    This function retrieves the necessary credentials and builds an authenticated service for the YouTube API.
+
+    Returns:
+        A built authenticated service for the YouTube API.
+
+    Raises:
+        SomeException: An exception raised when some specific condition is met.
+    """
+  
     flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE, 
                                    scope=SCOPES, 
                                    message=MISSING_CLIENT_SECRETS_MESSAGE)  
@@ -77,7 +88,22 @@ def get_authenticated_service():
                  http=credentials.authorize(httplib2.Http()))  
   
   
-def initialize_upload(youtube, options):  
+def initialize_upload(youtube, options):
+    """    Initialize the video upload process to YouTube.
+
+    Args:
+        youtube: An authorized instance of the `googleapiclient.discovery.Resource` class.
+        options: A dictionary containing the following keys:
+            - 'keywords' (str): Comma-separated keywords for the video.
+            - 'title' (str): Title of the video.
+            - 'description' (str): Description of the video.
+            - 'category' (str): Category ID for the video.
+            - 'privacyStatus' (str): Privacy status of the video.
+
+    Returns:
+        The result of the resumable upload process.
+    """
+  
     tags = None  
     if options['keywords']:  
         tags = options['keywords'].split(",")  
@@ -106,7 +132,21 @@ def initialize_upload(youtube, options):
   
 # This method implements an exponential backoff strategy to resume a  
 # failed upload.  
-def resumable_upload(insert_request):  
+def resumable_upload(insert_request):
+    """    This method implements an exponential backoff strategy to resume a
+    failed upload.
+
+    Args:
+        insert_request: The insert request for the upload.
+
+    Returns:
+        The response of the upload.
+
+    Raises:
+        HttpError: An error occurred during the HTTP request.
+        Exception: An exception occurred during the upload process.
+    """
+  
     response = None  
     error = None  
     retry = 0  
@@ -137,7 +177,24 @@ def resumable_upload(insert_request):
             time.sleep(sleep_seconds)  
   
   
-def upload_video(video_path, title, description, category, keywords, privacy_status):    
+def upload_video(video_path, title, description, category, keywords, privacy_status):
+    """    Uploads a video to YouTube.
+
+    Args:
+        video_path (str): The path to the video file.
+        title (str): The title of the video.
+        description (str): The description of the video.
+        category (str): The category of the video.
+        keywords (str): The keywords associated with the video.
+        privacy_status (str): The privacy status of the video.
+
+    Returns:
+        dict: The response from the upload process.
+
+    Raises:
+        HttpError: An HTTP error occurred during the upload process.
+    """
+    
     # Get the authenticated YouTube service  
     youtube = get_authenticated_service()    
       

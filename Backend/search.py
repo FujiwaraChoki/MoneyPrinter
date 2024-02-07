@@ -4,15 +4,17 @@ from typing import List
 from termcolor import colored
 
 def search_for_stock_videos(query: str, api_key: str) -> List[str]:
-    """
-    Searches for stock videos based on a query.
+    """    Searches for stock videos based on a query.
 
     Args:
         query (str): The query to search for.
         api_key (str): The API key to use.
 
     Returns:
-        List[str]: A list of stock videos.
+        str: The URL of the stock video found based on the query.
+
+    Raises:
+        KeyError: If the response does not contain the expected structure.
     """
     
     # Build headers

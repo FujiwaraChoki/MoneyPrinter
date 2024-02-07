@@ -75,6 +75,16 @@ TEXT_BYTE_LIMIT = 300
 
 # create a list by splitting a string, every element has n chars
 def split_string(string: str, chunk_size: int) -> List[str]:
+    """    Split the input string into chunks of specified size.
+
+    Args:
+        string (str): The input string to be split into chunks.
+        chunk_size (int): The size of each chunk.
+
+    Returns:
+        List[str]: A list of strings, each representing a chunk of the input string.
+    """
+
     words = string.split()
     result = []
     current_chunk = ""
@@ -94,6 +104,16 @@ def split_string(string: str, chunk_size: int) -> List[str]:
 
 # checking if the website that provides the service is available
 def get_api_response() -> requests.Response:
+    """    Get the API response from the specified endpoint.
+
+    Returns:
+        requests.Response: The response object from the API.
+
+    Raises:
+        This function may raise the following exceptions:
+        requests.exceptions.RequestException: If an error occurs while fetching the API response.
+    """
+
     url = f'{ENDPOINTS[current_endpoint].split("/a")[0]}'
     response = requests.get(url)
     return response
@@ -101,6 +121,21 @@ def get_api_response() -> requests.Response:
 
 # saving the audio file
 def save_audio_file(base64_data: str, filename: str = "output.mp3") -> None:
+    """    Save the audio file from base64 encoded data to the specified filename.
+
+    Args:
+        base64_data (str): The base64 encoded audio data.
+        filename (str?): The name of the output file. Defaults to "output.mp3".
+
+    Returns:
+        None
+
+    Raises:
+        TypeError: If base64_data is not a string.
+        TypeError: If filename is not a string.
+        ValueError: If the base64 encoded data is invalid.
+    """
+
     audio_bytes = base64.b64decode(base64_data)
     with open(filename, "wb") as file:
         file.write(audio_bytes)
@@ -108,6 +143,20 @@ def save_audio_file(base64_data: str, filename: str = "output.mp3") -> None:
 
 # send POST request to get the audio data
 def generate_audio(text: str, voice: str) -> bytes:
+    """    Send a POST request to get the audio data.
+
+    Args:
+        text (str): The text to be converted to audio.
+        voice (str): The voice to be used for the audio.
+
+    Returns:
+        bytes: The audio data in bytes.
+
+    Raises:
+        This function may raise exceptions of the following types:
+        requests.exceptions.RequestException: If a request error occurs.
+    """
+
     url = f"{ENDPOINTS[current_endpoint]}"
     headers = {"Content-Type": "application/json"}
     data = {"text": text, "voice": voice}
@@ -122,6 +171,23 @@ def tts(
     filename: str = "output.mp3",
     play_sound: bool = False,
 ) -> None:
+    """    Create a text-to-speech audio file.
+
+    Args:
+        text (str): The text to be converted to speech.
+        voice (str?): The voice to be used for speech synthesis. Defaults to "none".
+        filename (str?): The name of the output audio file. Defaults to "output.mp3".
+        play_sound (bool?): Flag to indicate whether to play the generated audio file. Defaults to False.
+
+    Returns:
+        None
+
+    Raises:
+        ValueError: If no voice is selected or the selected voice does not exist.
+        ValueError: If the input text is empty.
+        RuntimeError: If an error occurs while generating the audio.
+    """
+
     # checking if the website is available
     global current_endpoint
 
@@ -170,6 +236,20 @@ def tts(
 
             # Define a thread function to generate audio for each text part
             def generate_audio_thread(text_part, index):
+                """                Generate audio for each text part in a separate thread.
+
+                Args:
+                    text_part (str): The text part for which audio needs to be generated.
+                    index (int): The index of the text part.
+
+                Returns:
+                    None
+
+                Raises:
+                    ValueError: If the provided text_part is empty or None.
+                    TypeError: If the index is not an integer.
+                """
+
                 audio = generate_audio(text_part, voice)
                 if current_endpoint == 0:
                     base64_data = str(audio).split('"')[5]
