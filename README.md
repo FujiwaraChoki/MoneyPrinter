@@ -42,7 +42,7 @@ If you need help, open [ENV.md](ENV.md) for more information.
 
 ## Fonts
 
-Add your fonts to the `fonts/` folder, and load them by specifiying the font name on line `124` in `Backend/video.py`.
+Add your fonts to the `fonts/` folder, and load them by specifying the font name on line `124` in `Backend/video.py`.
 
 ## Contributing
 
