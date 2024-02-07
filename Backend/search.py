@@ -21,7 +21,7 @@ def search_for_stock_videos(query: str, api_key: str) -> List[str]:
     }
 
     # Build URL
-    url = f"https://api.pexels.com/videos/search?query={query}&per_page=1"
+    url = f"https://api.pexels.com/videos/search?query={query}&per_page=1&orientation=portrait&size=medium"
 
     # Send the request
     r = requests.get(url, headers=headers)
