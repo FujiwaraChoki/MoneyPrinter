@@ -29,6 +29,7 @@ PORT = 8080
 AMOUNT_OF_STOCK_VIDEOS = 5
 GENERATING = False
 
+
 # Generation Endpoint
 @app.route("/api/generate", methods=["POST"])
 def generate():
@@ -151,7 +152,7 @@ def generate():
         final_audio.write_audiofile(tts_path)
 
         # Generate subtitles
-        subtitles_path = generate_subtitles(tts_path)
+        subtitles_path = generate_subtitles(audio_path=tts_path, sentences=sentences, audio_clips=paths)
 
         # Concatenate videos
         temp_audio = AudioFileClip(tts_path)
@@ -190,10 +191,12 @@ def generate():
                 "data": [],
             }
         )
+
+
 @app.route("/api/cancel", methods=["POST"])
 def cancel():
     print(colored("[!] Received cancellation request...", "yellow"))
-    
+
     global GENERATING
     GENERATING = False
 
