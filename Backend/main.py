@@ -178,7 +178,7 @@ def generate():
         return jsonify(
             {
                 "status": "success",
-                "message": "Retrieved stock videos.",
+                "message": "Video generated! See temp/output.mp4 for result.",
                 "data": final_video_path,
             }
         )

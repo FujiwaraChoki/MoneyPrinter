@@ -103,8 +103,6 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
         messages=[{"role": "user", "content": prompt}],
     )
 
-    print(response.replace("```json", "").replace("```", "").strip())
-
     # Load response into JSON-Array
     try:
         search_terms = json.loads(response)
@@ -112,7 +110,7 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
         print(colored("[*] GPT returned an unformatted response. Attempting to clean...", "yellow"))
 
         # Use Regex to extract the array from the markdown
-        search_terms = re.findall(r'\[.*\]', response)
+        search_terms = re.findall(r'\[.*\]', str(response))
 
         if not search_terms:
             print(colored("[-] Could not parse response.", "red"))

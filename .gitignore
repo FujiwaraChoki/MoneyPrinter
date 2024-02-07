@@ -1,8 +1,9 @@
 __pycache__
 .env
+temp/*
 sounds/*
 output/*
 images/*
 *.zip
-temp/*
+*.srt
 .history

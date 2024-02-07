@@ -1,6 +1,5 @@
 import os
 import uuid
-from datetime import timedelta
 
 import requests
 import srt_equalizer
@@ -10,6 +9,7 @@ from typing import List
 from moviepy.editor import *
 from termcolor import colored
 from dotenv import load_dotenv
+from datetime import timedelta
 from moviepy.video.fx.all import crop
 from moviepy.video.tools.subtitles import SubtitlesClip
 
@@ -24,6 +24,7 @@ def save_video(video_url: str, directory: str = "../temp") -> str:
 
     Args:
         video_url (str): The URL of the video to save.
+        directory (str): The path of the temporary directory to save the video to
 
     Returns:
         str: The path to the saved video.
