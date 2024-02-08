@@ -1,6 +1,5 @@
 import os
 import uuid
-from datetime import timedelta
 
 import requests
 import srt_equalizer
@@ -10,6 +9,7 @@ from typing import List
 from moviepy.editor import *
 from termcolor import colored
 from dotenv import load_dotenv
+from datetime import timedelta
 from moviepy.video.fx.all import crop
 from moviepy.video.tools.subtitles import SubtitlesClip
 
@@ -24,6 +24,7 @@ def save_video(video_url: str, directory: str = "../temp") -> str:
 
     Args:
         video_url (str): The URL of the video to save.
+        directory (str): The path of the temporary directory to save the video to
 
     Returns:
         str: The path to the saved video.
@@ -55,13 +56,13 @@ def __generate_subtitles_assemblyai(audio_path: str) -> str:
     return subtitles
 
 
-def __generate_subtitles_locally(sentences: list[str], audio_clips: list[AudioFileClip]) -> str:
+def __generate_subtitles_locally(sentences: List[str], audio_clips: List[AudioFileClip]) -> str:
     """
     Generates subtitles from a given audio file and returns the path to the subtitles.
 
     Args:
-        sentences (list[str]): all the sentences said out loud in the audio clips
-        audio_clips (list[AudioFileClip]): all the individual audio clips which will make up the final audio track
+        sentences (List[str]): all the sentences said out loud in the audio clips
+        audio_clips (List[AudioFileClip]): all the individual audio clips which will make up the final audio track
     Returns:
         str: The generated subtitles
     """
@@ -88,14 +89,14 @@ def __generate_subtitles_locally(sentences: list[str], audio_clips: list[AudioFi
     return "\n".join(subtitles)
 
 
-def generate_subtitles(audio_path: str, sentences: list[str], audio_clips: list[AudioFileClip]) -> str:
+def generate_subtitles(audio_path: str, sentences: List[str], audio_clips: List[AudioFileClip]) -> str:
     """
     Generates subtitles from a given audio file and returns the path to the subtitles.
 
     Args:
         audio_path (str): The path to the audio file to generate subtitles from.
-        sentences (list[str]): all the sentences said out loud in the audio clips
-        audio_clips (list[AudioFileClip]): all the individual audio clips which will make up the final audio track
+        sentences (List[str]): all the sentences said out loud in the audio clips
+        audio_clips (List[AudioFileClip]): all the individual audio clips which will make up the final audio track
 
     Returns:
         str: The path to the generated subtitles.
@@ -109,11 +110,14 @@ def generate_subtitles(audio_path: str, sentences: list[str], audio_clips: list[
     subtitles_path = f"../subtitles/{uuid.uuid4()}.srt"
 
     if ASSEMBLY_AI_API_KEY is not None and ASSEMBLY_AI_API_KEY != "":
-        print(colored("[+] Creating subtitles with assembly ai", "blue"))
+        print(colored("[+] Creating subtitles using AssemblyAI", "blue"))
         subtitles = __generate_subtitles_assemblyai(audio_path)
     else:
-        print(colored("[+] Creating subtitles locally", "blue"))
-        subtitles = __generate_subtitles_locally(sentences, audio_clips)
+        #print(colored("[+] Creating subtitles locally", "blue"))
+        #subtitles = __generate_subtitles_locally(sentences, audio_clips)
+        print(colored("[-] Local subtitle generation has been disabled for the time being.", "red"))
+        print(colored("[-] Exiting.", "red"))
+        sys.exit(1)
 
     with open(subtitles_path, "w") as file:
         file.write(subtitles)
@@ -131,7 +135,7 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
     Combines a list of videos into one video and returns the path to the combined video.
 
     Args:
-        video_paths (list): A list of paths to the videos to combine.
+        video_paths (List): A list of paths to the videos to combine.
         max_duration (int): The maximum duration of the combined video.
 
     Returns:
@@ -152,9 +156,10 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
 
         # Not all videos are same size,
         # so we need to resize them
-        clip = crop(clip, width=1080, height=1920, \
-                    x_center=clip.w / 2, \
-                    y_center=clip.h / 2)
+        if not round((clip.w/clip.h), 4) == 0.5625:
+            clip = crop(clip, width=round(0.5625*clip.h), height=clip.h, \
+                        x_center=clip.w / 2, \
+                        y_center=clip.h / 2)
         clip = clip.resize((1080, 1920))
 
         clips.append(clip)

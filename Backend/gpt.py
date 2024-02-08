@@ -32,7 +32,7 @@ def generate_script(video_subject: str) -> str:
 
     Obviously, the script should be related to the subject of the video.
 
-    ONLY RETURN THE RAW SCRIPT. DO NOT RETURN ANYTHING ELSE.
+    ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE.
     """
 
     # Generate script
@@ -103,8 +103,6 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
         messages=[{"role": "user", "content": prompt}],
     )
 
-    print(response.replace("```json", "").replace("```", "").strip())
-
     # Load response into JSON-Array
     try:
         search_terms = json.loads(response)
@@ -112,7 +110,7 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
         print(colored("[*] GPT returned an unformatted response. Attempting to clean...", "yellow"))
 
         # Use Regex to extract the array from the markdown
-        search_terms = re.findall(r'\[.*\]', response)
+        search_terms = re.findall(r'\[.*\]', str(response))
 
         if not search_terms:
             print(colored("[-] Could not parse response.", "red"))
