@@ -171,7 +171,7 @@ def generate():
         
         # Start Youtube Uploader
         # Check if the CLIENT_SECRETS_FILE exists  
-        client_secrets_file = os.path.abspath("./Backend/client_secret.json")  
+        client_secrets_file = os.path.abspath("./client_secret.json")  
         SKIP_YT_UPLOAD = False  
         if not os.path.exists(client_secrets_file):  
             SKIP_YT_UPLOAD = True  
