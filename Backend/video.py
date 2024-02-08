@@ -56,13 +56,13 @@ def __generate_subtitles_assemblyai(audio_path: str) -> str:
     return subtitles
 
 
-def __generate_subtitles_locally(sentences: list[str], audio_clips: list[AudioFileClip]) -> str:
+def __generate_subtitles_locally(sentences: List[str], audio_clips: List[AudioFileClip]) -> str:
     """
     Generates subtitles from a given audio file and returns the path to the subtitles.
 
     Args:
-        sentences (list[str]): all the sentences said out loud in the audio clips
-        audio_clips (list[AudioFileClip]): all the individual audio clips which will make up the final audio track
+        sentences (List[str]): all the sentences said out loud in the audio clips
+        audio_clips (List[AudioFileClip]): all the individual audio clips which will make up the final audio track
     Returns:
         str: The generated subtitles
     """
@@ -71,7 +71,7 @@ def __generate_subtitles_locally(sentences: list[str], audio_clips: list[AudioFi
         # Convert total seconds to the SRT time format: HH:MM:SS,mmm
         if total_seconds == 0:
             return "0:00:00,0"
-        return str(timedelta(seconds=total_seconds))[:-3].replace('.', ',')
+        return str(timedelta(seconds=total_seconds)).rstrip('0').replace('.', ',')
 
     start_time = 0
     subtitles = []
@@ -89,14 +89,14 @@ def __generate_subtitles_locally(sentences: list[str], audio_clips: list[AudioFi
     return "\n".join(subtitles)
 
 
-def generate_subtitles(audio_path: str, sentences: list[str], audio_clips: list[AudioFileClip]) -> str:
+def generate_subtitles(audio_path: str, sentences: List[str], audio_clips: List[AudioFileClip]) -> str:
     """
     Generates subtitles from a given audio file and returns the path to the subtitles.
 
     Args:
         audio_path (str): The path to the audio file to generate subtitles from.
-        sentences (list[str]): all the sentences said out loud in the audio clips
-        audio_clips (list[AudioFileClip]): all the individual audio clips which will make up the final audio track
+        sentences (List[str]): all the sentences said out loud in the audio clips
+        audio_clips (List[AudioFileClip]): all the individual audio clips which will make up the final audio track
 
     Returns:
         str: The path to the generated subtitles.
@@ -113,11 +113,11 @@ def generate_subtitles(audio_path: str, sentences: list[str], audio_clips: list[
         print(colored("[+] Creating subtitles using AssemblyAI", "blue"))
         subtitles = __generate_subtitles_assemblyai(audio_path)
     else:
-        #print(colored("[+] Creating subtitles locally", "blue"))
-        #subtitles = __generate_subtitles_locally(sentences, audio_clips)
-        print(colored("[-] Local subtitle generation has been disabled for the time being.", "red"))
-        print(colored("[-] Exiting.", "red"))
-        sys.exit(1)
+        print(colored("[+] Creating subtitles locally", "blue"))
+        subtitles = __generate_subtitles_locally(sentences, audio_clips)
+        # print(colored("[-] Local subtitle generation has been disabled for the time being.", "red"))
+        # print(colored("[-] Exiting.", "red"))
+        # sys.exit(1)
 
     with open(subtitles_path, "w") as file:
         file.write(subtitles)
@@ -135,7 +135,7 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
     Combines a list of videos into one video and returns the path to the combined video.
 
     Args:
-        video_paths (list): A list of paths to the videos to combine.
+        video_paths (List): A list of paths to the videos to combine.
         max_duration (int): The maximum duration of the combined video.
 
     Returns:
@@ -156,8 +156,8 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
 
         # Not all videos are same size,
         # so we need to resize them
-        if not clip.h > clip.w:
-            clip = crop(clip, width=1080, height=1920, \
+        if not round((clip.w/clip.h), 4) == 0.5625:
+            clip = crop(clip, width=round(0.5625*clip.h), height=clip.h, \
                         x_center=clip.w / 2, \
                         y_center=clip.h / 2)
         clip = clip.resize((1080, 1920))

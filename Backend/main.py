@@ -9,6 +9,8 @@ from tiktokvoice import *
 from flask_cors import CORS
 from termcolor import colored
 from dotenv import load_dotenv
+from youtube import upload_video 
+from apiclient.errors import HttpError   
 from flask import Flask, request, jsonify
 from moviepy.config import change_settings
 
@@ -44,6 +46,9 @@ def generate():
 
         # Parse JSON
         data = request.get_json()
+        
+        # Get 'automateYoutubeUpload' from the request data and default to False if not provided 
+        automate_youtube_upload = data.get('automateYoutubeUpload', False)  
 
         # Print little information about the video which is to be generated
         print(colored("[Video to be generated]", "blue"))
@@ -163,6 +168,47 @@ def generate():
 
         # Put everything together
         final_video_path = generate_video(combined_video_path, tts_path, subtitles_path)
+        
+        # Start Youtube Uploader
+        # Check if the CLIENT_SECRETS_FILE exists  
+        client_secrets_file = os.path.abspath("./client_secret.json")  
+        SKIP_YT_UPLOAD = False  
+        if not os.path.exists(client_secrets_file):  
+            SKIP_YT_UPLOAD = True  
+            print(colored("[-] Client secrets file missing. YouTube upload will be skipped.", "yellow"))  
+            print(colored("[-] Please download the client_secret.json from Google Cloud Platform and store this inside the /Backend directory.", "red"))  
+        
+        # Only proceed with YouTube upload if the toggle is True  and client_secret.json exists.
+        if automate_youtube_upload and not SKIP_YT_UPLOAD:  
+            # Define metadata for the video  
+            title, description, keywords = generate_metadata(data["videoSubject"], script)  
+  
+            # Choose the appropriate category ID for your videos  
+            video_category_id = "28"  # Science & Technology  
+            privacyStatus = "private"  # "public", "private", "unlisted"  
+            video_metadata = {  
+                'video_path': os.path.abspath(f"../temp/{final_video_path}"),  
+                'title': title,  
+                'description': description,  
+                'category': video_category_id,  
+                'keywords': ",".join(keywords),  
+                'privacyStatus': privacyStatus,  
+            }  
+  
+            # Upload the video to YouTube  
+            try:  
+                # Unpack the video_metadata dictionary into individual arguments  
+                video_response = upload_video(  
+                    video_path=video_metadata['video_path'],  
+                    title=video_metadata['title'],  
+                    description=video_metadata['description'],  
+                    category=video_metadata['category'],  
+                    keywords=video_metadata['keywords'],  
+                    privacy_status=video_metadata['privacyStatus']  
+                )  
+                print(f"Uploaded video ID: {video_response.get('id')}")  
+            except HttpError as e:  
+                print(f"An HTTP error {e.resp.status} occurred:\n{e.content}")  
 
         # Let user know
         print(colored(f"[+] Video generated: {final_video_path}!", "green"))
