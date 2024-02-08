@@ -71,7 +71,7 @@ def __generate_subtitles_locally(sentences: List[str], audio_clips: List[AudioFi
         # Convert total seconds to the SRT time format: HH:MM:SS,mmm
         if total_seconds == 0:
             return "0:00:00,0"
-        return str(timedelta(seconds=total_seconds))[:-3].replace('.', ',')
+        return str(timedelta(seconds=total_seconds)).rstrip('0').replace('.', ',')
 
     start_time = 0
     subtitles = []
@@ -113,11 +113,11 @@ def generate_subtitles(audio_path: str, sentences: List[str], audio_clips: List[
         print(colored("[+] Creating subtitles using AssemblyAI", "blue"))
         subtitles = __generate_subtitles_assemblyai(audio_path)
     else:
-        #print(colored("[+] Creating subtitles locally", "blue"))
-        #subtitles = __generate_subtitles_locally(sentences, audio_clips)
-        print(colored("[-] Local subtitle generation has been disabled for the time being.", "red"))
-        print(colored("[-] Exiting.", "red"))
-        sys.exit(1)
+        print(colored("[+] Creating subtitles locally", "blue"))
+        subtitles = __generate_subtitles_locally(sentences, audio_clips)
+        # print(colored("[-] Local subtitle generation has been disabled for the time being.", "red"))
+        # print(colored("[-] Exiting.", "red"))
+        # sys.exit(1)
 
     with open(subtitles_path, "w") as file:
         file.write(subtitles)
