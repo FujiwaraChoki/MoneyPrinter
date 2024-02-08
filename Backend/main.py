@@ -162,15 +162,22 @@ def generate():
         tts_path = f"../temp/{uuid4()}.mp3"
         final_audio.write_audiofile(tts_path)
 
-        # Generate subtitles
-        subtitles_path = generate_subtitles(audio_path=tts_path, sentences=sentences, audio_clips=paths)
+        try:
+            subtitles_path = generate_subtitles(audio_path=tts_path, sentences=sentences, audio_clips=paths)
+        except Exception as e:
+            print(colored(f"[-] Error generating subtitles: {e}", "red"))
+            subtitles_path = None
 
         # Concatenate videos
         temp_audio = AudioFileClip(tts_path)
         combined_video_path = combine_videos(video_paths, temp_audio.duration)
 
         # Put everything together
-        final_video_path = generate_video(combined_video_path, tts_path, subtitles_path)
+        try:
+            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path)
+        except Exception as e:
+            print(colored(f"[-] Error generating final video: {e}", "red"))
+            final_video_path = None
         
         # Start Youtube Uploader
         # Check if the CLIENT_SECRETS_FILE exists  
