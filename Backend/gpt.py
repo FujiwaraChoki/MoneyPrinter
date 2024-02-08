@@ -18,7 +18,7 @@ def generate_script(video_subject: str) -> str:
 
     # Build prompt
     prompt = f"""
-    Generate a script for a video, depending on the subject of the video.
+    Generate a script for a 45 second video, depending on the subject of the video.
     Subject: {video_subject}
 
     The script is to be returned as a string.
@@ -26,11 +26,15 @@ def generate_script(video_subject: str) -> str:
     Here is an example of a string:
     "This is an example string."
 
-    Do not under any circumstance reference this prompt in your response.
+    Do not under any circumstance reference this prompt in your response. Also, don't mention that this is a script.
 
     Get straight to the point, don't start with unnecessary things like, "welcome to this video".
+    
+    Present new information in every paragraph. Do not repeat the same information.
 
     Obviously, the script should be related to the subject of the video.
+    
+    Don't name or number the paragraphs.
 
     ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE.
     """
