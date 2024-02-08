@@ -73,7 +73,8 @@ def generate():
 
         # Search for a video of the given search term
         video_urls = []
-
+        #defines how many results it should query and search through
+        it = 10
         # Loop through all search terms,
         # and search for a video of the given search term
         for search_term in search_terms:
@@ -86,17 +87,19 @@ def generate():
                     }
                 )
             found_url = search_for_stock_videos(
-                search_term, os.getenv("PEXELS_API_KEY")
+                search_term, os.getenv("PEXELS_API_KEY"), it
             )
-
-            if found_url != None and found_url not in video_urls and found_url != "":
-                video_urls.append(found_url)
+            #check for duplicates
+            for url in found_url:
+                if url not in video_urls:
+                    video_urls.append(url)
+                    break
 
         # Define video_paths
         video_paths = []
 
         # Let user know
-        print(colored("[+] Downloading videos...", "blue"))
+        print(colored(f"[+] Downloading {len(video_urls)} videos...", "blue"))
 
         # Save the videos
         for video_url in video_urls:
