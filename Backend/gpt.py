@@ -115,9 +115,6 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
         if not search_terms:
             print(colored("[-] Could not parse response.", "red"))
 
-        # Load the array into a JSON-Array
-        search_terms = json.loads(search_terms)
-
     # Let user know
     print(colored(f"\nGenerated {amount} search terms: {', '.join(search_terms)}", "cyan"))
 
