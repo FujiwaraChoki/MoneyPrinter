@@ -89,9 +89,11 @@ def initialize_upload(youtube, options):
             'tags': tags,  
             'categoryId': options['category']  
         },  
-        'status': {  
-            'privacyStatus': options['privacyStatus']  
-        }  
+        'status': {    
+            'privacyStatus': options['privacyStatus'],  
+            'madeForKids': False,  # Video is not made for kids  
+            'selfDeclaredMadeForKids': False  # You declare that the video is not made for kids  
+        } 
     }  
   
     # Call the API's videos.insert method to create and upload the video.  
