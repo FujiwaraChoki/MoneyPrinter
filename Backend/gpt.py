@@ -26,19 +26,21 @@ def generate_script(video_subject: str) -> str:
     Here is an example of a string:
     "This is an example string."
 
-    Do not under any circumstance reference this prompt in your response.
+    ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR "SCRIPT" SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE.
+    """
+
+    system_prompt = """
+    Do not under any circumstance reference the prompt in your response.
 
     Get straight to the point, don't start with unnecessary things like, "welcome to this video".
 
     Obviously, the script should be related to the subject of the video.
-
-    ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE.
     """
 
     # Generate script
     response = g4f.ChatCompletion.create(
         model=g4f.models.gpt_35_turbo_16k_0613,
-        messages=[{"role": "user", "content": prompt}],
+        messages=[{"role": "user", "content": prompt},{"role": "system", "content": system_prompt}],
     )
 
     print(colored(response, "cyan"))
