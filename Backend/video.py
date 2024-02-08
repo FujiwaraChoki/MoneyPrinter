@@ -143,44 +143,30 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
     """
     video_id = uuid.uuid4()
     combined_video_path = f"../temp/{video_id}.mp4"
-    
-    #required duration of each clip:
-    req_dur = max_duration / len(video_paths)
 
     print(colored("[+] Combining videos...", "blue"))
-    print(colored(f"[+] Each clip will be maximum {req_dur} seconds long.", "blue"))
+    print(colored(f"[+] Each video will be {max_duration / len(video_paths)} seconds long.", "blue"))
 
     clips = []
-    tot_dur = 0
-    #add downloaded clips over and over until the duration of the audio (max_duration) has been reached
-    while tot_dur < max_duration:
-        for video_path in video_paths:
-            clip = VideoFileClip(video_path)
-            clip = clip.without_audio()
-            # check if clip is longer than the remaning audio
-            if (max_duration - tot_dur) < clip.duration:
-                clip = clip.subclip(0, (max_duration - tot_dur))
-            # only shorten clips if the calculated clip length (req_dur) is shorter than the actual clip to prevent still image
-            elif req_dur < clip.duration:
-                clip = clip.subclip(0, req_dur)
-            clip = clip.set_fps(30)
+    for video_path in video_paths:
+        clip = VideoFileClip(video_path)
+        clip = clip.without_audio()
+        clip = clip.subclip(0, max_duration / len(video_paths))
+        clip = clip.set_fps(30)
 
-            # Not all videos are same size,
-            # so we need to resize them
-            if round((clip.w/clip.h), 4) < 0.5625:
-                clip = crop(clip, width=clip.w, height=round(clip.w/0.5625), \
-                            x_center=clip.w / 2, \
-                            y_center=clip.h / 2)
-            else:
-                clip = crop(clip, width=round(0.5625*clip.h), height=clip.h, \
-                            x_center=clip.w / 2, \
-                            y_center=clip.h / 2)
-            clip = clip.resize((1080, 1920))
+        # Not all videos are same size,
+        # so we need to resize them
+        if round((clip.w/clip.h), 4) < 0.5625:
+            clip = crop(clip, width=clip.w, height=round(clip.w/0.5625), \
+                        x_center=clip.w / 2, \
+                        y_center=clip.h / 2)
+        else:
+            clip = crop(clip, width=round(0.5625*clip.h), height=clip.h, \
+                        x_center=clip.w / 2, \
+                        y_center=clip.h / 2)
+        clip = clip.resize((1080, 1920))
 
-            clips.append(clip)
-            tot_dur += clip.duration
-            if tot_dur >= max_duration:
-                break
+        clips.append(clip)
 
     final_clip = concatenate_videoclips(clips)
     final_clip = final_clip.set_fps(30)

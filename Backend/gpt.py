@@ -1,16 +1,53 @@
 import re
 import json
 import g4f
+import openai
 from typing import Tuple, List  
 from termcolor import colored
+from dotenv import load_dotenv
+import os
 
+# Load environment variables
+load_dotenv("../.env")
 
-def generate_script(video_subject: str) -> str:
+# Set environment variables
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+openai.api_key = OPENAI_API_KEY
+
+def generate_response(prompt: str, ai_model: str) -> str:
     """
-    Generate a script for a video, depending on the subject of the video.
+    Generate a response from the AI model based on the prompt.
+
+    Args:
+        prompt (str): The prompt to send to the AI model.
+        ai_model (str): The AI model to use for generation.
+
+    Returns:
+        str: The response from the AI model.
+    """
+    if ai_model == 'g4f':
+        response = g4f.ChatCompletion.create(
+            model=g4f.models.gpt_35_turbo_16k_0613,
+            messages=[{"role": "user", "content": prompt}],
+        )
+    elif ai_model in ['gpt3.5-turbo', 'gpt4']:
+        model_name = "gpt-3.5-turbo" if ai_model == 'gpt3.5-turbo' else "gpt-4-1106-preview"
+        response = openai.ChatCompletion.create(
+            model=model_name,
+            messages=[{"role": "user", "content": prompt}],
+        ).choices[0].message.content
+    else:
+        raise ValueError("Invalid AI model selected.")
+    return response
+
+def generate_script(video_subject: str, paragraph_number: int, ai_model: str) -> str:
+    """
+    Generate a script for a video, depending on the subject of the video, the number of paragraphs, and the AI model.
 
     Args:
         video_subject (str): The subject of the video.
+        paragraph_number (int): The number of paragraphs to generate.
+        ai_model (str): The AI model to use for generation.
 
     Returns:
         str: The script for the video.
@@ -20,8 +57,9 @@ def generate_script(video_subject: str) -> str:
     prompt = f"""
     Generate a script for a video, depending on the subject of the video.
     Subject: {video_subject}
+    Number of paragraphs: {paragraph_number}
 
-    The script is to be returned as a string.
+    The script is to be returned as a string with the specified number of paragraphs.
 
     Here is an example of a string:
     "This is an example string."
@@ -36,10 +74,7 @@ def generate_script(video_subject: str) -> str:
     """
 
     # Generate script
-    response = g4f.ChatCompletion.create(
-        model=g4f.models.gpt_35_turbo_16k_0613,
-        messages=[{"role": "user", "content": prompt}],
-    )
+    response = generate_response(prompt, ai_model)
 
     print(colored(response, "cyan"))
 
@@ -54,20 +89,33 @@ def generate_script(video_subject: str) -> str:
         response = re.sub(r'\[.*\]', '', response)
         response = re.sub(r'\(.*\)', '', response)
 
-        return f"{response} "
-    print(colored("[-] GPT returned an empty response.", "red"))
-    return None
+        # Split the script into paragraphs
+        paragraphs = response.split('\n\n')
 
+        # Select the specified number of paragraphs
+        selected_paragraphs = paragraphs[:paragraph_number]
 
-def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
+        # Join the selected paragraphs into a single string
+        final_script = '\n\n'.join(selected_paragraphs)
+
+        # Print to console the number of paragraphs used
+        print(colored(f"Number of paragraphs used: {len(selected_paragraphs)}", "green"))
+
+        return final_script
+    else:
+        print(colored("[-] GPT returned an empty response.", "red"))
+        return None
+
+def get_search_terms(video_subject: str, amount: int, script: str, ai_model: str) -> List[str]:
     """
-    Generate a JSON-Array of search terms for stock videos,
-    depending on the subject of a video.
+    Generate a list of search terms for stock videos,
+    depending on the subject of a video and the AI model.
 
     Args:
         video_subject (str): The subject of the video.
         amount (int): The amount of search terms to generate.
         script (str): The script of the video.
+        ai_model (str): The AI model to use for generation.
 
     Returns:
         List[str]: The search terms for the video subject.
@@ -80,17 +128,13 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     Subject: {video_subject}
 
     The search terms are to be returned as
-    a JSON-Array of strings.
+    a list of strings.
 
     Each search term should consist of 1-3 words,
     always add the main subject of the video.
     
-    YOU MUST ONLY RETURN THE JSON-ARRAY OF STRINGS.
-    YOU MUST NOT RETURN ANYTHING ELSE. 
-    YOU MUST NOT RETURN THE SCRIPT.
-    
     The search terms must be related to the subject of the video.
-    Here is an example of a JSON-Array of strings:
+    Here is an example of a list of strings:
     ["search term 1", "search term 2", "search term 3"]
 
     For context, here is the full text:
@@ -98,39 +142,39 @@ def get_search_terms(video_subject: str, amount: int, script: str) -> List[str]:
     """
 
     # Generate search terms
-    response = g4f.ChatCompletion.create(
-        model=g4f.models.gpt_35_turbo_16k_0613,
-        messages=[{"role": "user", "content": prompt}],
-    )
+    response = generate_response(prompt, ai_model)
 
-    # Load response into JSON-Array
+    # Parse response into a list of search terms
+    search_terms = []
     try:
         search_terms = json.loads(response)
-    except Exception:
+        if not isinstance(search_terms, list) or not all(isinstance(term, str) for term in search_terms):
+            raise ValueError("Response is not a list of strings.")
+    except (json.JSONDecodeError, ValueError):
         print(colored("[*] GPT returned an unformatted response. Attempting to clean...", "yellow"))
-
-        # Use Regex to extract the array from the markdown
-        search_terms = re.findall(r'\[.*\]', str(response))
-
-        if not search_terms:
-            print(colored("[-] Could not parse response.", "red"))
-
-        # Load the array into a JSON-Array
-        search_terms = json.loads(search_terms)
+        # Attempt to extract list-like string and convert to list
+        match = re.search(r'\["(?:[^"\\]|\\.)*"(?:,\s*"[^"\\]*")*\]', response)
+        if match:
+            try:
+                search_terms = json.loads(match.group())
+            except json.JSONDecodeError:
+                print(colored("[-] Could not parse response.", "red"))
+                return []
 
     # Let user know
-    print(colored(f"\nGenerated {amount} search terms: {', '.join(search_terms)}", "cyan"))
+    print(colored(f"\nGenerated {len(search_terms)} search terms: {', '.join(search_terms)}", "cyan"))
 
     # Return search terms
     return search_terms
 
-def generate_metadata(video_subject: str, script: str) -> Tuple[str, str, List[str]]:  
+def generate_metadata(video_subject: str, script: str, ai_model: str) -> Tuple[str, str, List[str]]:  
     """  
-    Generate metadata for a YouTube video, including the title, description, and keywords.  
+    Generate metadata for a YouTube video, including the title, description, and keywords, depending on the AI model.  
   
     Args:  
         video_subject (str): The subject of the video.  
         script (str): The script of the video.  
+        ai_model (str): The AI model to use for generation.  
   
     Returns:  
         Tuple[str, str, List[str]]: The title, description, and keywords for the video.  
@@ -138,35 +182,23 @@ def generate_metadata(video_subject: str, script: str) -> Tuple[str, str, List[s
   
     # Build prompt for title  
     title_prompt = f"""  
-    Generate a catchy and SEO-friendly title for a YouTube shorts video about {video_subject}.  
+    Generate a catchy and SEO-friendly title for a YouTube video about {video_subject}.  
     """  
   
     # Generate title  
-    title_response = g4f.ChatCompletion.create(  
-        model=g4f.models.gpt_35_turbo_16k_0613,  
-        messages=[{"role": "user", "content": title_prompt}],  
-    )  
-  
-    # Extract title from response  
-    title = title_response.strip()  # Assuming title_response is a string  
+    title = generate_response(title_prompt, ai_model).strip()  
   
     # Build prompt for description  
     description_prompt = f"""  
-    Write a brief and engaging description for a YouTube shorts video about {video_subject}.  
+    Write a brief and engaging description for a YouTube video about {video_subject}.  
     The video is based on the following script:  
     {script}  
     """  
   
     # Generate description  
-    description_response = g4f.ChatCompletion.create(  
-        model=g4f.models.gpt_35_turbo_16k_0613,  
-        messages=[{"role": "user", "content": description_prompt}],  
-    )  
-  
-    # Extract description from response  
-    description = description_response.strip()  # Assuming description_response is a string  
+    description = generate_response(description_prompt, ai_model).strip()  
   
     # Generate keywords  
-    keywords = get_search_terms(video_subject, 6, script)  # Assuming you want 6 keywords  
+    keywords = get_search_terms(video_subject, 6, script, ai_model)  
   
     return title, description, keywords  
