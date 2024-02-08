@@ -156,7 +156,11 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
 
         # Not all videos are same size,
         # so we need to resize them
-        if not round((clip.w/clip.h), 4) == 0.5625:
+        if round((clip.w/clip.h), 4) < 0.5625:
+            clip = crop(clip, width=clip.w, height=round(clip.w/0.5625), \
+                        x_center=clip.w / 2, \
+                        y_center=clip.h / 2)
+        else:
             clip = crop(clip, width=round(0.5625*clip.h), height=clip.h, \
                         x_center=clip.w / 2, \
                         y_center=clip.h / 2)
