@@ -22,17 +22,10 @@
     </p>
 
     <div class="flex justify-center mt-8">
-      <div class="flex flex-col space-y-4">
-        <label for="videoSubject" class="text-blue-600">Subject</label>
-        <input
-          type="text"
-          name="videoSubject"
-          id="videoSubject"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-        />
+      <div class="max-w-xl flex flex-col space-y-4 w-full">
         <label for="voice" class="text-blue-600">Voice</label>
         <select name="voice" id="voice"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500">
+          class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500">
           <option value="en_us_ghostface">Ghost Face</option>
           <option value="en_us_chewbacca">Chewbacca</option>
           <option value="en_us_c3po">C3PO</option>
@@ -75,6 +68,14 @@
           <option value="en_male_funny">wacky</option>
           <option value="en_female_emotional">peaceful</option>
         </select>
+        <label for="videoSubject" class="text-blue-600">Subject</label>
+        <textarea
+          rows="3"
+          type="text"
+          name="videoSubject"
+          id="videoSubject"
+          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+        ></textarea>
         <label for="youtubeUploadToggle" class="flex items-center text-blue-600">
           <input
             type="checkbox"
