@@ -12,6 +12,25 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from moviepy.config import change_settings
 
+# Import necessary modules
+from flask import abort
+
+# Generation Endpoint
+@app.route("/api/generate", methods=["POST"])
+def generate():
+    try:
+        # Parse JSON
+        data = request.get_json()
+
+        # Validate input fields
+        video_subject = data.get("videoSubject")
+        if not video_subject or not isinstance(video_subject, str) or len(video_subject.strip()) == 0:
+            abort(400, "Video subject is required and must be a non-empty string.")
+
+        # Rest of the code remains unchanged
+        ...
+
+
 # Load environment variables
 load_dotenv("../.env")
 
