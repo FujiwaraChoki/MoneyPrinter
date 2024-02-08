@@ -163,9 +163,6 @@
         // Get value from toggle: automated youtube upload
         const youtubeUpload = document.querySelector("#youtubeUploadToggle").checked;
 
-        // Save the data to localStorage
-        localStorage.setItem('voiceValue', voiceValue);
-
         const url = "http://localhost:8080/api/generate";
 
         // Construct data to be sent to the server
