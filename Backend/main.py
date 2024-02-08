@@ -78,8 +78,10 @@ def generate():
 
         # Search for a video of the given search term
         video_urls = []
-        #defines how many results it should query and search through
-        it = 10
+        # defines how many results it should query and search through
+        it = 15
+        # defines the minimum duration of each clip
+        min_dur = 10
         # Loop through all search terms,
         # and search for a video of the given search term
         for search_term in search_terms:
@@ -92,7 +94,7 @@ def generate():
                     }
                 )
             found_url = search_for_stock_videos(
-                search_term, os.getenv("PEXELS_API_KEY"), it
+                search_term, os.getenv("PEXELS_API_KEY"), it, min_dur
             )
             #check for duplicates
             for url in found_url:
