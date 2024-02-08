@@ -56,7 +56,7 @@ MoneyPrinter now includes functionality to automatically upload generated videos
 
 To use this feature, you need to:
 1. Create a project inside your Google Cloud Platform -> `https://console.cloud.google.com/`. 
-1. Obtain `client_services.json` from the project and add it to the Backend/ directory.
+1. Obtain `client_secret.json` from the project and add it to the Backend/ directory.
 1. Enable the YouTube v3 API in your project -> `https://console.cloud.google.com/apis/library/youtube.googleapis.com`
 1. Create an `OAuth consent screen` and add yourself (the account of your youtube channel) to the testers.
 1. Enable the following scopes in the `OAuth consent screen` for your project:
