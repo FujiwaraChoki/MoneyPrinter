@@ -12,6 +12,4 @@ subtitles/*
 client_secret.json
 main.py-oauth2.json
 .DS_Store
-
-
 Backend/output*
