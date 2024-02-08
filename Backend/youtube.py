@@ -137,26 +137,40 @@ def resumable_upload(insert_request):
             time.sleep(sleep_seconds)  
   
   
-def upload_video(video_path, title, description, category, keywords, privacy_status):    
-    # Get the authenticated YouTube service  
-    youtube = get_authenticated_service()    
-      
-    # Retrieve and print the channel ID for the authenticated user  
-    channels_response = youtube.channels().list(mine=True, part='id').execute()    
-    for channel in channels_response['items']:    
-        print(f"Channel ID: {channel['id']}")  # This will print out the channel ID(s)  
-      
-    try:    
+def upload_video(video_path, title, description, category, keywords, privacy_status):  
+    try:  
+        # Get the authenticated YouTube service  
+        youtube = get_authenticated_service()  
+  
+        # Retrieve and print the channel ID for the authenticated user  
+        channels_response = youtube.channels().list(mine=True, part='id').execute()  
+        for channel in channels_response['items']:  
+            print(f"Channel ID: {channel['id']}")  # This will print out the channel ID(s)  
+  
         # Initialize the upload process  
-        video_response = initialize_upload(youtube, {    
+        video_response = initialize_upload(youtube, {  
             'file': video_path,  # The path to the video file  
-            'title': title,    
-            'description': description,    
-            'category': category,    
-            'keywords': keywords,    
-            'privacyStatus': privacy_status    
-        })    
+            'title': title,  
+            'description': description,  
+            'category': category,  
+            'keywords': keywords,  
+            'privacyStatus': privacy_status  
+        })  
         return video_response  # Return the response from the upload process  
-    except HttpError as e:    
-        print(f"An HTTP error {e.resp.status} occurred:\n{e.content}")    
-        raise e  # Re-raise the exception to handle it elsewhere  
+    except HttpError as e:  
+        print(f"An HTTP error {e.resp.status} occurred:\n{e.content}")  
+        if e.resp.status in [401, 403]:  
+            print("The credentials are invalid or expired, let's refresh them and try the upload again.")  
+            # Here you could refresh the credentials and retry the upload  
+            youtube = get_authenticated_service()  # This will prompt for re-authentication if necessary  
+            video_response = initialize_upload(youtube, {  
+                'file': video_path,  
+                'title': title,  
+                'description': description,  
+                'category': category,  
+                'keywords': keywords,  
+                'privacyStatus': privacy_status  
+            })  
+            return video_response  
+        else:  
+            raise e  # Re-raise the exception to handle it elsewhere  

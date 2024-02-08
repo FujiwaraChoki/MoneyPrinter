@@ -169,7 +169,17 @@ def generate():
         # Put everything together
         final_video_path = generate_video(combined_video_path, tts_path, subtitles_path)
         
-        if automate_youtube_upload:  # Only proceed with YouTube upload if the toggle is True  
+        # Start Youtube Uploader
+        # Check if the CLIENT_SECRETS_FILE exists  
+        client_secrets_file = os.path.abspath("./Backend/client_secret.json")  
+        SKIP_YT_UPLOAD = False  
+        if not os.path.exists(client_secrets_file):  
+            SKIP_YT_UPLOAD = True  
+            print(colored("[-] Client secrets file missing. YouTube upload will be skipped.", "yellow"))  
+            print(colored("[-] Please download the client_secret.json from Google Cloud Platform and store this inside the /Backend directory.", "red"))  
+        
+        # Only proceed with YouTube upload if the toggle is True  and client_secret.json exists.
+        if automate_youtube_upload and not SKIP_YT_UPLOAD:  
             # Define metadata for the video  
             title, description, keywords = generate_metadata(data["videoSubject"], script)  
   
