@@ -7,3 +7,7 @@ images/*
 *.zip
 *.srt
 .history
+.DS_Store
+
+
+Backend/output*
