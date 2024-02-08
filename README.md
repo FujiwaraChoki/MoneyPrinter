@@ -69,6 +69,13 @@ Videos are uploaded as private by default. For a completely automated workflow, 
 
 For videos that have been locked as private due to upload via an unverified API service, you will not be able to appeal. You’ll need to re-upload the video via a verified API service or via the YouTube app/site. The unverified API service can also apply for an API audit. So make sure to verify your API, see [OAuth App Verification Help Center](https://support.google.com/cloud/answer/13463073) for more information. 
 
+## Solutions running on Linux
+
+Use IMAGEMAGICK_BINARY="/usr/bin/convert" in your .env - This solved the most problems.
+
+If you got an error like: "convert: attempt to perform an operation not allowed by the security policy" go to /etc/ImageMagick-6/policy.xml and there is a pattern called "@*", there a rights on none, change it to "read,write"
+
+
 ## Donate 🎁
 
 If you like and enjoy `MoneyPrinter`, and would like to donate, you can do that by clicking on the button on the right hand side of the repository. ❤️
