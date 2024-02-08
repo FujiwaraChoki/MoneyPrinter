@@ -32,6 +32,7 @@ def search_for_stock_videos(query: str, api_key: str) -> List[str]:
     # Get first video url
     video_urls = []
     video_url = ""
+    video_res = 0
     try:
         video_urls = response["videos"][0]["video_files"]
     except Exception:
@@ -42,8 +43,10 @@ def search_for_stock_videos(query: str, api_key: str) -> List[str]:
     for video in video_urls:
         # Check if video has a download link
         if ".com/external" in video["link"]:
-            # Set video url
-            video_url = video["link"]
+            # Only save the URL with the largest resolution
+            if (video["width"]*video["height"]) > video_res:
+                video_url = video["link"]
+                video_res = video["width"]*video["height"]
 
     # Let user know
     print(colored(f"\t=>{video_url}", "cyan"))
