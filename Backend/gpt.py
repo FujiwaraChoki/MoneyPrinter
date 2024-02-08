@@ -7,7 +7,7 @@ from termcolor import colored
 
 def generate_script(video_subject: str) -> str:
     """
-    Generate a script for a video, depending on the subject of the video.
+    Generate a script for a video , depending on the subject of the video.
 
     Args:
         video_subject (str): The subject of the video.
@@ -18,7 +18,7 @@ def generate_script(video_subject: str) -> str:
 
     # Build prompt
     prompt = f"""
-    Generate a script for a 45 second video, depending on the subject of the video.
+    Generate a script for video in the style of a social media short, depending on the subject of the video.
     Subject: {video_subject}
 
     The script is to be returned as a string.
@@ -33,6 +33,8 @@ def generate_script(video_subject: str) -> str:
     Present new information in every paragraph. Do not repeat the same information.
 
     Obviously, the script should be related to the subject of the video.
+
+    Present the information in 5 short sentences.
     
     Don't name or number the paragraphs.
 
