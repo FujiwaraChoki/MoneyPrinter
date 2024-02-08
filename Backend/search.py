@@ -3,7 +3,7 @@ import requests
 from typing import List
 from termcolor import colored
 
-def search_for_stock_videos(query: str, api_key: str, it: int) -> List[str]:
+def search_for_stock_videos(query: str, api_key: str, it: int, min_dur: int) -> List[str]:
     """
     Searches for stock videos based on a query.
 
@@ -36,6 +36,9 @@ def search_for_stock_videos(query: str, api_key: str, it: int) -> List[str]:
     try:
         # loop through each video in the result
         for i in range(it):
+            #check if video has desired minimum duration
+            if response["videos"][i]["duration"] < min_dur:
+                continue
             raw_urls = response["videos"][i]["video_files"]
             temp_video_url = ""
             
