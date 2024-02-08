@@ -18,7 +18,7 @@
   <body class="bg-blue-100 min-h-screen justify-center p-40">
     <h1 class="text-4xl text-center mb-4">MoneyPrinter</h1>
     <p class="text-center text-gray-700">
-      This Application is intended to automate the creation of YouTube Shorts.
+      This Application is intended to automate the creation and uploads of YouTube Shorts.
     </p>
 
     <div class="flex justify-center mt-8">
@@ -75,6 +75,15 @@
           <option value="en_male_funny">wacky</option>
           <option value="en_female_emotional">peaceful</option>
         </select>
+        <label for="youtubeUploadToggle" class="flex items-center text-blue-600">
+          <input
+            type="checkbox"
+            name="youtubeUploadToggle"
+            id="youtubeUploadToggle"
+            class="mr-2"
+          />  
+          Automate YouTube Uploads  
+        </label>  
         <button
           id="generateButton"
           class="bg-blue-500 hover:bg-blue-700 duration-100 linear text-white px-4 py-2 rounded-md"
@@ -151,6 +160,8 @@
         // Get values from input fields
         const videoSubjectValue = videoSubject.value;
         const voiceValue = voice.value;
+        // Get value from toggle: automated youtube upload
+        const youtubeUpload = document.querySelector("#youtubeUploadToggle").checked;
 
         const url = "http://localhost:8080/api/generate";
 
@@ -158,6 +169,7 @@
         const data = {
           videoSubject: videoSubjectValue,
           voice: voiceValue,
+          automateYoutubeUpload: youtubeUpload,
         };
 
         // Send the actual request to the server
