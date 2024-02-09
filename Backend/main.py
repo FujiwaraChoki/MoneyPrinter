@@ -128,6 +128,17 @@ def generate():
                     video_urls.append(url)
                     break
 
+        # Check if video_urls is empty
+        if not video_urls:
+            print(colored("[-] No videos found to download.", "red"))
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "No videos found to download.",
+                    "data": [],
+                }
+            )
+            
         # Define video_paths
         video_paths = []
 
