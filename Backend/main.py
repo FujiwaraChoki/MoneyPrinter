@@ -45,16 +45,8 @@ def generate():
         # Clean
         clean_dir("../temp/")
         clean_dir("../subtitles/")
-        
-        # Download songs
-        if use_music:
-            # Downloads a ZIP file containing popular TikTok Songs
-            if songs_zip_url:
-                fetch_songs(songs_zip_url)
-            else:
-                # Default to a ZIP file containing popular TikTok Songs
-                fetch_songs("https://filebin.net/2avx134kdibc4c3q/drive-download-20240209T180019Z-001.zip")
 
+        
         # Parse JSON
         data = request.get_json()
         paragraph_number = int(data.get('paragraphNumber', 1))  # Default to 1 if not provided
@@ -68,6 +60,15 @@ def generate():
 
         # Get the ZIP Url of the songs
         songs_zip_url = data.get('zipUrl')
+        
+        # Download songs
+        if use_music:
+            # Downloads a ZIP file containing popular TikTok Songs
+            if songs_zip_url:
+                fetch_songs(songs_zip_url)
+            else:
+                # Default to a ZIP file containing popular TikTok Songs
+                fetch_songs("https://filebin.net/2avx134kdibc4c3q/drive-download-20240209T180019Z-001.zip")
 
         # Print little information about the video which is to be generated
         print(colored("[Video to be generated]", "blue"))
