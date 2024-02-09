@@ -296,7 +296,7 @@ def generate():
         return jsonify(
             {
                 "status": "success",
-                "message": "Video generated! See temp/output.mp4 for result.",
+                "message": "Video generated! See MoneyPrinter/output.mp4 for result.",
                 "data": final_video_path,
             }
         )

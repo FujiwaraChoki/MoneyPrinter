@@ -42,7 +42,7 @@ If you need help, open [ENV.md](ENV.md) for more information.
 1. Enter a topic to talk about
 1. Click on the "Generate" button
 1. Wait for the video to be generated
-1. The video's location is `temp/output.mp4`
+1. The video's location is `MoneyPrinter/output.mp4`
 
 ## Music 🎵
 
