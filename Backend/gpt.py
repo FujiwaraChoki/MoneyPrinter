@@ -1,8 +1,8 @@
 import re
 import json
 import g4f
-import openai
-from typing import Tuple, List  
+from openai import OpenAI
+from typing import Tuple, List
 from termcolor import colored
 from dotenv import load_dotenv
 import os
@@ -12,7 +12,7 @@ load_dotenv("../.env")
 
 # Set environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-openai.api_key = OPENAI_API_KEY
+openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 def generate_response(prompt: str, ai_model: str) -> str:
@@ -44,10 +44,10 @@ def generate_response(prompt: str, ai_model: str) -> str:
 
         model_name = "gpt-3.5-turbo" if ai_model == "gpt3.5-turbo" else "gpt-4-1106-preview"
 
-        response = openai.ChatCompletion.create(
-
+        response = openai_client.chat.completions.create(
+            
             model=model_name,
-
+            
             messages=[{"role": "user", "content": prompt}],
 
         ).choices[0].message.content
