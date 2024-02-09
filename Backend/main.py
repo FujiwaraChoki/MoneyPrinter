@@ -27,8 +27,9 @@ SESSION_ID = os.getenv("TIKTOK_SESSION_ID")
 openai_api_key = os.getenv('OPENAI_API_KEY')
 change_settings({"IMAGEMAGICK_BINARY": os.getenv("IMAGEMAGICK_BINARY")})
 
+
 # Initialize Flask
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../static", static_url_path="/static")
 CORS(app)
 
 # Constants
@@ -37,6 +38,14 @@ PORT = 8080
 AMOUNT_OF_STOCK_VIDEOS = 5
 GENERATING = False
 
+# Create static folder if it doesn't exist
+if not os.path.exists("../static"):
+    os.makedirs("../static")
+# Create static/Songs and static/generated_videos folder if it doesn't exist
+if not os.path.exists("../static/Songs"):
+    os.makedirs("../static/Songs")
+if not os.path.exists("../static/generated_videos"):
+    os.makedirs("../static/generated_videos") 
 
 # Generation Endpoint
 @app.route("/api/generate", methods=["POST"])
@@ -68,13 +77,13 @@ def generate():
         songs_zip_url = data.get('zipUrl')
 
         # Download songs
-        if use_music:
-            # Downloads a ZIP file containing popular TikTok Songs
-            if songs_zip_url:
-                fetch_songs(songs_zip_url)
-            else:
-                # Default to a ZIP file containing popular TikTok Songs
-                fetch_songs("https://filebin.net/2avx134kdibc4c3q/drive-download-20240209T180019Z-001.zip")
+        # if use_music:
+        #     # Downloads a ZIP file containing popular TikTok Songs
+        #     if songs_zip_url:
+        #         fetch_songs(songs_zip_url)
+        #     else:
+        #         # Default to a ZIP file containing popular TikTok Songs
+        #         fetch_songs("https://filebin.net/2avx134kdibc4c3q/drive-download-20240209T180019Z-001.zip")
 
         # Print little information about the video which is to be generated
         print(colored("[Video to be generated]", "blue"))
@@ -225,6 +234,7 @@ def generate():
         temp_audio = AudioFileClip(tts_path)
         combined_video_path = combine_videos(video_paths, temp_audio.duration, 5, n_threads or 2)
 
+        print(colored(f"[-] Next step: {combined_video_path}", "green"))
         # Put everything together
         try:
             final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2, subtitles_position)
@@ -346,6 +356,284 @@ def cancel():
 
     return jsonify({"status": "success", "message": "Cancelled video generation."})
 
+# Route to generate the script and return the video script
+@app.route("/api/script", methods=["POST"])
+def generate_script_only():
+    # Set generating to true
+    GENERATING = True
+
+    clean_dir("../subtitles/")
+    print(colored("[+] Received script request...", "green"))
+
+    data = request.get_json()
+    video_subject = data["videoSubject"]
+    extra_prompt = data["extraPrompt"]
+    ai_model = data["aiModel"]
+
+    script = generate_script(video_subject, 1, ai_model,"",extra_prompt)
+
+
+
+    search_terms = get_search_terms(
+            data["videoSubject"], AMOUNT_OF_STOCK_VIDEOS, script, ai_model
+        )
+
+    return jsonify(
+        {
+            "status": "success",
+            "message": "Script generated!",
+            "data": {
+                "script": script,
+                "search": search_terms
+            },
+        }
+    )
+
+# Download the videos and split the script
+@app.route("/api/search-and-download", methods=["POST"])
+def search_and_download():
+    # Set generating to true
+    GENERATING = True 
+     # Clean
+    clean_dir("../temp/")
+    clean_dir("../subtitles/")
+    print(colored("[+] Received search and download request...", "green"))
+
+    data = request.get_json()
+    search_terms = data["search"]
+    script = data["script"]
+    voice = data["voice"]
+    voice_prefix = voice[:2]
+    # Set the default subtitles_position to the center, bottom
+    subtitles_position = data.get("subtitlesPosition", "center,bottom")
+    n_threads = data.get('threads', 4) 
+
+    if not voice:
+        print(colored("[!] No voice was selected. Defaulting to \"en_us_001\"", "yellow"))
+        voice = "en_us_001"
+    # Search for a video of the given search term
+    video_urls = []
+
+    # Defines how many results it should query and search through
+    it = 15
+    # Defines the minimum duration of each clip
+    min_dur = 10
+    # and search for a video of the given search term
+    for search_term in search_terms:
+        if not GENERATING:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "Video generation was cancelled.",
+                    "data": [],
+                }
+            )
+        found_urls = search_for_stock_videos(
+            search_term, os.getenv("PEXELS_API_KEY"), it, min_dur
+        )
+        # Check for duplicates
+        for url in found_urls:
+            if url not in video_urls:
+                video_urls.append(url)
+
+    # Define video_paths
+    video_paths = []
+
+    # Let user know
+    print(colored(f"[+] Downloading {len(video_urls)} videos...", "blue"))
+
+    # Save the videos
+    for video_url in video_urls:
+        if not GENERATING:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "Video generation was cancelled.",
+                    "data": [],
+                }
+            )
+        try:
+            saved_video_path = save_video(video_url)
+            video_paths.append(saved_video_path)
+        except Exception:
+            print(colored(f"[-] Could not download video: {video_url}", "red"))
+
+    # Let user know
+    print(colored("[+] Videos downloaded!", "green"))
+
+
+    # Split script into sentences
+    sentences = script.split(". ")
+
+    # Remove empty strings
+    sentences = list(filter(lambda x: x != "", sentences))
+    paths = []
+
+    # Generate TTS for every sentence
+    for sentence in sentences:
+        if not GENERATING:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "Video generation was cancelled.",
+                    "data": [],
+                }
+            )
+        current_tts_path = f"../temp/{uuid4()}.mp3"
+        tts(sentence, voice, filename=current_tts_path)
+        audio_clip = AudioFileClip(current_tts_path)
+        paths.append(audio_clip)
+
+    # Combine all TTS files using moviepy
+    final_audio = concatenate_audioclips(paths)
+    tts_path = f"../temp/{uuid4()}.mp3"
+    final_audio.write_audiofile(tts_path)
+
+    try:
+        subtitles_path = generate_subtitles(audio_path=tts_path, sentences=sentences, audio_clips=paths, voice=voice_prefix)
+    except Exception as e:
+        print(colored(f"[-] Error generating subtitles: {e}", "red"))
+        subtitles_path = None
+
+    # Concatenate videos
+    temp_audio = AudioFileClip(tts_path)
+    print(video_paths)
+
+    combined_video_path = combine_videos(video_paths, temp_audio.duration, 5, n_threads or 2)
+
+    print(colored(f"[-] Next step: {combined_video_path}", "green"))
+
+    # Put everything together
+    try:
+        final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads, subtitles_position)
+    except Exception as e:
+        print(colored(f"[-] Error generating final video: {e}", "red"))
+        final_video_path = None
+    # Let user know
+    print(colored(f"[+] Video generated: {final_video_path}!", "green"))
+
+    # Stop FFMPEG processes
+    if os.name == "nt":
+        # Windows
+        os.system("taskkill /f /im ffmpeg.exe")
+    else:
+        # Other OS
+        os.system("pkill -f ffmpeg")
+    # Set generating to false
+    GENERATING = False
+    return jsonify(
+        {
+            "status": "success",
+            "message": "Search and download complete!",
+            "data": {
+                "finalAudio": tts_path ,
+                "subtitles": subtitles_path,
+                "finalVideo": final_video_path
+            }
+        }
+    )
+
+# Add audio to the video
+@app.route("/api/addAudio", methods=["POST"])
+def addAudio():
+    GENERATING = True
+    data = request.get_json()
+    final_video_path = data["finalVideo"]
+    song_path = data["songPath"]
+
+    # Add song to video at 30% volume using moviepy
+    video_clip = VideoFileClip(f"../temp/{final_video_path}")
+    original_duration = video_clip.duration
+    original_audio = video_clip.audio
+    song_clip = AudioFileClip("../static/Songs/"+song_path).set_fps(44100)
+
+    # Set the volume of the song to 10% of the original volume
+    song_clip = song_clip.volumex(0.1).set_fps(44100)
+
+    # Add the song to the video
+    comp_audio = CompositeAudioClip([original_audio, song_clip])
+    video_clip = video_clip.set_audio(comp_audio)
+    video_clip = video_clip.set_fps(30)
+    video_clip = video_clip.set_duration(original_duration)
+    # Add the time stamp to the video name
+    video_name = f"{final_video_path.split('.')[0]}-{uuid4()}.mp4"
+    video_clip.write_videofile(f"../static/generated_videos/{video_name}", threads=2)
+
+     # Stop FFMPEG processes
+    if os.name == "nt":
+        # Windows
+        os.system("taskkill /f /im ffmpeg.exe")
+    else:
+        # Other OS
+        os.system("pkill -f ffmpeg")
+    # Set generating to false
+    GENERATING = False
+    return jsonify(
+        {
+            "status": "success",
+            "message": "Search and download complete!",
+            "data": {
+                "finalVideo": "../static/generated_videos/" + final_video_path
+            }
+        }
+    )
+
+
+# Get all available songs
+@app.route("/api/getSongs", methods=["GET"])
+def get_songs():
+    songs = os.listdir("../Songs")
+    return jsonify({
+        "status": "success",
+        "message": "Songs retrieved successfully!",
+        "data": {
+            "songs": songs
+        }
+    })
+
+# Get all available videos
+@app.route("/api/getVideos", methods=["GET"])
+def get_videos():
+    # Get all videos mp4 only
+    videos = os.listdir("../static/generated_videos")
+    videos = [video for video in videos if video.endswith(".mp4")]
+    return jsonify(
+        {
+        "status": "success",
+        "message": "Videos retrieved successfully!",
+        "data": {
+            "videos": videos
+            }
+        }
+    )
+
+# Get all available subtitles
+@app.route("/api/getSubtitles", methods=["GET"])
+def get_subtitles():
+    subtitles = os.listdir("../subtitles")
+    return jsonify(
+        {
+        "status": "success",
+        "message": "Songs retrieved successfully!",
+        "data": {
+            "subtitles": subtitles
+            }
+        }
+    )
+
+
+#Get all available models and voices
+@app.route("/api/models", methods=["GET"])
+def get_models():
+    return jsonify(
+        {
+        "status": "success",
+        "message": "Songs retrieved successfully!",
+        "data": {
+            "voices": available_voices()
+            }
+        }
+    )
 
 if __name__ == "__main__":
 

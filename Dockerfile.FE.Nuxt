@@ -1,0 +1,20 @@
+# use node 16 alpine image as build image
+FROM node:18.9.0 as builder
+# RUN corepack enable
+RUN npm install -g pnpm
+# create work directory in app folder
+WORKDIR /app
+
+# copy over package.json files
+COPY ./UI .
+RUN npm config set registry https://registry.npmjs.org/
+RUN pnpm i --ignore-scripts --unsafe-perm
+ENV PATH  /usr/app/frontend/node_modules/.bin:$PATH
+RUN pnpm  build
+
+# expose the host and port 3000 to the server
+ENV HOST 0.0.0.0
+EXPOSE 3000
+
+# run the build project with node
+ENTRYPOINT ["node", ".output/server/index.mjs"]

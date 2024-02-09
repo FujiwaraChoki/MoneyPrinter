@@ -1,37 +1,24 @@
-version: "3"
+version: '3.5'
 services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    volumes:
+      - .:/home/app
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: "frontend"
+      dockerfile: Dockerfile.FE
     ports:
-      - "8001:8001"
-    command: ["python3", "-m", "http.server", "8001", "--directory", "frontend"]
-    volumes:
-      - ./Frontend:/app/frontend
-    restart: always
-  backend:
+      - ${FE_PORT}:3000
+  nuxt:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: "backend"
+      dockerfile: Dockerfile.FE.Nuxt
     ports:
-      - "8080:8080"
-    command: ["python3", "backend/main.py"]
-    volumes:
-      - ./files:/temp
-      - ./Backend:/app/backend
-      - ./fonts:/app/fonts
-    environment:
-      - ASSEMBLY_AI_API_KEY=${ASSEMBLY_AI_API_KEY}
-      - TIKTOK_SESSION_ID=${TIKTOK_SESSION_ID}
-      - IMAGEMAGICK_BINARY=/usr/local/bin/magick
-      - PEXELS_API_KEY=${PEXELS_API_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-    depends_on:
-      - frontend
-    restart: always
-
-volumes:
-  files:
+      - ${FE_NUXT}:3000

@@ -205,3 +205,7 @@ def tts(
 
     except Exception as e:
         print(colored(f"[-] An error occurred during TTS: {e}", "red"))
+
+# Rerun the all the voices
+def available_voices() -> list:
+    return VOICES

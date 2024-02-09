@@ -157,7 +157,7 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
         str: The path to the combined video.
     """
     video_id = uuid.uuid4()
-    combined_video_path = f"../temp/{video_id}.mp4"
+    combined_video_path = f"../temp/{video_id}-combined.mp4"
     
     # Required duration of each clip
     req_dur = max_duration / len(video_paths)
@@ -178,7 +178,7 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
             # Only shorten clips if the calculated clip length (req_dur) is shorter than the actual clip to prevent still image
             elif req_dur < clip.duration:
                 clip = clip.subclip(0, req_dur)
-            clip = clip.set_fps(30)
+            # clip = clip.set_fps(30)
 
             # Not all videos are same size,
             # so we need to resize them
@@ -198,10 +198,15 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
             clips.append(clip)
             tot_dur += clip.duration
 
+    print(colored("[+] Videos combined.", "green"))
+    # Debug what is in clips
+    print(clips)
     final_clip = concatenate_videoclips(clips)
     final_clip = final_clip.set_fps(30)
-    final_clip.write_videofile(combined_video_path, threads=threads)
+    print(colored("[+] Set clip.", "green"))
+    final_clip.write_videofile(combined_video_path, threads=3)
 
+    print(colored("[+] Final video created.", "green"))
     return combined_video_path
 
 
@@ -219,6 +224,10 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str,
     Returns:
         str: The path to the final video.
     """
+
+    # PRINT STATE
+    print(colored("[+] Starting video generation...", "green"))
+
     # Make a generator that returns a TextClip when called with consecutive
     generator = lambda txt: TextClip(
         txt,
@@ -239,10 +248,13 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str,
         subtitles.set_pos((horizontal_subtitles_position, vertical_subtitles_position))
     ])
 
+    print(colored("[+] Adding audio...", "green"))
     # Add the audio
     audio = AudioFileClip(tts_path)
     result = result.set_audio(audio)
+    print(colored("[+] Audio Done...", "green"))
 
-    result.write_videofile("../temp/output.mp4", threads=threads or 2)
+    print(colored("[+] Writing video...", "green"))
+    result.write_videofile("../temp/output.mp4", threads=3)
 
     return "output.mp4"

@@ -1,0 +1,14 @@
+# Dockerfile
+FROM python:3.10.4-slim-buster
+RUN pip install --upgrade pip
+
+RUN useradd -m myuser
+USER myuser
+WORKDIR /home/myuser
+
+COPY --chown=myuser:myuser ./Frontend ./
+
+ENV PATH="/home/myuser/.local/bin:${PATH}"
+
+# python -m http.server 3001 
+CMD [ "python", "-m", "http.server", "3000" ]

@@ -82,30 +82,24 @@ Videos are uploaded as private by default. For a completely automated workflow, 
 
 For videos that have been locked as private due to upload via an unverified API service, you will not be able to appeal. You’ll need to re-upload the video via a verified API service or via the YouTube app/site. The unverified API service can also apply for an API audit. So make sure to verify your API, see [OAuth App Verification Help Center](https://support.google.com/cloud/answer/13463073) for more information.
 
-## FAQ 🤔
+## Nuxt FE:
 
-### How do I get the TikTok session ID?
+Before runing the front end create the fallowing folders
 
-You can obtain your TikTok session ID by logging into TikTok in your browser and copying the value of the `sessionid` cookie.
+1. `static`
+2. `static/generated_videos` -> All videos generated that have music will be here
+3. `static/Songs` -> Put the mp4 songs that you want to use here
 
-### My ImageMagick binary is not being detected
+Start the front end:
+1. `cd UI`
+2. `npm install`
+3. `npm run dev`
 
-Make sure you set your path to the ImageMagick binary correctly in the `.env` file, it should look something like this:
+Alternative front end will be in port 3000
 
-```env
-IMAGEMAGICK_BINARY="C:\\Program Files\\ImageMagick-7.1.0-Q16\\magick.exe"
-```
+The frontend depend in the backend.
+You can run the docker container or you run the backend locally
 
-Don't forget to use double backslashes (`\\`) in the path, instead of one.
-
-### I can't install `playsound`: Wheel failed to build
-
-If you're having trouble installing `playsound`, you can try installing it using the following command:
-
-```bash
-pip install -U wheel
-pip install -U playsound
-```
 
 ## Donate 🎁
 
