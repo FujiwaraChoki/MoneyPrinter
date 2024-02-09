@@ -23,6 +23,13 @@
 
     <div class="flex justify-center mt-8">
       <div class="max-w-xl flex flex-col space-y-4 w-full">
+        <label for="aiModel" class="text-blue-600">AI Model</label>
+        <select name="aiModel" id="aiModel"
+          class="w-full border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500">
+          <option value="g4f">g4f (Free)</option>
+          <option value="gpt3_5">OpenAI GPT-3.5</option>
+          <option value="gpt4">OpenAI GPT-4</option>
+        </select>
         <label for="voice" class="text-blue-600">Voice</label>
         <select name="voice" id="voice"
           class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500">
@@ -76,6 +83,16 @@
           id="videoSubject"
           class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
         ></textarea>
+        <label for="paragraphNumber" class="text-blue-600">Paragraph Number</label>
+        <input
+          type="number"
+          name="paragraphNumber"
+          id="paragraphNumber"
+          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          value="1"
+          min="1"
+          max="100"
+        />
         <label for="youtubeUploadToggle" class="flex items-center text-blue-600">
           <input
             type="checkbox"
@@ -117,7 +134,9 @@
 
     <script>
       const videoSubject = document.querySelector("#videoSubject");
+      const aiModel = document.querySelector("#aiModel");
       const voice = document.querySelector("#voice");
+      const paragraphNumber = document.querySelector("#paragraphNumber");
       const generateButton = document.querySelector("#generateButton");
       const cancelButton = document.querySelector("#cancelButton");
 
@@ -160,7 +179,9 @@
 
         // Get values from input fields
         const videoSubjectValue = videoSubject.value;
+        const aiModelValue = aiModel.value;
         const voiceValue = voice.value;
+        const paragraphNumberValue = paragraphNumber.value;
         // Get value from toggle: automated youtube upload
         const youtubeUpload = document.querySelector("#youtubeUploadToggle").checked;
 
@@ -169,9 +190,12 @@
         // Construct data to be sent to the server
         const data = {
           videoSubject: videoSubjectValue,
+          aiModel: aiModelValue,
           voice: voiceValue,
+          paragraphNumber: paragraphNumberValue,
           automateYoutubeUpload: youtubeUpload,
         };
+
 
         // Send the actual request to the server
         fetch(url, {
@@ -222,5 +246,4 @@
     </script>
   </body>
 </html>
-
 

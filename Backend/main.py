@@ -9,16 +9,19 @@ from tiktokvoice import *
 from flask_cors import CORS
 from termcolor import colored
 from dotenv import load_dotenv
-from youtube import upload_video
-from apiclient.errors import HttpError
+from youtube import upload_video 
+from apiclient.errors import HttpError   
 from flask import Flask, request, jsonify
 from moviepy.config import change_settings
+import openai
+
 
 # Load environment variables
 load_dotenv("../.env")
 
 # Set environment variables
 SESSION_ID = os.getenv("TIKTOK_SESSION_ID")
+openai_api_key = os.getenv('OPENAI_API_KEY')
 change_settings({"IMAGEMAGICK_BINARY": os.getenv("IMAGEMAGICK_BINARY")})
 
 # Initialize Flask
@@ -46,6 +49,9 @@ def generate():
 
         # Parse JSON
         data = request.get_json()
+        paragraph_number = int(data.get('paragraphNumber', 1))  # Default to 1 if not provided
+        ai_model = data.get('aiModel')  # Get the AI model selected by the user
+
 
         # Get 'automateYoutubeUpload' from the request data and default to False if not provided
         automate_youtube_upload = data.get('automateYoutubeUpload', False)
@@ -53,6 +59,8 @@ def generate():
         # Print little information about the video which is to be generated
         print(colored("[Video to be generated]", "blue"))
         print(colored("   Subject: " + data["videoSubject"], "blue"))
+        print(colored("   AI Model: " + ai_model, "blue"))  # Print the AI model being used
+
 
         if not GENERATING:
             return jsonify(
@@ -64,7 +72,7 @@ def generate():
             )
 
         # Generate a script
-        script = generate_script(data["videoSubject"])
+        script = generate_script(data["videoSubject"], paragraph_number, ai_model)  # Pass the AI model to the script generation
         voice = data["voice"]
 
         if not voice:
@@ -73,7 +81,7 @@ def generate():
 
         # Generate search terms
         search_terms = get_search_terms(
-            data["videoSubject"], AMOUNT_OF_STOCK_VIDEOS, script
+            data["videoSubject"], AMOUNT_OF_STOCK_VIDEOS, script, ai_model
         )
 
         # Search for a video of the given search term
@@ -193,7 +201,7 @@ def generate():
         # Only proceed with YouTube upload if the toggle is True  and client_secret.json exists.
         if automate_youtube_upload and not SKIP_YT_UPLOAD:
             # Define metadata for the video
-            title, description, keywords = generate_metadata(data["videoSubject"], script)
+            title, description, keywords = generate_metadata(data["videoSubject"], script, ai_model)  
 
             print(colored("[-] Metadata for YouTube upload:", "blue"))
             print(colored("   Title: ", "blue"))
