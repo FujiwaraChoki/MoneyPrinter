@@ -37,9 +37,7 @@ def search_for_stock_videos(query: str, api_key: str, it: int, min_dur: int) -> 
                 if best_video:
                     video_url = best_video["link"]
                     if ".com/external" in video_url :
-                    	video_urls.append(video_url)
-                    else:
-                    	print(colored(f"Ignoring video with unsupported URL: {video_url}", "yellow"))
+                        video_urls.append(video_url)
                 
         # Let the user know
         print(colored(f"\t=> \"{query}\" found {len(video_urls)} videos", "cyan"))
@@ -51,4 +49,4 @@ def search_for_stock_videos(query: str, api_key: str, it: int, min_dur: int) -> 
     except requests.exceptions.RequestException as req_err:
         print(colored(f"Request error occurred: {req_err}", "red"))
     except Exception as err:
-        print(colored(f"An error occurred: {err}", "red"))
+        print(colored(f"An error occurred: {err}", "red")))
