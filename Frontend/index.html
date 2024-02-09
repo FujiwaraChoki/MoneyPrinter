@@ -275,30 +275,15 @@
         }
       });
 
+
+
+
+
+
+      toggles = ["youtubeUploadToggle", "useMusicToggle", "reuseChoicesToggle"];
       fields = ["aiModel", "voice", "paragraphNumber", "videoSubject", "zipUrl"];
 
-      fields.forEach((id) => {
-          document.getElementById(id).addEventListener("change", (event) => {
-            localStorage.setItem(`${id}Value`, event.target.value);
-          });
-        });
-
-      document.addEventListener("DOMContentLoaded", (event) => {
-        fields.forEach((id) => {
-          const select = document.getElementById(id);
-          const storedValue = localStorage.getItem(`${id}Value`);
-          const storedReuseValue = localStorage.getItem("reuseChoicesToggleValue");
-
-          if (storedValue && storedReuseValue === "true") {
-            select.value = storedValue;
-          }
-        });
-      });
-
       document.addEventListener("DOMContentLoaded", () => {
-
-        toggles = ["youtubeUploadToggle", "useMusicToggle", "reuseChoicesToggle"];
-
         toggles.forEach((id) => {
           const toggle = document.getElementById(id);
           const storedValue = localStorage.getItem(`${id}Value`);
@@ -310,6 +295,20 @@
           // Attach change listener to update localStorage
           toggle.addEventListener("change", (event) => {
               localStorage.setItem(`${id}Value`, event.target.checked);
+          });
+        });
+
+        fields.forEach((id) => {
+          const select = document.getElementById(id);
+          const storedValue = localStorage.getItem(`${id}Value`);
+          const storedReuseValue = localStorage.getItem("reuseChoicesToggleValue");
+
+          if (storedValue && storedReuseValue === "true") {
+            select.value = storedValue;
+          }
+          // Attach change listener to update localStorage
+          select.addEventListener("change", (event) => {
+            localStorage.setItem(`${id}Value`, event.target.value);
           });
         });
       });
