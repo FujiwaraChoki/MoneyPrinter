@@ -35,8 +35,12 @@ def search_for_stock_videos(query: str, api_key: str, it: int, min_dur: int) -> 
             if video.get("duration", 0) >= min_dur:
                 best_video = max(video.get("video_files", []), key=lambda x: x.get("width", 0) * x.get("height", 0))
                 if best_video:
-                    video_urls.append(best_video["link"])
-
+                    video_url = best_video["link"]
+                    if ".com/external" in video_url :
+                    	video_urls.append(video_url)
+                    else:
+                    	print(colored(f"Ignoring video with unsupported URL: {video_url}", "yellow"))
+                
         # Let the user know
         print(colored(f"\t=> \"{query}\" found {len(video_urls)} videos", "cyan"))
 
