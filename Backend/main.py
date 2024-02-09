@@ -71,6 +71,7 @@ def generate():
             print(colored("[!] No voice was selected. Defaulting to \"en_us_001\"", "yellow"))
             voice = "en_us_001"
 
+        print(colored(f"[+] Generating search terms", "green"))
         # Generate search terms
         search_terms = get_search_terms(
             data["videoSubject"], AMOUNT_OF_STOCK_VIDEOS, script
@@ -180,7 +181,7 @@ def generate():
         except Exception as e:
             print(colored(f"[-] Error generating final video: {e}", "red"))
             final_video_path = None
-        
+
         # Start Youtube Uploader
         # Check if the CLIENT_SECRETS_FILE exists
         client_secrets_file = os.path.abspath("./client_secret.json")
@@ -190,18 +191,15 @@ def generate():
             print(colored("[-] Client secrets file missing. YouTube upload will be skipped.", "yellow"))
             print(colored("[-] Please download the client_secret.json from Google Cloud Platform and store this inside the /Backend directory.", "red"))
 
+        title, description, keywords = generate_metadata(data["videoSubject"], script)
+
         # Only proceed with YouTube upload if the toggle is True  and client_secret.json exists.
         if automate_youtube_upload and not SKIP_YT_UPLOAD:
+            print(colored("[-] Generating metadata for YouTube upload...", "blue"))
             # Define metadata for the video
-            title, description, keywords = generate_metadata(data["videoSubject"], script)
+            # title, description, keywords = generate_metadata(data["videoSubject"], script)
 
-            print(colored("[-] Metadata for YouTube upload:", "blue"))
-            print(colored("   Title: ", "blue"))
-            print(colored(f"   {title}", "blue"))
-            print(colored("   Description: ", "blue"))
-            print(colored(f"   {description}", "blue"))
-            print(colored("   Keywords: ", "blue"))
-            print(colored(f"  {', '.join(keywords)}", "blue"))
+
 
             # Choose the appropriate category ID for your videos
             video_category_id = "28"  # Science & Technology
@@ -217,6 +215,7 @@ def generate():
 
             # Upload the video to YouTube
             try:
+                print(colored("[-] Uploading video to YouTube...", "cyan"))
                 # Unpack the video_metadata dictionary into individual arguments
                 video_response = upload_video(
                     video_path=video_metadata['video_path'],
@@ -230,7 +229,18 @@ def generate():
             except HttpError as e:
                 print(f"An HTTP error {e.resp.status} occurred:\n{e.content}")
 
+            print(colored("[+] Done uploading to YouTube!", "green"))
+
         # Let user know
+
+        print(colored("[-] Metadata for YouTube upload:", "blue"))
+        print(colored("   Title: ", "blue"))
+        print(colored(f"   {title}", "blue"))
+        print(colored("   Description: ", "blue"))
+        print(colored(f"   {description}", "blue"))
+        print(colored("   Keywords: ", "blue"))
+        print(colored(f"  {', '.join(keywords)}", "blue"))
+
         print(colored(f"[+] Video generated: {final_video_path}!", "green"))
 
         # Stop FFMPEG processes
