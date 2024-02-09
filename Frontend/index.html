@@ -188,6 +188,7 @@
             alert(data.message);
             // Hide cancel button after generation is complete
             generateButton.disabled = false;
+            generateButton.classList.remove("hidden");
             cancelButton.classList.add("hidden");
           })
           .catch((error) => {
