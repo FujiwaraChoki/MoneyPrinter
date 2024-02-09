@@ -199,14 +199,20 @@ def generate():
             print(colored("[-] Client secrets file missing. YouTube upload will be skipped.", "yellow"))
             print(colored("[-] Please download the client_secret.json from Google Cloud Platform and store this inside the /Backend directory.", "red"))
 
+        # Define metadata for the video, we will display this to the user in the console, regardless if they choose to auto upload.
+
+        print(colored("[-] Generating metadata for YouTube upload...", "blue"))
         title, description, keywords = generate_metadata(data["videoSubject"], script)
+        print(colored("[-] Metadata for YouTube upload:", "blue"))
+        print(colored("   Title: ", "blue"))
+        print(colored(f"   {title}", "blue"))
+        print(colored("   Description: ", "blue"))
+        print(colored(f"   {description}", "blue"))
+        print(colored("   Keywords: ", "blue"))
+        print(colored(f"  {', '.join(keywords)}", "blue"))
 
         # Only proceed with YouTube upload if the toggle is True  and client_secret.json exists.
         if automate_youtube_upload and not SKIP_YT_UPLOAD:
-            print(colored("[-] Generating metadata for YouTube upload...", "blue"))
-            # Define metadata for the video
-            # title, description, keywords = generate_metadata(data["videoSubject"], script, ai_model)
-
 
 
             # Choose the appropriate category ID for your videos
@@ -240,14 +246,6 @@ def generate():
             print(colored("[+] Done uploading to YouTube!", "green"))
 
         # Let user know
-
-        print(colored("[-] Metadata for YouTube upload:", "blue"))
-        print(colored("   Title: ", "blue"))
-        print(colored(f"   {title}", "blue"))
-        print(colored("   Description: ", "blue"))
-        print(colored(f"   {description}", "blue"))
-        print(colored("   Keywords: ", "blue"))
-        print(colored(f"  {', '.join(keywords)}", "blue"))
 
         print(colored(f"[+] Video generated: {final_video_path}!", "green"))
 
