@@ -9,8 +9,8 @@ from tiktokvoice import *
 from flask_cors import CORS
 from termcolor import colored
 from dotenv import load_dotenv
-from youtube import upload_video 
-from apiclient.errors import HttpError   
+from youtube import upload_video
+from apiclient.errors import HttpError
 from flask import Flask, request, jsonify
 from moviepy.config import change_settings
 
@@ -46,7 +46,7 @@ def generate():
         clean_dir("../temp/")
         clean_dir("../subtitles/")
 
-        
+
         # Parse JSON
         data = request.get_json()
         paragraph_number = int(data.get('paragraphNumber', 1))  # Default to 1 if not provided
@@ -60,7 +60,7 @@ def generate():
 
         # Get the ZIP Url of the songs
         songs_zip_url = data.get('zipUrl')
-        
+
         # Download songs
         if use_music:
             # Downloads a ZIP file containing popular TikTok Songs
@@ -207,7 +207,18 @@ def generate():
         except Exception as e:
             print(colored(f"[-] Error generating final video: {e}", "red"))
             final_video_path = None
-        
+
+        # Define metadata for the video, we will display this to the user, and use it for the YouTube upload
+        title, description, keywords = generate_metadata(data["videoSubject"], script, ai_model)
+
+        print(colored("[-] Metadata for YouTube upload:", "blue"))
+        print(colored("   Title: ", "blue"))
+        print(colored(f"   {title}", "blue"))
+        print(colored("   Description: ", "blue"))
+        print(colored(f"   {description}", "blue"))
+        print(colored("   Keywords: ", "blue"))
+        print(colored(f"  {', '.join(keywords)}", "blue"))
+
         if automate_youtube_upload:
             # Start Youtube Uploader
             # Check if the CLIENT_SECRETS_FILE exists
@@ -220,17 +231,6 @@ def generate():
 
             # Only proceed with YouTube upload if the toggle is True  and client_secret.json exists.
             if not SKIP_YT_UPLOAD:
-                # Define metadata for the video
-                title, description, keywords = generate_metadata(data["videoSubject"], script, ai_model)  
-
-                print(colored("[-] Metadata for YouTube upload:", "blue"))
-                print(colored("   Title: ", "blue"))
-                print(colored(f"   {title}", "blue"))
-                print(colored("   Description: ", "blue"))
-                print(colored(f"   {description}", "blue"))
-                print(colored("   Keywords: ", "blue"))
-                print(colored(f"  {', '.join(keywords)}", "blue"))
-
                 # Choose the appropriate category ID for your videos
                 video_category_id = "28"  # Science & Technology
                 privacyStatus = "private"  # "public", "private", "unlisted"
