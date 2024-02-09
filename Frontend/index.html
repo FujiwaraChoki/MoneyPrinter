@@ -143,13 +143,13 @@
           Cancel
         </button>
         <label
-        for="reuseChoices"
+        for="reuseChoicesToggle"
         class="flex items-center text-blue-600"
       >
         <input
           type="checkbox"
-          name="reuseChoices"
-          id="reuseChoices"
+          name="reuseChoicesToggle"
+          id="reuseChoicesToggle"
           class="mr-2"
         />
         Reuse Choices?
@@ -295,29 +295,29 @@
         });
       });
 
-    document.addEventListener("DOMContentLoaded", (event) => {
-        const youtubeUploadToggle = document.getElementById("youtubeUploadToggle");
-        const reuseChoices = document.getElementById("reuseChoices");
+      document.addEventListener("DOMContentLoaded", () => {
+        // Define an array of toggle configuration objects
+        const toggles = [
+            { id: "youtubeUploadToggle", storageKey: "youtubeUploadToggleValue" },
+            { id: "useMusicToggle", storageKey: "useMusicToggleValue" },
+            { id: "reuseChoicesToggle", storageKey: "reuseChoicesValue" }
+        ];
 
-        const storedYoutubeValue = localStorage.getItem("youtubeUploadToggleValue");
-        const storedReuseValue = localStorage.getItem("reuseChoicesValue");
+        // Function to initialize each toggle state from localStorage
+        toggles.forEach(({ id, storageKey }) => {
+          const toggle = document.getElementById(id);
+          const storedValue = localStorage.getItem(storageKey);
+          const storedReuseValue = localStorage.getItem("reuseChoicesValue");
 
-        if (storedYoutubeValue && storedReuseValue === "true") {
-            youtubeUploadToggle.checked = storedYoutubeValue === "true";
-        }
-
-        if (storedReuseValue) {
-            reuseChoices.checked = storedReuseValue === "true";
-        }
-    });
-
-    document.getElementById("youtubeUploadToggle").addEventListener("change", (event) => {
-        localStorage.setItem("youtubeUploadToggleValue", event.target.checked);
-    });
-
-    document.getElementById("reuseChoices").addEventListener("change", (event) => {
-        localStorage.setItem("reuseChoicesValue", event.target.checked);
-    });
+          if (toggle && storedValue !== null && storedReuseValue === "true") {
+              toggle.checked = storedValue === "true";
+          }
+          // Attach change listener to update localStorage
+          toggle.addEventListener("change", (event) => {
+              localStorage.setItem(storageKey, event.target.checked);
+          });
+        });
+      });
 
     </script>
   </body>
