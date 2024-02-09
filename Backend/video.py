@@ -130,47 +130,65 @@ def generate_subtitles(audio_path: str, sentences: List[str], audio_clips: List[
     return subtitles_path
 
 
-def combine_videos(video_paths: List[str], max_duration: int) -> str:
+def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration: int) -> str:
     """
     Combines a list of videos into one video and returns the path to the combined video.
 
     Args:
         video_paths (List): A list of paths to the videos to combine.
         max_duration (int): The maximum duration of the combined video.
+        max_clip_duration (int): The maximum duration of each clip.
 
     Returns:
         str: The path to the combined video.
     """
     video_id = uuid.uuid4()
     combined_video_path = f"../temp/{video_id}.mp4"
+    
+    #required duration of each clip:
+    req_dur = max_duration / len(video_paths)
 
     print(colored("[+] Combining videos...", "blue"))
-    print(colored(f"[+] Each video will be {max_duration / len(video_paths)} seconds long.", "blue"))
+    print(colored(f"[+] Each clip will be maximum {req_dur} seconds long.", "blue"))
 
     clips = []
-    for video_path in video_paths:
-        clip = VideoFileClip(video_path)
-        clip = clip.without_audio()
-        clip = clip.subclip(0, max_duration / len(video_paths))
-        clip = clip.set_fps(30)
+    tot_dur = 0
+    #add downloaded clips over and over until the duration of the audio (max_duration) has been reached
+    while tot_dur < max_duration:
+        for video_path in video_paths:
+            clip = VideoFileClip(video_path)
+            clip = clip.without_audio()
+            # check if clip is longer than the remaning audio
+            if (max_duration - tot_dur) < clip.duration:
+                clip = clip.subclip(0, (max_duration - tot_dur))
+            # only shorten clips if the calculated clip length (req_dur) is shorter than the actual clip to prevent still image
+            elif req_dur < clip.duration:
+                clip = clip.subclip(0, req_dur)
+            clip = clip.set_fps(30)
 
-        # Not all videos are same size,
-        # so we need to resize them
-        if round((clip.w/clip.h), 4) < 0.5625:
-            clip = crop(clip, width=clip.w, height=round(clip.w/0.5625), \
-                        x_center=clip.w / 2, \
-                        y_center=clip.h / 2)
-        else:
-            clip = crop(clip, width=round(0.5625*clip.h), height=clip.h, \
-                        x_center=clip.w / 2, \
-                        y_center=clip.h / 2)
-        clip = clip.resize((1080, 1920))
+            # Not all videos are same size,
+            # so we need to resize them
+            if round((clip.w/clip.h), 4) < 0.5625:
+                clip = crop(clip, width=clip.w, height=round(clip.w/0.5625), \
+                            x_center=clip.w / 2, \
+                            y_center=clip.h / 2)
+            else:
+                clip = crop(clip, width=round(0.5625*clip.h), height=clip.h, \
+                            x_center=clip.w / 2, \
+                            y_center=clip.h / 2)
+            clip = clip.resize((1080, 1920))
 
-        clips.append(clip)
+            if clip.duration > max_clip_duration:
+                clip = clip.subclip(0, max_clip_duration)
+
+            clips.append(clip)
+            tot_dur += clip.duration
+            #if tot_dur >= max_duration:
+            #    break
 
     final_clip = concatenate_videoclips(clips)
     final_clip = final_clip.set_fps(30)
-    final_clip.write_videofile(combined_video_path, threads=3)
+    final_clip.write_videofile(combined_video_path, threads=2)
 
     return combined_video_path
 
@@ -208,6 +226,6 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str)
     audio = AudioFileClip(tts_path)
     result = result.set_audio(audio)
 
-    result.write_videofile("../temp/output.mp4", threads=3)
+    result.write_videofile("../temp/output.mp4", threads=2)
 
     return "output.mp4"

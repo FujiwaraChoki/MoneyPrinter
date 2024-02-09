@@ -18,21 +18,28 @@
   <body class="bg-blue-100 min-h-screen justify-center p-40">
     <h1 class="text-4xl text-center mb-4">MoneyPrinter</h1>
     <p class="text-center text-gray-700">
-      This Application is intended to automate the creation and uploads of YouTube Shorts.
+      This Application is intended to automate the creation and uploads of
+      YouTube Shorts.
     </p>
 
     <div class="flex justify-center mt-8">
-      <div class="flex flex-col space-y-4">
-        <label for="videoSubject" class="text-blue-600">Subject</label>
-        <input
-          type="text"
-          name="videoSubject"
-          id="videoSubject"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-        />
+      <div class="max-w-xl flex flex-col space-y-4 w-full">
+        <label for="aiModel" class="text-blue-600">AI Model</label>
+        <select
+          name="aiModel"
+          id="aiModel"
+          class="w-full border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+        >
+          <option value="g4f">g4f (Free)</option>
+          <option value="gpt3.5-turbo">OpenAI GPT-3.5</option>
+          <option value="gpt4">OpenAI GPT-4</option>
+        </select>
         <label for="voice" class="text-blue-600">Voice</label>
-        <select name="voice" id="voice"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500">
+        <select
+          name="voice"
+          id="voice"
+          class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+        >
           <option value="en_us_ghostface">Ghost Face</option>
           <option value="en_us_chewbacca">Chewbacca</option>
           <option value="en_us_c3po">C3PO</option>
@@ -75,15 +82,56 @@
           <option value="en_male_funny">wacky</option>
           <option value="en_female_emotional">peaceful</option>
         </select>
-        <label for="youtubeUploadToggle" class="flex items-center text-blue-600">
+        <label for="zipUrl" class="text-blue-600"
+          >Zip URL (Leave empty for default)</label
+        >
+        <input
+          type="text"
+          name="zipUrl"
+          id="zipUrl"
+          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+        />
+        <label for="videoSubject" class="text-blue-600">Subject</label>
+        <textarea
+          rows="3"
+          type="text"
+          name="videoSubject"
+          id="videoSubject"
+          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+        ></textarea>
+        <label for="paragraphNumber" class="text-blue-600"
+          >Paragraph Number</label
+        >
+        <input
+          type="number"
+          name="paragraphNumber"
+          id="paragraphNumber"
+          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          value="1"
+          min="1"
+          max="100"
+        />
+        <label
+          for="youtubeUploadToggle"
+          class="flex items-center text-blue-600"
+        >
           <input
             type="checkbox"
             name="youtubeUploadToggle"
             id="youtubeUploadToggle"
             class="mr-2"
-          />  
-          Automate YouTube Uploads  
-        </label>  
+          />
+          Automate YouTube Uploads
+        </label>
+        <label for="useMusicToggle" class="flex items-center text-blue-600">
+          <input
+            type="checkbox"
+            name="useMusicToggle"
+            id="useMusicToggle"
+            class="mr-2"
+          />
+          Use Music
+        </label>
         <button
           id="generateButton"
           class="bg-blue-500 hover:bg-blue-700 duration-100 linear text-white px-4 py-2 rounded-md"
@@ -116,7 +164,12 @@
 
     <script>
       const videoSubject = document.querySelector("#videoSubject");
+      const aiModel = document.querySelector("#aiModel");
       const voice = document.querySelector("#voice");
+      const zipUrl = document.querySelector("#zipUrl");
+      const paragraphNumber = document.querySelector("#paragraphNumber");
+      const youtubeToggle = document.querySelector("#youtubeUploadToggle");
+      const useMusicToggle = document.querySelector("#useMusicToggle");
       const generateButton = document.querySelector("#generateButton");
       const cancelButton = document.querySelector("#cancelButton");
 
@@ -159,17 +212,24 @@
 
         // Get values from input fields
         const videoSubjectValue = videoSubject.value;
+        const aiModelValue = aiModel.value;
         const voiceValue = voice.value;
-        // Get value from toggle: automated youtube upload
-        const youtubeUpload = document.querySelector("#youtubeUploadToggle").checked;
+        const paragraphNumberValue = paragraphNumber.value;
+        const youtubeUpload = youtubeToggle.checked;
+        const useMusicToggleState = useMusicToggle.checked;
+        const zipUrlValue = zipUrl.value;
 
         const url = "http://localhost:8080/api/generate";
 
         // Construct data to be sent to the server
         const data = {
           videoSubject: videoSubjectValue,
+          aiModel: aiModelValue,
           voice: voiceValue,
+          paragraphNumber: paragraphNumberValue,
           automateYoutubeUpload: youtubeUpload,
+          useMusic: useMusicToggleState,
+          zipUrl: zipUrlValue,
         };
 
         // Send the actual request to the server
@@ -187,6 +247,7 @@
             alert(data.message);
             // Hide cancel button after generation is complete
             generateButton.disabled = false;
+            generateButton.classList.remove("hidden");
             cancelButton.classList.add("hidden");
           })
           .catch((error) => {
@@ -202,6 +263,21 @@
         if (event.key === "Enter") {
           generateVideo();
         }
+      });
+
+      // Load the data from localStorage on page load
+      document.addEventListener("DOMContentLoaded", (event) => {
+        const voiceSelect = document.getElementById("voice");
+        const storedVoiceValue = localStorage.getItem("voiceValue");
+
+        if (storedVoiceValue) {
+          voiceSelect.value = storedVoiceValue;
+        }
+      });
+
+      // When the voice select field changes, store the new value in localStorage.
+      document.getElementById("voice").addEventListener("change", (event) => {
+        localStorage.setItem("voiceValue", event.target.value);
       });
     </script>
   </body>
