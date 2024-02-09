@@ -16,5 +16,4 @@ assemblyai
 brotli
 google-api-python-client 
 oauth2client
-edge-tts
-openai
+openai==0.28
