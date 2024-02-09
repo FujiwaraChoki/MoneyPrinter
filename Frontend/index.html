@@ -126,6 +126,18 @@
         >
           Cancel
         </button>
+        <label
+        for="reuseChoices"
+        class="flex items-center text-blue-600"
+      >
+        <input
+          type="checkbox"
+          name="reuseChoices"
+          id="reuseChoices"
+          class="mr-2"
+        />
+        Reuse Choices?
+      </label>
       </div>
     </div>
 
@@ -242,20 +254,50 @@
         }
       });
 
-      // Load the data from localStorage on page load
+      fields = ["aiModel", "voice", "paragraphNumber", "videoSubject"];
+
+      fields.forEach((id) => {
+          document.getElementById(id).addEventListener("change", (event) => {
+            localStorage.setItem(`${id}Value`, event.target.value);
+          });
+        });
+
       document.addEventListener("DOMContentLoaded", (event) => {
-        const voiceSelect = document.getElementById("voice");
-        const storedVoiceValue = localStorage.getItem("voiceValue");
+        fields.forEach((id) => {
+          const select = document.getElementById(id);
+          const storedValue = localStorage.getItem(`${id}Value`);
+          const storedReuseValue = localStorage.getItem("reuseChoicesValue");
 
-        if (storedVoiceValue) {
-          voiceSelect.value = storedVoiceValue;
+          if (storedValue && storedReuseValue === "true") {
+            select.value = storedValue;
+          }
+        });
+      });
+
+    document.addEventListener("DOMContentLoaded", (event) => {
+        const youtubeUploadToggle = document.getElementById("youtubeUploadToggle");
+        const reuseChoices = document.getElementById("reuseChoices");
+
+        const storedYoutubeValue = localStorage.getItem("youtubeUploadToggleValue");
+        const storedReuseValue = localStorage.getItem("reuseChoicesValue");
+
+        if (storedYoutubeValue && storedReuseValue === "true") {
+            youtubeUploadToggle.checked = storedYoutubeValue === "true";
         }
-      });
 
-      // When the voice select field changes, store the new value in localStorage.
-      document.getElementById("voice").addEventListener("change", (event) => {
-        localStorage.setItem("voiceValue", event.target.value);
-      });
+        if (storedReuseValue) {
+            reuseChoices.checked = storedReuseValue === "true";
+        }
+    });
+
+    document.getElementById("youtubeUploadToggle").addEventListener("change", (event) => {
+        localStorage.setItem("youtubeUploadToggleValue", event.target.checked);
+    });
+
+    document.getElementById("reuseChoices").addEventListener("change", (event) => {
+        localStorage.setItem("reuseChoicesValue", event.target.checked);
+    });
+
     </script>
   </body>
 </html>
