@@ -18,21 +18,28 @@
   <body class="bg-blue-100 min-h-screen justify-center p-40">
     <h1 class="text-4xl text-center mb-4">MoneyPrinter</h1>
     <p class="text-center text-gray-700">
-      This Application is intended to automate the creation and uploads of YouTube Shorts.
+      This Application is intended to automate the creation and uploads of
+      YouTube Shorts.
     </p>
 
     <div class="flex justify-center mt-8">
       <div class="max-w-xl flex flex-col space-y-4 w-full">
         <label for="aiModel" class="text-blue-600">AI Model</label>
-        <select name="aiModel" id="aiModel"
-          class="w-full border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500">
+        <select
+          name="aiModel"
+          id="aiModel"
+          class="w-full border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+        >
           <option value="g4f">g4f (Free)</option>
-          <option value="gpt3_5">OpenAI GPT-3.5</option>
+          <option value="gpt3.5-turbo">OpenAI GPT-3.5</option>
           <option value="gpt4">OpenAI GPT-4</option>
         </select>
         <label for="voice" class="text-blue-600">Voice</label>
-        <select name="voice" id="voice"
-          class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500">
+        <select
+          name="voice"
+          id="voice"
+          class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+        >
           <option value="en_us_ghostface">Ghost Face</option>
           <option value="en_us_chewbacca">Chewbacca</option>
           <option value="en_us_c3po">C3PO</option>
@@ -83,7 +90,9 @@
           id="videoSubject"
           class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
         ></textarea>
-        <label for="paragraphNumber" class="text-blue-600">Paragraph Number</label>
+        <label for="paragraphNumber" class="text-blue-600"
+          >Paragraph Number</label
+        >
         <input
           type="number"
           name="paragraphNumber"
@@ -93,15 +102,18 @@
           min="1"
           max="100"
         />
-        <label for="youtubeUploadToggle" class="flex items-center text-blue-600">
+        <label
+          for="youtubeUploadToggle"
+          class="flex items-center text-blue-600"
+        >
           <input
             type="checkbox"
             name="youtubeUploadToggle"
             id="youtubeUploadToggle"
             class="mr-2"
-          />  
-          Automate YouTube Uploads  
-        </label>  
+          />
+          Automate YouTube Uploads
+        </label>
         <button
           id="generateButton"
           class="bg-blue-500 hover:bg-blue-700 duration-100 linear text-white px-4 py-2 rounded-md"
@@ -183,7 +195,8 @@
         const voiceValue = voice.value;
         const paragraphNumberValue = paragraphNumber.value;
         // Get value from toggle: automated youtube upload
-        const youtubeUpload = document.querySelector("#youtubeUploadToggle").checked;
+        const youtubeUpload = document.querySelector("#youtubeUploadToggle")
+          .checked;
 
         const url = "http://localhost:8080/api/generate";
 
@@ -195,7 +208,6 @@
           paragraphNumber: paragraphNumberValue,
           automateYoutubeUpload: youtubeUpload,
         };
-
 
         // Send the actual request to the server
         fetch(url, {
@@ -231,9 +243,9 @@
       });
 
       // Load the data from localStorage on page load
-      document.addEventListener('DOMContentLoaded', (event) => {
-      const voiceSelect = document.getElementById('voice');
-      const storedVoiceValue = localStorage.getItem('voiceValue');
+      document.addEventListener("DOMContentLoaded", (event) => {
+        const voiceSelect = document.getElementById("voice");
+        const storedVoiceValue = localStorage.getItem("voiceValue");
 
         if (storedVoiceValue) {
           voiceSelect.value = storedVoiceValue;
@@ -241,10 +253,9 @@
       });
 
       // When the voice select field changes, store the new value in localStorage.
-      document.getElementById('voice').addEventListener('change', (event) => {
-        localStorage.setItem('voiceValue', event.target.value);
+      document.getElementById("voice").addEventListener("change", (event) => {
+        localStorage.setItem("voiceValue", event.target.value);
       });
     </script>
   </body>
 </html>
-
