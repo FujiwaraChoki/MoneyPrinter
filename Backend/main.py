@@ -118,14 +118,13 @@ def generate():
                         "data": [],
                     }
                 )
-            found_url = search_for_stock_videos(
+            found_urls = search_for_stock_videos(
                 search_term, os.getenv("PEXELS_API_KEY"), it, min_dur
             )
             # Check for duplicates
-            for url in found_url:
+            for url in found_urls:
                 if url not in video_urls:
                     video_urls.append(url)
-                    break
 
         # Define video_paths
         video_paths = []
@@ -199,7 +198,8 @@ def generate():
 
         # Concatenate videos
         temp_audio = AudioFileClip(tts_path)
-        combined_video_path = combine_videos(video_paths, temp_audio.duration)
+        print(video_paths)
+        combined_video_path = combine_videos(video_paths, temp_audio.duration, 5)
 
         # Put everything together
         try:
