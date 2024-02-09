@@ -287,7 +287,7 @@
         fields.forEach((id) => {
           const select = document.getElementById(id);
           const storedValue = localStorage.getItem(`${id}Value`);
-          const storedReuseValue = localStorage.getItem("reuseChoicesValue");
+          const storedReuseValue = localStorage.getItem("reuseChoicesToggleValue");
 
           if (storedValue && storedReuseValue === "true") {
             select.value = storedValue;
@@ -296,25 +296,20 @@
       });
 
       document.addEventListener("DOMContentLoaded", () => {
-        // Define an array of toggle configuration objects
-        const toggles = [
-            { id: "youtubeUploadToggle", storageKey: "youtubeUploadToggleValue" },
-            { id: "useMusicToggle", storageKey: "useMusicToggleValue" },
-            { id: "reuseChoicesToggle", storageKey: "reuseChoicesValue" }
-        ];
 
-        // Function to initialize each toggle state from localStorage
-        toggles.forEach(({ id, storageKey }) => {
+        toggles = ["youtubeUploadToggle", "useMusicToggle", "reuseChoicesToggle"];
+
+        toggles.forEach((id) => {
           const toggle = document.getElementById(id);
-          const storedValue = localStorage.getItem(storageKey);
-          const storedReuseValue = localStorage.getItem("reuseChoicesValue");
+          const storedValue = localStorage.getItem(`${id}Value`);
+          const storedReuseValue = localStorage.getItem("reuseChoicesToggleValue");
 
           if (toggle && storedValue !== null && storedReuseValue === "true") {
               toggle.checked = storedValue === "true";
           }
           // Attach change listener to update localStorage
           toggle.addEventListener("change", (event) => {
-              localStorage.setItem(storageKey, event.target.checked);
+              localStorage.setItem(`${id}Value`, event.target.checked);
           });
         });
       });
