@@ -99,13 +99,13 @@
           id="videoSubject"
           class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
         ></textarea>
-        <label for="paragraphNumber" class="text-blue-600"
-          >Paragraph Number</label
+        <label for="sentenceNumber" class="text-blue-600"
+          >sentence Number</label
         >
         <input
           type="number"
-          name="paragraphNumber"
-          id="paragraphNumber"
+          name="sentenceNumber"
+          id="sentenceNumber"
           class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
           value="1"
           min="1"
@@ -167,7 +167,7 @@
       const aiModel = document.querySelector("#aiModel");
       const voice = document.querySelector("#voice");
       const zipUrl = document.querySelector("#zipUrl");
-      const paragraphNumber = document.querySelector("#paragraphNumber");
+      const sentenceNumber = document.querySelector("#sentenceNumber");
       const youtubeToggle = document.querySelector("#youtubeUploadToggle");
       const useMusicToggle = document.querySelector("#useMusicToggle");
       const generateButton = document.querySelector("#generateButton");
@@ -214,7 +214,7 @@
         const videoSubjectValue = videoSubject.value;
         const aiModelValue = aiModel.value;
         const voiceValue = voice.value;
-        const paragraphNumberValue = paragraphNumber.value;
+        const sentenceNumberValue = sentenceNumber.value;
         const youtubeUpload = youtubeToggle.checked;
         const useMusicToggleState = useMusicToggle.checked;
         const zipUrlValue = zipUrl.value;
@@ -226,7 +226,7 @@
           videoSubject: videoSubjectValue,
           aiModel: aiModelValue,
           voice: voiceValue,
-          paragraphNumber: paragraphNumberValue,
+          sentenceNumber: sentenceNumberValue,
           automateYoutubeUpload: youtubeUpload,
           useMusic: useMusicToggleState,
           zipUrl: zipUrlValue,

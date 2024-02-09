@@ -44,7 +44,7 @@ def generate_response(prompt: str, ai_model: str) -> str:
 
         model_name = "gpt-3.5-turbo" if ai_model == "gpt3.5-turbo" else "gpt-4-1106-preview"
 
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
 
             model=model_name,
 
@@ -61,7 +61,7 @@ def generate_response(prompt: str, ai_model: str) -> str:
 def generate_script(video_subject: str, paragraph_number: int, ai_model: str) -> str:
 
     """
-    Generate a script for a video, depending on the subject of the video, the number of paragraphs, and the AI model.
+    Generate a script for a video, depending on the subject of the video, the number of sentences, and the AI model.
 
 
 
@@ -69,7 +69,7 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str) ->
 
         video_subject (str): The subject of the video.
 
-        paragraph_number (int): The number of paragraphs to generate.
+        paragraph_number (int): The number of sentences to generate.
 
         ai_model (str): The AI model to use for generation.
 
@@ -85,10 +85,10 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str) ->
     prompt = f"""
     Generate a script for a video, depending on the subject of the video.
     Subject: {video_subject}
-    Number of paragraphs: {paragraph_number}
+    Number of sentences: {paragraph_number}
 
 
-    The script is to be returned as a string with the specified number of paragraphs.
+    The script is to be returned as a string with the specified number of sentences.
 
     Here is an example of a string:
     "This is an example string."
@@ -100,7 +100,7 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str) ->
     Obviously, the script should be related to the subject of the video.
 
     YOU MUST NOT INCLUDE ANY TYPE OF MARKDOWN OR FORMATTING IN THE SCRIPT, NEVER USE A TITLE.
-    ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE. YOU MUST NOT MENTION THE PROMPT, OR ANYTHING ABOUT THE SCRIPT ITSELF. ALSO, NEVER TALK ABOUT THE AMOUNT OF PARAGRAPHS OR LINES. JUST WRITE THE SCRIPT.
+    ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE. YOU MUST NOT MENTION THE PROMPT, OR ANYTHING ABOUT THE SCRIPT ITSELF. ALSO, NEVER TALK ABOUT THE AMOUNT OF sentences OR LINES. JUST WRITE THE SCRIPT.
     """
 
     # Generate script
@@ -119,17 +119,17 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str) ->
         response = re.sub(r"\[.*\]", "", response)
         response = re.sub(r"\(.*\)", "", response)
 
-        # Split the script into paragraphs
-        paragraphs = response.split("\n\n")
+        # Split the script into sentences
+        sentences = response.split("\n\n")
 
-        # Select the specified number of paragraphs
-        selected_paragraphs = paragraphs[:paragraph_number]
+        # Select the specified number of sentences
+        selected_sentences = sentences[:paragraph_number]
 
-        # Join the selected paragraphs into a single string
-        final_script = "\n\n".join(selected_paragraphs)
+        # Join the selected sentences into a single string
+        final_script = "\n\n".join(selected_sentences)
 
-        # Print to console the number of paragraphs used
-        print(colored(f"Number of paragraphs used: {len(selected_paragraphs)}", "green"))
+        # Print to console the number of sentences used
+        print(colored(f"Number of sentences used: {len(selected_sentences)}", "green"))
 
         return final_script
     else:
