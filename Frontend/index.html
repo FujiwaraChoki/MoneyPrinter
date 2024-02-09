@@ -82,6 +82,15 @@
           <option value="en_male_funny">wacky</option>
           <option value="en_female_emotional">peaceful</option>
         </select>
+        <label for="zipUrl" class="text-blue-600"
+          >Zip URL (Leave empty for default)</label
+        >
+        <input
+          type="text"
+          name="zipUrl"
+          id="zipUrl"
+          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+        />
         <label for="videoSubject" class="text-blue-600">Subject</label>
         <textarea
           rows="3"
@@ -113,6 +122,15 @@
             class="mr-2"
           />
           Automate YouTube Uploads
+        </label>
+        <label for="useMusicToggle" class="flex items-center text-blue-600">
+          <input
+            type="checkbox"
+            name="useMusicToggle"
+            id="useMusicToggle"
+            class="mr-2"
+          />
+          Use Music
         </label>
         <button
           id="generateButton"
@@ -148,7 +166,10 @@
       const videoSubject = document.querySelector("#videoSubject");
       const aiModel = document.querySelector("#aiModel");
       const voice = document.querySelector("#voice");
+      const zipUrl = document.querySelector("#zipUrl");
       const paragraphNumber = document.querySelector("#paragraphNumber");
+      const youtubeToggle = document.querySelector("#youtubeUploadToggle");
+      const useMusicToggle = document.querySelector("#useMusicToggle");
       const generateButton = document.querySelector("#generateButton");
       const cancelButton = document.querySelector("#cancelButton");
 
@@ -194,9 +215,9 @@
         const aiModelValue = aiModel.value;
         const voiceValue = voice.value;
         const paragraphNumberValue = paragraphNumber.value;
-        // Get value from toggle: automated youtube upload
-        const youtubeUpload = document.querySelector("#youtubeUploadToggle")
-          .checked;
+        const youtubeUpload = youtubeToggle.checked;
+        const useMusicToggleState = useMusicToggle.checked;
+        const zipUrlValue = zipUrl.value;
 
         const url = "http://localhost:8080/api/generate";
 
@@ -207,6 +228,8 @@
           voice: voiceValue,
           paragraphNumber: paragraphNumberValue,
           automateYoutubeUpload: youtubeUpload,
+          useMusic: useMusicToggleState,
+          zipUrl: zipUrlValue,
         };
 
         // Send the actual request to the server

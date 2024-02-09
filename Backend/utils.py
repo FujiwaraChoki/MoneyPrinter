@@ -1,6 +1,8 @@
 import os
-import zipfile
+import json
+import random
 import logging
+import zipfile
 import requests
 
 from termcolor import colored
@@ -34,29 +36,54 @@ def clean_dir(path: str) -> None:
     except Exception as e:
         logger.error(f"Error occurred while cleaning directory {path}: {str(e)}")
 
-def fetch_music(url: str) -> None:
+def fetch_songs(zip_url: str) -> None:
     """
-    Downloads music into songs/ directory to use with geneated videos.
+    Downloads songs into songs/ directory to use with geneated videos.
 
     Args:
-        url (str): URL to the ZIP File of the music.
+        zip_url (str): The URL to the zip file containing the songs.
 
     Returns:
         None
     """
     try:
-        response = requests.get(url)
+        logger.info(colored(f" => Fetching songs...", "magenta"))
+
+        files_dir = "../Songs"
+        if not os.path.exists(files_dir):
+            os.mkdir(files_dir)
+            logger.info(colored(f"Created directory: {files_dir}", "green"))
+
+        # Download songs
+        response = requests.get(zip_url)
+
+        # Save the zip file
         with open("../Songs/songs.zip", "wb") as file:
             file.write(response.content)
-        logger.info(colored(f"Downloaded ZIP from {url}.", "green"))
 
-        # Unzip
-        with zipfile.ZipFile("../Songs/songs.zip", "r") as zip_ref:
-            zip_ref.extractall("../Songs")
-
-        logger.info(colored(f"Unzipped songs.zip", "green"))
+        # Unzip the file
+        with zipfile.ZipFile("../Songs/songs.zip", "r") as file:
+            file.extractall("../Songs")
 
         # Remove the zip file
         os.remove("../Songs/songs.zip")
+
+        logger.info(colored(" => Downloaded Songs to ../Songs.", "green"))
+
     except Exception as e:
-        logger.error(f"Error occurred while fetching music: {str(e)}")
+        logger.error(colored(f"Error occurred while fetching songs: {str(e)}", "red"))
+
+def choose_random_song() -> str:
+    """
+    Chooses a random song from the songs/ directory.
+
+    Returns:
+        str: The path to the chosen song.
+    """
+    try:
+        songs = os.listdir("../Songs")
+        song = random.choice(songs)
+        logger.info(colored(f"Chose song: {song}", "green"))
+        return f"../Songs/{song}"
+    except Exception as e:
+        logger.error(colored(f"Error occurred while choosing random song: {str(e)}", "red"))
