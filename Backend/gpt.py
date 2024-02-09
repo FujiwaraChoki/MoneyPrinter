@@ -40,9 +40,9 @@ def generate_response(prompt: str, ai_model: str) -> str:
 
         )
 
-    elif ai_model in ['gpt3.5-turbo', 'gpt4']:
+    elif ai_model in ["gpt3.5-turbo", "gpt4"]:
 
-        model_name = "gpt-3.5-turbo" if ai_model == 'gpt3.5-turbo' else "gpt-4-1106-preview"
+        model_name = "gpt-3.5-turbo" if ai_model == "gpt3.5-turbo" else "gpt-4-1106-preview"
 
         response = openai.ChatCompletion.create(
 
@@ -81,7 +81,6 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str) ->
 
     """
 
-
     # Build prompt
     prompt = f"""
     Generate a script for a video, depending on the subject of the video.
@@ -100,7 +99,8 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str) ->
 
     Obviously, the script should be related to the subject of the video.
 
-    ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE.
+    YOU MUST NOT INCLUDE ANY TYPE OF MARKDOWN OR FORMATTING IN THE SCRIPT, NEVER USE A TITLE.
+    ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE. YOU MUST NOT MENTION THE PROMPT, OR ANYTHING ABOUT THE SCRIPT ITSELF. ALSO, NEVER TALK ABOUT THE AMOUNT OF PARAGRAPHS OR LINES. JUST WRITE THE SCRIPT.
     """
 
     # Generate script
@@ -116,17 +116,17 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str) ->
         response = response.replace("#", "")
 
         # Remove markdown syntax
-        response = re.sub(r'\[.*\]', '', response)
-        response = re.sub(r'\(.*\)', '', response)
+        response = re.sub(r"\[.*\]", "", response)
+        response = re.sub(r"\(.*\)", "", response)
 
         # Split the script into paragraphs
-        paragraphs = response.split('\n\n')
+        paragraphs = response.split("\n\n")
 
         # Select the specified number of paragraphs
         selected_paragraphs = paragraphs[:paragraph_number]
 
         # Join the selected paragraphs into a single string
-        final_script = '\n\n'.join(selected_paragraphs)
+        final_script = "\n\n".join(selected_paragraphs)
 
         # Print to console the number of paragraphs used
         print(colored(f"Number of paragraphs used: {len(selected_paragraphs)}", "green"))

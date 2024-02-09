@@ -184,7 +184,7 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
 
     final_clip = concatenate_videoclips(clips)
     final_clip = final_clip.set_fps(30)
-    final_clip.write_videofile(combined_video_path, threads=3)
+    final_clip.write_videofile(combined_video_path, threads=2)
 
     return combined_video_path
 
@@ -222,6 +222,6 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str)
     audio = AudioFileClip(tts_path)
     result = result.set_audio(audio)
 
-    result.write_videofile("../temp/output.mp4", threads=3)
+    result.write_videofile("../temp/output.mp4", threads=2)
 
     return "output.mp4"

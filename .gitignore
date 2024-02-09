@@ -6,6 +6,8 @@ output/*
 images/*
 *.zip
 *.srt
+*.mp4
+*.mp3
 .history
 subtitles/*
 /venv
