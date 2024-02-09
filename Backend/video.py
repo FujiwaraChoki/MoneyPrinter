@@ -157,7 +157,7 @@ def combine_videos(video_paths: List[str], max_duration: int) -> str:
         for video_path in video_paths:
             clip = VideoFileClip(video_path)
             clip = clip.without_audio()
-            # check if clip is longer than the remaning audio
+            # check if clip is longer than the remaining audio
             if (max_duration - tot_dur) < clip.duration:
                 clip = clip.subclip(0, (max_duration - tot_dur))
             # only shorten clips if the calculated clip length (req_dur) is shorter than the actual clip to prevent still image
