@@ -20,8 +20,8 @@ def generate_script(video_subject: str) -> str:
     prompt = f"""
     Generate a script for a video, depending on the subject of the video.
     Subject: {video_subject}
-
-    The script is to be returned as a string.
+    
+    The script is to be returned as a string. Keep it concise, so a maximum of 5 sentences.
 
     Here is an example of a string:
     "This is an example string."
