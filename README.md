@@ -28,10 +28,12 @@ poetry install --no-root
 cp .env.example .env
 
 # Run the backend server
+poetry shell
 cd Backend
 python main.py
 
 # Run the frontend server in a different terminal session
+poetry shell
 cd Frontend
 python -m http.server 3000
 ```
