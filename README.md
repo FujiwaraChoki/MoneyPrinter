@@ -16,8 +16,11 @@ After you finished installing Python, you can install `MoneyPrinter` by followin
 git clone https://github.com/FujiwaraChoki/MoneyPrinter.git
 cd MoneyPrinter
 
+# Install poetry 1.7.1 for dependency management
+pip install poetry==1.7.1
+
 # Install requirements
-pip install -r requirements.txt
+poetry install --no-root
 
 # Copy .env.example and fill out values
 cp .env.example .env
