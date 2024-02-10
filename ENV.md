@@ -9,4 +9,6 @@
 
 - PEXELS_API_KEY: Your unique Pexels API key is required. Obtain yours [here](https://www.pexels.com/api/)
 
+- OPENAI_API_KEY: Your unique OpenAI API key is required. Obtain yours [here](https://platform.openai.com/docs/quickstart?context=python)
+
 Open an issue if you need help with any of these.
