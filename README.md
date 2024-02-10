@@ -16,6 +16,8 @@ After you finished installing Python, you can install `MoneyPrinter` by followin
 git clone https://github.com/FujiwaraChoki/MoneyPrinter.git
 cd MoneyPrinter
 
+# manually install ffmpeg based on your system
+
 # Install poetry 1.7.1 for dependency management
 pip install poetry==1.7.1
 
