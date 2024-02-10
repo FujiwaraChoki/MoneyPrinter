@@ -12,12 +12,12 @@ RUN wget https://github.com/ImageMagick/ImageMagick/archive/refs/tags/7.1.0-31.t
 RUN sh ./ImageMagick-7.1.0-31/configure --prefix=/usr/local --with-bzlib=yes --with-fontconfig=yes --with-freetype=yes --with-gslib=yes --with-gvc=yes --with-jpeg=yes --with-jp2=yes --with-png=yes --with-tiff=yes --with-xml=yes --with-gs-font-dir=yes && \
     make -j && make install && ldconfig /usr/local/lib/
 
-WORKDIR /tmp
-
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip && pip install poetry==1.7.1
 
 WORKDIR /app
 
-ADD ./requirements.txt .
+COPY . .
 
-RUN pip install -r requirements.txt
+RUN poetry config virtualenvs.create false
+
+RUN poetry install --no-dev
