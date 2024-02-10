@@ -65,7 +65,7 @@ def generate_response(prompt: str, ai_model: str) -> str:
 
     return response
 
-def generate_script(video_subject: str, paragraph_number: int, ai_model: str) -> str:
+def generate_script(video_subject: str, paragraph_number: int, ai_model: str, voice: str) -> str:
 
     """
     Generate a script for a video, depending on the subject of the video, the number of paragraphs, and the AI model.
@@ -93,7 +93,7 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str) ->
     Generate a script for a video, depending on the subject of the video.
     Subject: {video_subject}
     Number of paragraphs: {paragraph_number}
-
+    Language: {voice}
 
     The script is to be returned as a string with the specified number of paragraphs.
 
@@ -107,6 +107,7 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str) ->
     Obviously, the script should be related to the subject of the video.
 
     YOU MUST NOT INCLUDE ANY TYPE OF MARKDOWN OR FORMATTING IN THE SCRIPT, NEVER USE A TITLE.
+    YOU MUST WRITE THE SCRIPT IN THE LANGUAGE SPECIFIED IN [LANGUAGE].
     ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE. YOU MUST NOT MENTION THE PROMPT, OR ANYTHING ABOUT THE SCRIPT ITSELF. ALSO, NEVER TALK ABOUT THE AMOUNT OF PARAGRAPHS OR LINES. JUST WRITE THE SCRIPT.
     """
 
