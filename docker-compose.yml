@@ -23,12 +23,11 @@ services:
       - ./files:/temp
       - ./Backend:/app/backend
       - ./fonts:/app/fonts
+    env_file:
+      - path: ./.env
+        required: true
     environment:
-      - ASSEMBLY_AI_API_KEY=${ASSEMBLY_AI_API_KEY}
-      - TIKTOK_SESSION_ID=${TIKTOK_SESSION_ID}
       - IMAGEMAGICK_BINARY=/usr/local/bin/magick
-      - PEXELS_API_KEY=${PEXELS_API_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       - frontend
     restart: always
