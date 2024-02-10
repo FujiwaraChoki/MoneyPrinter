@@ -126,6 +126,7 @@ def generate():
             for url in found_urls:
                 if url not in video_urls:
                     video_urls.append(url)
+                    break
 
         # Define video_paths
         video_paths = []
