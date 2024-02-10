@@ -1,4 +1,5 @@
 import os
+import asyncio
 
 from gpt import *
 from video import *
@@ -19,6 +20,7 @@ load_dotenv("../.env")
 
 # Set environment variables
 SESSION_ID = os.getenv("TIKTOK_SESSION_ID")
+TIKTOK_MS_CODE = os.getenv("TIKTOK_MS_CODE")
 change_settings({"IMAGEMAGICK_BINARY": os.getenv("IMAGEMAGICK_BINARY")})
 
 # Initialize Flask
@@ -71,58 +73,62 @@ def generate():
             print(colored("[!] No voice was selected. Defaulting to \"en_us_001\"", "yellow"))
             voice = "en_us_001"
 
-        # Generate search terms
-        search_terms = get_search_terms(
-            data["videoSubject"], AMOUNT_OF_STOCK_VIDEOS, script
-        )
-
-        # Search for a video of the given search term
-        video_urls = []
-        # defines how many results it should query and search through
-        it = 15
-        # defines the minimum duration of each clip
-        min_dur = 10
-        # Loop through all search terms,
-        # and search for a video of the given search term
-        for search_term in search_terms:
-            if not GENERATING:
-                return jsonify(
-                    {
-                        "status": "error",
-                        "message": "Video generation was cancelled.",
-                        "data": [],
-                    }
-                )
-            found_url = search_for_stock_videos(
-                search_term, os.getenv("PEXELS_API_KEY"), it, min_dur
-            )
-            #check for duplicates
-            for url in found_url:
-                if url not in video_urls:
-                    video_urls.append(url)
-                    break
-
         # Define video_paths
         video_paths = []
 
-        # Let user know
-        print(colored(f"[+] Downloading {len(video_urls)} videos...", "blue"))
+        if TIKTOK_MS_CODE:
+            hashtags = generate_hashtags(data["videoSubject"], 5)
+            video_paths.extend(asyncio.run(save_tiktok_videos(hashtags=hashtags, video_count=10)))
+        else:
+            # Generate search terms
+            search_terms = get_search_terms(
+                data["videoSubject"], AMOUNT_OF_STOCK_VIDEOS, script
+            )
 
-        # Save the videos
-        for video_url in video_urls:
-            if not GENERATING:
-                return jsonify(
-                    {
-                        "status": "error",
-                        "message": "Video generation was cancelled.",
-                        "data": [],
-                    }
+            # Search for a video of the given search term
+            video_urls = []
+            # defines how many results it should query and search through
+            it = 15
+            # defines the minimum duration of each clip
+            min_dur = 10
+            # Loop through all search terms,
+            # and search for a video of the given search term
+            for search_term in search_terms:
+                if not GENERATING:
+                    return jsonify(
+                        {
+                            "status": "error",
+                            "message": "Video generation was cancelled.",
+                            "data": [],
+                        }
+                    )
+                found_url = search_for_stock_videos(
+                    search_term, os.getenv("PEXELS_API_KEY"), it, min_dur
                 )
-            try:
-                saved_video_path = save_video(video_url)
-                video_paths.append(saved_video_path)
-            except Exception:
-                print(colored(f"[-] Could not download video: {video_url}", "red"))
+                #check for duplicates
+                for url in found_url:
+                    if url not in video_urls:
+                        video_urls.append(url)
+                        break
+
+            # Let user know
+            print(colored(f"[+] Downloading {len(video_urls)} videos...", "blue"))
+
+            # Save the videos
+            for video_url in video_urls:
+                if not GENERATING:
+                    return jsonify(
+                        {
+                            "status": "error",
+                            "message": "Video generation was cancelled.",
+                            "data": [],
+                        }
+                    )
+                try:
+                    saved_video_path = save_video(video_url)
+                    video_paths.append(saved_video_path)
+                except Exception:
+                    print(colored(f"[-] Could not download video: {video_url}", "red"))
 
         # Let user know
         print(colored("[+] Videos downloaded!", "green"))

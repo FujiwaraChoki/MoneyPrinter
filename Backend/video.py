@@ -4,6 +4,8 @@ import uuid
 import requests
 import srt_equalizer
 import assemblyai as aai
+import asyncio
+import random
 
 from typing import List
 from moviepy.editor import *
@@ -12,10 +14,86 @@ from dotenv import load_dotenv
 from datetime import timedelta
 from moviepy.video.fx.all import crop
 from moviepy.video.tools.subtitles import SubtitlesClip
+from TikTokApi import TikTokApi
+from yt_dlp import YoutubeDL
+from concurrent.futures import ThreadPoolExecutor
 
 load_dotenv("../.env")
 
 ASSEMBLY_AI_API_KEY = os.getenv("ASSEMBLY_AI_API_KEY")
+TIKTOK_MS_CODE = os.getenv("TIKTOK_MS_CODE")
+
+
+async def save_tiktok_videos(hashtags: list, video_count: int = 1, directory: str = "../temp") -> list:
+    video_ids = []
+    async with TikTokApi() as api:
+        await api.create_sessions(ms_tokens=[TIKTOK_MS_CODE], num_sessions=1, sleep_after=3, headless=False, suppress_resource_load_types=["image", "media", "font", "stylesheet"])
+
+        selected_videos = []
+
+        # Add videos from TikTok by hashtags
+        selected_videos.extend(await __fetch_tiktok_videos_by_hashtags(api, hashtags))
+
+        # Fill insufficient videos with trending videos
+        if len(selected_videos) < video_count:
+            trending_videos = await __fetch_tiktok_trending_videos(api)
+            selected_videos.extend(random.choices(trending_videos, k=video_count-len(selected_videos)))
+
+        await __download_tiktok_videos(random.choices(selected_videos, k=video_count), directory, video_ids)
+
+    # Construct video paths
+    video_paths = [f"{directory}/{video_id}.mp4" for video_id in video_ids]
+    return video_paths
+
+
+async def __fetch_tiktok_videos_by_hashtags(api, hashtags):
+    videos = []
+    for hashtag in hashtags:
+        try:
+            result = [video async for video in api.hashtag(name=hashtag).videos()]
+            print(colored(f'hashtag: {hashtag}, searched count: {len(result)}', "cyan"))
+            videos.extend(result)
+        except Exception as e:
+            print(f"Err: {e}")
+    return videos
+
+
+async def __fetch_tiktok_trending_videos(api):
+    videos = []
+    try:
+        result = [video async for video in api.trending.videos()]
+        print(colored(f'trending video searched count: {len(result)}', "cyan"))
+        videos.extend(result)
+    except Exception as e:
+        print(f"Err: {e}")
+    return videos
+
+
+async def __download_tiktok_videos(videos, directory, video_ids):
+    with ThreadPoolExecutor() as executor:
+        tasks = []
+        for video in videos:
+            video_id = str(uuid.uuid4())
+            video_ids.append(video_id)
+            tiktok_url = f"https://www.tiktok.com/@{video.author.username}/video/{video.id}"
+            ydl_opts = {'outtmpl': f'{directory}/{video_id}.%(ext)s'}
+
+            tasks.append(asyncio.ensure_future(__download_tiktok_video_async(ydl_opts, tiktok_url, executor)))
+        await asyncio.gather(*tasks)
+
+
+async def __download_tiktok_video_async(ydl_opts, url, executor):
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(executor, lambda: __download_tiktok_video_sync(ydl_opts, url))
+
+
+def __download_tiktok_video_sync(ydl_opts, url):
+    try:
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+
+    except Exception as e:
+        print(f"Err: {e}")
 
 
 def save_video(video_url: str, directory: str = "../temp") -> str:
