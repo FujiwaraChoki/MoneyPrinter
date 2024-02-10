@@ -1,0 +1,37 @@
+version: "3"
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "frontend"
+    ports:
+      - "8001:8001"
+    command: ["python3", "-m", "http.server", "8001", "--directory", "frontend"]
+    volumes:
+      - ./Frontend:/app/frontend
+    restart: always
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "backend"
+    ports:
+      - "8080:8080"
+    command: ["python3", "backend/main.py"]
+    volumes:
+      - ./files:/temp
+      - ./Backend:/app/backend
+      - ./fonts:/app/fonts
+    environment:
+      - ASSEMBLY_AI_API_KEY=${ASSEMBLY_AI_API_KEY}
+      - TIKTOK_SESSION_ID=${TIKTOK_SESSION_ID}
+      - IMAGEMAGICK_BINARY=/usr/local/bin/magick
+      - PEXELS_API_KEY=${PEXELS_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - frontend
+    restart: always
+
+volumes:
+  files:
