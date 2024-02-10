@@ -9,4 +9,6 @@
 
 - PEXELS_API_KEY: Your unique Pexels API key is required. Obtain yours [here](https://www.pexels.com/api/)
 
+- GOOGLE_API_KEY:  Your Gemini API key is essential for Gemini Pro Model. Generate one securely at [Get API key | Google AI Studio](https://makersuite.google.com/app/apikey)
+
 Open an issue if you need help with any of these.
