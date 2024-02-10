@@ -33,7 +33,7 @@ python -m http.server 3000
 
 See [`.env.example`](.env.example) for the required environment variables.
 
-If you need help, open [ENV.md](ENV.md) for more information.
+If you need help, open [EnvironmentVariables.md](EnvironmentVariables.md) for more information.
 
 ## Usage 🛠️
 
