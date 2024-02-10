@@ -20,4 +20,6 @@ COPY . .
 
 RUN poetry config virtualenvs.create false
 
-RUN poetry install --no-dev
+RUN poetry install --no-root
+
+RUN poetry shell

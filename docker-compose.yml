@@ -6,8 +6,8 @@ services:
       dockerfile: Dockerfile
     container_name: "frontend"
     ports:
-      - "8001:8001"
-    command: ["python3", "-m", "http.server", "8001", "--directory", "frontend"]
+      - "3000:3000"
+    command: ["python3", "-m", "http.server", "3000", "--directory", "frontend"]
     volumes:
       - ./Frontend:/app/frontend
     restart: always
