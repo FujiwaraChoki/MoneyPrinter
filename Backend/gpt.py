@@ -44,7 +44,7 @@ def generate_response(prompt: str, ai_model: str) -> str:
 
         model_name = "gpt-3.5-turbo" if ai_model == "gpt3.5-turbo" else "gpt-4-1106-preview"
 
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
 
             model=model_name,
 
