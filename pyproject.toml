@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "MoneyPrinter"
+version = "0.1.0"
+description = "Automate Creation of YouTube Shorts using MoviePy"
+authors = []
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+g4f = "0.2.0.7"
+requests = "2.31.0"
+moviepy = "1.0.3"
+termcolor = "2.4.0"
+flask = "3.0.0"
+flask-cors = "4.0.0"
+playsound = { git = "https://github.com/taconi/playsound.git", rev="92385c78ec05c2fc3afad1afc5edc9d1282aa1e5" }
+Pillow = "9.5.0"
+python-dotenv = "1.0.0"
+srt_equalizer = "0.1.8"
+platformdirs = "4.1.0"
+undetected_chromedriver = "*"
+assemblyai = "*"
+brotli = "*"
+google-api-python-client = "*"
+oauth2client = "*"
+openai = "0.28"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
