@@ -29,8 +29,8 @@ cp .env.example .env
 cd Backend
 python main.py
 
-# Run the frontend server
-cd ../Frontend
+# Run the frontend server in a different terminal session
+cd Frontend
 python -m http.server 3000
 ```
 
