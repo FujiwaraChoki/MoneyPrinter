@@ -159,7 +159,7 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
     video_id = uuid.uuid4()
     combined_video_path = f"../temp/{video_id}.mp4"
     
-    #required duration of each clip:
+    # Required duration of each clip
     req_dur = max_duration / len(video_paths)
 
     print(colored("[+] Combining videos...", "blue"))
@@ -167,7 +167,7 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
 
     clips = []
     tot_dur = 0
-    #add downloaded clips over and over until the duration of the audio (max_duration) has been reached
+    # Add downloaded clips over and over until the duration of the audio (max_duration) has been reached
     while tot_dur < max_duration:
         for video_path in video_paths:
             clip = VideoFileClip(video_path)
@@ -197,8 +197,6 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
 
             clips.append(clip)
             tot_dur += clip.duration
-            #if tot_dur >= max_duration:
-            #    break
 
     final_clip = concatenate_videoclips(clips)
     final_clip = final_clip.set_fps(30)

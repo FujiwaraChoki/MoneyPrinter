@@ -1,17 +1,15 @@
-#!/usr/bin/python  
+import os
+import sys
+import time
+import random
+import httplib2
   
-import httplib2  
-import os  
-import random  
-import sys  
-import time  
-  
-from apiclient.discovery import build  
-from apiclient.errors import HttpError  
-from apiclient.http import MediaFileUpload  
-from oauth2client.client import flow_from_clientsecrets  
-from oauth2client.file import Storage  
-from oauth2client.tools import argparser, run_flow  
+from oauth2client.file import Storage
+from apiclient.discovery import build
+from apiclient.errors import HttpError
+from apiclient.http import MediaFileUpload
+from oauth2client.tools import argparser, run_flow
+from oauth2client.client import flow_from_clientsecrets
   
 # Explicitly tell the underlying HTTP transport library not to retry, since  
 # we are handling retry logic ourselves.  
@@ -61,7 +59,13 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 VALID_PRIVACY_STATUSES = ("public", "private", "unlisted")  
   
   
-def get_authenticated_service():  
+def get_authenticated_service():
+    """
+    This method retrieves the YouTube service.
+
+    Returns:
+        any: The authenticated YouTube service.
+    """
     flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE, 
                                    scope=SCOPES, 
                                    message=MISSING_CLIENT_SECRETS_MESSAGE)  
@@ -77,7 +81,18 @@ def get_authenticated_service():
                  http=credentials.authorize(httplib2.Http()))  
   
   
-def initialize_upload(youtube, options):  
+def initialize_upload(youtube: any, options: dict):
+    """
+    This method uploads a video to YouTube.
+
+    Args:
+        youtube (any): The authenticated YouTube service.
+        options (dict): The options to upload the video with.
+
+    Returns:
+        response: The response from the upload process.
+    """
+
     tags = None  
     if options['keywords']:  
         tags = options['keywords'].split(",")  
@@ -104,11 +119,18 @@ def initialize_upload(youtube, options):
     )  
   
     return resumable_upload(insert_request)  
-  
-  
-# This method implements an exponential backoff strategy to resume a  
-# failed upload.  
-def resumable_upload(insert_request):  
+
+def resumable_upload(insert_request: MediaFileUpload):
+    """
+    This method implements an exponential backoff strategy to resume a  
+    failed upload.
+
+    Args:
+        insert_request (MediaFileUpload): The request to insert the video.
+
+    Returns:
+        response: The response from the upload process.
+    """
     response = None  
     error = None  
     retry = 0  
