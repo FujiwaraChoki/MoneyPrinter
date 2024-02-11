@@ -37,7 +37,7 @@ def save_video(video_url: str, directory: str = "../temp") -> str:
     return video_path
 
 
-def __generate_subtitles_assemblyai(audio_path: str) -> str:
+def __generate_subtitles_assemblyai(audio_path: str, voice: str) -> str:
     """
     Generates subtitles from a given audio file and returns the path to the subtitles.
 
@@ -48,8 +48,21 @@ def __generate_subtitles_assemblyai(audio_path: str) -> str:
         str: The generated subtitles
     """
 
+    language_mapping = {
+        "br": "pt",
+        "id": "en", #AssemblyAI doesn't have Indonesian 
+        "jp": "ja",
+        "kr": "ko",
+    }
+
+    if voice in language_mapping:
+        lang_code = language_mapping[voice]
+    else:
+        lang_code = voice
+
     aai.settings.api_key = ASSEMBLY_AI_API_KEY
-    transcriber = aai.Transcriber()
+    config = aai.TranscriptionConfig(language_code=lang_code)
+    transcriber = aai.Transcriber(config=config)
     transcript = transcriber.transcribe(audio_path)
     subtitles = transcript.export_subtitles_srt()
 
@@ -89,7 +102,7 @@ def __generate_subtitles_locally(sentences: List[str], audio_clips: List[AudioFi
     return "\n".join(subtitles)
 
 
-def generate_subtitles(audio_path: str, sentences: List[str], audio_clips: List[AudioFileClip]) -> str:
+def generate_subtitles(audio_path: str, sentences: List[str], audio_clips: List[AudioFileClip], voice: str) -> str:
     """
     Generates subtitles from a given audio file and returns the path to the subtitles.
 
@@ -111,7 +124,7 @@ def generate_subtitles(audio_path: str, sentences: List[str], audio_clips: List[
 
     if ASSEMBLY_AI_API_KEY is not None and ASSEMBLY_AI_API_KEY != "":
         print(colored("[+] Creating subtitles using AssemblyAI", "blue"))
-        subtitles = __generate_subtitles_assemblyai(audio_path)
+        subtitles = __generate_subtitles_assemblyai(audio_path, voice)
     else:
         print(colored("[+] Creating subtitles locally", "blue"))
         subtitles = __generate_subtitles_locally(sentences, audio_clips)
