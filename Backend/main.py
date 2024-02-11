@@ -9,8 +9,8 @@ from tiktokvoice import *
 from flask_cors import CORS
 from termcolor import colored
 from dotenv import load_dotenv
-from youtube import upload_video 
-from apiclient.errors import HttpError   
+from youtube import upload_video
+from apiclient.errors import HttpError
 from flask import Flask, request, jsonify
 from moviepy.config import change_settings
 
@@ -46,11 +46,13 @@ def generate():
         clean_dir("../temp/")
         clean_dir("../subtitles/")
 
-        
+
         # Parse JSON
         data = request.get_json()
         paragraph_number = int(data.get('paragraphNumber', 1))  # Default to 1 if not provided
         ai_model = data.get('aiModel')  # Get the AI model selected by the user
+        n_threads = data.get('threads')  # Amount of threads to use for video generation
+        subtitles_position = data.get('subtitlesPosition')  # Position of the subtitles in the video
 
         # Get 'useMusic' from the request data and default to False if not provided
         use_music = data.get('useMusic', False)
@@ -60,7 +62,7 @@ def generate():
 
         # Get the ZIP Url of the songs
         songs_zip_url = data.get('zipUrl')
-        
+
         # Download songs
         if use_music:
             # Downloads a ZIP file containing popular TikTok Songs
@@ -130,7 +132,19 @@ def generate():
             for url in found_urls:
                 if url not in video_urls:
                     video_urls.append(url)
+                    break
 
+        # Check if video_urls is empty
+        if not video_urls:
+            print(colored("[-] No videos found to download.", "red"))
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "No videos found to download.",
+                    "data": [],
+                }
+            )
+            
         # Define video_paths
         video_paths = []
 
@@ -203,16 +217,26 @@ def generate():
 
         # Concatenate videos
         temp_audio = AudioFileClip(tts_path)
-        print(video_paths)
-        combined_video_path = combine_videos(video_paths, temp_audio.duration, 5)
+        combined_video_path = combine_videos(video_paths, temp_audio.duration, 5, n_threads or 2)
 
         # Put everything together
         try:
-            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path)
+            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2, subtitles_position)
         except Exception as e:
             print(colored(f"[-] Error generating final video: {e}", "red"))
             final_video_path = None
-        
+
+        # Define metadata for the video, we will display this to the user, and use it for the YouTube upload
+        title, description, keywords = generate_metadata(data["videoSubject"], script, ai_model)
+
+        print(colored("[-] Metadata for YouTube upload:", "blue"))
+        print(colored("   Title: ", "blue"))
+        print(colored(f"   {title}", "blue"))
+        print(colored("   Description: ", "blue"))
+        print(colored(f"   {description}", "blue"))
+        print(colored("   Keywords: ", "blue"))
+        print(colored(f"  {', '.join(keywords)}", "blue"))
+
         if automate_youtube_upload:
             # Start Youtube Uploader
             # Check if the CLIENT_SECRETS_FILE exists
@@ -225,17 +249,6 @@ def generate():
 
             # Only proceed with YouTube upload if the toggle is True  and client_secret.json exists.
             if not SKIP_YT_UPLOAD:
-                # Define metadata for the video
-                title, description, keywords = generate_metadata(data["videoSubject"], script, ai_model)  
-
-                print(colored("[-] Metadata for YouTube upload:", "blue"))
-                print(colored("   Title: ", "blue"))
-                print(colored(f"   {title}", "blue"))
-                print(colored("   Description: ", "blue"))
-                print(colored(f"   {description}", "blue"))
-                print(colored("   Keywords: ", "blue"))
-                print(colored(f"  {', '.join(keywords)}", "blue"))
-
                 # Choose the appropriate category ID for your videos
                 video_category_id = "28"  # Science & Technology
                 privacyStatus = "private"  # "public", "private", "unlisted"
@@ -281,7 +294,7 @@ def generate():
             video_clip = video_clip.set_audio(comp_audio)
             video_clip = video_clip.set_fps(30)
             video_clip = video_clip.set_duration(original_duration)
-            video_clip.write_videofile(f"../{final_video_path}", threads=2)
+            video_clip.write_videofile(f"../{final_video_path}", threads=n_threads or 1)
 
 
         # Let user know

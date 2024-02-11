@@ -16,4 +16,5 @@ assemblyai
 brotli
 google-api-python-client 
 oauth2client
-openai
+openai==0.28
+google-generativeai
