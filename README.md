@@ -50,6 +50,8 @@ To use your own music, compress all your MP3 Files into a ZIP file and upload it
 
 It is recommended to use Services such as [Filebin](https://filebin.net) to upload your ZIP file.
 
+You can also just move your MP3 files into the `Songs` folder.
+
 ## Fonts 🅰
 
 Add your fonts to the `fonts/` folder, and load them by specifying the font name on line `124` in `Backend/video.py`.
@@ -79,6 +81,31 @@ The authentication process creates and stores a `main.py-oauth2.json` file insid
 Videos are uploaded as private by default. For a completely automated workflow, change the privacyStatus in main.py to your desired setting ("public", "private", or "unlisted").
 
 For videos that have been locked as private due to upload via an unverified API service, you will not be able to appeal. You’ll need to re-upload the video via a verified API service or via the YouTube app/site. The unverified API service can also apply for an API audit. So make sure to verify your API, see [OAuth App Verification Help Center](https://support.google.com/cloud/answer/13463073) for more information.
+
+## FAQ 🤔
+
+### How do I get the TikTok session ID?
+
+You can obtain your TikTok session ID by logging into TikTok in your browser and copying the value of the `sessionid` cookie.
+
+### My ImageMagick binary is not being detected
+
+Make sure you set your path to the ImageMagick binary correctly in the `.env` file, it should look something like this:
+
+```env
+IMAGEMAGICK_BINARY="C:\\Program Files\\ImageMagick-7.1.0-Q16\\magick.exe"
+```
+
+Don't forget to use double backslashes (`\\`) in the path, instead of one.
+
+### I can't install `playsound`: Wheel failed to build
+
+If you're having trouble installing `playsound`, you can try installing it using the following command:
+
+```bash
+pip install -U wheel
+pip install -U playsound
+```
 
 ## Donate 🎁
 

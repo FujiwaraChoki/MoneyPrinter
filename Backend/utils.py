@@ -53,6 +53,9 @@ def fetch_songs(zip_url: str) -> None:
         if not os.path.exists(files_dir):
             os.mkdir(files_dir)
             logger.info(colored(f"Created directory: {files_dir}", "green"))
+        else:
+            # Skip if songs are already downloaded
+            return
 
         # Download songs
         response = requests.get(zip_url)

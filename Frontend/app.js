@@ -8,6 +8,18 @@ const useMusicToggle = document.querySelector("#useMusicToggle");
 const generateButton = document.querySelector("#generateButton");
 const cancelButton = document.querySelector("#cancelButton");
 
+const advancedOptionsToggle = document.querySelector("#advancedOptionsToggle");
+
+advancedOptionsToggle.addEventListener("click", () => {
+  // Change Emoji, from ▼ to ▲ and vice versa
+  const emoji = advancedOptionsToggle.textContent;
+  advancedOptionsToggle.textContent = emoji.includes("▼")
+    ? "Show less Options ▲"
+    : "Show Advanced Options ▼";
+  const advancedOptions = document.querySelector("#advancedOptions");
+  advancedOptions.classList.toggle("hidden");
+});
+
 const cancelGeneration = () => {
   console.log("Canceling generation...");
   // Send request to /cancel
@@ -52,6 +64,7 @@ const generateVideo = () => {
   const paragraphNumberValue = paragraphNumber.value;
   const youtubeUpload = youtubeToggle.checked;
   const useMusicToggleState = useMusicToggle.checked;
+  const threads = document.querySelector("#threads").value;
   const zipUrlValue = zipUrl.value;
 
   const url = "http://localhost:8080/api/generate";
@@ -65,6 +78,7 @@ const generateVideo = () => {
     automateYoutubeUpload: youtubeUpload,
     useMusic: useMusicToggleState,
     zipUrl: zipUrlValue,
+    threads: threads,
   };
 
   // Send the actual request to the server
