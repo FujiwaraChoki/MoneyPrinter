@@ -10,6 +10,8 @@ Automate the creation of YouTube Shorts locally, simply by providing a video top
 
 `MoneyPrinter` requires Python 3.11 to run effectively. If you don't have Python installed, you can download it from [here](https://www.python.org/downloads/).
 
+Additionally, you may need to install the `libharfbuzz-dev` package to avoid an ImageMagick error.
+
 After you finished installing Python, you can install `MoneyPrinter` by following the steps below:
 
 ```bash
@@ -44,6 +46,8 @@ If you need help, open [EnvironmentVariables.md](EnvironmentVariables.md) for mo
 1. Wait for the video to be generated
 1. The video's location is `MoneyPrinter/output.mp4`
 
+P.S. If you are accesssing the MP Frontend from a different device (e.g. the MP front and backend  on a server), edit lines 28 and 74 of Frontend/app.js from localhost to whatever the IP of that server is you're running MP on.
+
 ## Music 🎵
 
 To use your own music, compress all your MP3 Files into a ZIP file and upload it somewhere. Provide the link to the ZIP file in the Frontend.
@@ -54,7 +58,7 @@ You can also just move your MP3 files into the `Songs` folder.
 
 ## Fonts 🅰
 
-Add your fonts to the `fonts/` folder, and load them by specifying the font name on line `124` in `Backend/video.py`.
+Add your fonts to the `fonts/` folder, and load them by specifying the font name on line `225` in `Backend/video.py`.
 
 ## Automatic YouTube Uploading 🎥
 
@@ -89,6 +93,8 @@ For videos that have been locked as private due to upload via an unverified API 
 You can obtain your TikTok session ID by logging into TikTok in your browser and copying the value of the `sessionid` cookie.
 
 ### My ImageMagick binary is not being detected
+
+If you're on Linux, run `chmod +x magick` on the `magick` binary to make it executable.
 
 Make sure you set your path to the ImageMagick binary correctly in the `.env` file, it should look something like this:
 
