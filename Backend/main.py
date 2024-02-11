@@ -278,12 +278,12 @@ def generate():
                 except HttpError as e:
                     print(f"An HTTP error {e.resp.status} occurred:\n{e.content}")
 
+        video_clip = VideoFileClip(f"../temp/{final_video_path}")
         if use_music:
             # Select a random song
             song_path = choose_random_song()
 
             # Add song to video at 30% volume using moviepy
-            video_clip = VideoFileClip(f"../temp/{final_video_path}")
             original_duration = video_clip.duration
             original_audio = video_clip.audio
             song_clip = AudioFileClip(song_path).set_fps(44100)
@@ -296,6 +296,8 @@ def generate():
             video_clip = video_clip.set_audio(comp_audio)
             video_clip = video_clip.set_fps(30)
             video_clip = video_clip.set_duration(original_duration)
+            video_clip.write_videofile(f"../{final_video_path}", threads=n_threads or 1)
+        else:
             video_clip.write_videofile(f"../{final_video_path}", threads=n_threads or 1)
 
 
