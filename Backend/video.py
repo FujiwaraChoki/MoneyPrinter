@@ -194,7 +194,7 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
     return combined_video_path
 
 
-def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str, threads: int) -> str:
+def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str, threads: int, subtitles_position: str) -> str:
     """
     This function creates the final video, with subtitles and audio.
 
@@ -203,6 +203,7 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str,
         tts_path (str): The path to the text-to-speech audio.
         subtitles_path (str): The path to the subtitles.
         threads (int): The number of threads to use for the video processing.
+        subtitles_position (str): The position of the subtitles.
 
     Returns:
         str: The path to the final video.
@@ -217,11 +218,14 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str,
         stroke_width=5,
     )
 
+    # Split the subtitles position into horizontal and vertical
+    horizontal_subtitles_position, vertical_subtitles_position = subtitles_position.split(",")
+
     # Burn the subtitles into the video
     subtitles = SubtitlesClip(subtitles_path, generator)
     result = CompositeVideoClip([
         VideoFileClip(combined_video_path),
-        subtitles.set_pos(("center", "center"))
+        subtitles.set_pos((horizontal_subtitles_position, vertical_subtitles_position))
     ])
 
     # Add the audio
