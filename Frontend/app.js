@@ -66,6 +66,7 @@ const generateVideo = () => {
   const useMusicToggleState = useMusicToggle.checked;
   const threads = document.querySelector("#threads").value;
   const zipUrlValue = zipUrl.value;
+  const subtitlesPosition = document.querySelector("#subtitlesPosition").value;
 
   const url = "http://localhost:8080/api/generate";
 
@@ -79,6 +80,7 @@ const generateVideo = () => {
     useMusic: useMusicToggleState,
     zipUrl: zipUrlValue,
     threads: threads,
+    subtitlesPosition: subtitlesPosition,
   };
 
   // Send the actual request to the server
