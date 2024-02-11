@@ -50,6 +50,9 @@ def __generate_subtitles_assemblyai(audio_path: str, voice: str) -> str:
 
     language_mapping = {
         "br": "pt",
+        "id": "en", #AssemblyAI doesn't have Indonesian 
+        "jp": "ja",
+        "kr": "ko",
     }
 
     if voice in language_mapping:
