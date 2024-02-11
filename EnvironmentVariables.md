@@ -13,15 +13,15 @@
     - If you are using Chrome or edge, you can also get the session ID by going to `chrome://settings/cookies/detail?site=tiktok.com` and copying the value of the `sessionid` cookie.
 
   #### NOTE: 
-     The session ID is only valid for a few hours, so you will need to update it regularly.
+     - The session ID is only valid for a few hours, so you will need to update it regularly.
   #### To get the session ID in India
-     if you are from India change the region other than india using vpn  in the TikTok website and then get the session ID .
+     - if you are from India change the region other than india using vpn  in the TikTok website and then get the session ID .
 
 
 - IMAGEMAGICK_BINARY: The filepath to the ImageMagick binary (.exe file) is needed. Obtain it [here](https://imagemagick.org/script/download.php)
 
-  -For Windows, the default path is
-    `C:\Program Files\ImageMagick-7.0.11-Q16-HDRI\magick.exe`
+    - For Windows, the default path is
+          `C:\Program Files\ImageMagick-7.0.11-Q16-HDRI\magick.exe`
 
 - PEXELS_API_KEY: Your unique Pexels API key is required. Obtain yours [here](https://www.pexels.com/api/)
 
