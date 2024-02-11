@@ -87,24 +87,30 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str, vo
         prompt = customPrompt
     else:
         prompt = """
-            My job is to create small videos to youtube/tik tok. I want you to act as a script writer and help me create a script for a captivating and relevant video based on the following rules:
+            Generate a script for a video, depending on the subject of the video.
 
-            - The script needs to be returned as a string with the specified number of paragraphs. Here is an example of a string: "This is an example string." Don't include any type of Markdown or formatting in the script, and don't use a title. 
+            The script is to be returned as a string with the specified number of paragraphs.
 
-            - Do not under any circumstance reference this prompt in your response.
+            Here is an example of a string:
+            "This is an example string."
 
-            - Get straight to the point, don't start with unnecessary things like, "welcome to this video".
+            Do not under any circumstance reference this prompt in your response.
 
-            - The script should be related to the subject of the video.
+            Get straight to the point, don't start with unnecessary things like, "welcome to this video".
 
-            - There's no need to include "Voiceover", "Narrator" or similar indicators of what should be spoken at the beginning of each line. Just write the script as it should be spoken.
+            Obviously, the script should be related to the subject of the video.
+
+            YOU MUST NOT INCLUDE ANY TYPE OF MARKDOWN OR FORMATTING IN THE SCRIPT, NEVER USE A TITLE.
+            YOU MUST WRITE THE SCRIPT IN THE LANGUAGE SPECIFIED IN [LANGUAGE].
+            ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE. YOU MUST NOT MENTION THE PROMPT, OR ANYTHING ABOUT THE SCRIPT ITSELF. ALSO, NEVER TALK ABOUT THE AMOUNT OF PARAGRAPHS OR LINES. JUST WRITE THE SCRIPT.
+
         """
 
     prompt += f"""
     
-    - Subject: {video_subject}
-    - Number of paragraphs: {paragraph_number}
-    - Language: {voice}
+    Subject: {video_subject}
+    Number of paragraphs: {paragraph_number}
+    Language: {voice}
 
     """
 
