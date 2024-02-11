@@ -17,6 +17,9 @@ git clone https://github.com/FujiwaraChoki/MoneyPrinter.git
 cd MoneyPrinter
 
 # Install requirements
+# Windows user's might need following commands before installing requirements.txt
+# pip install --upgrade setuptools wheel
+# pip install playsound
 pip install -r requirements.txt
 
 # Copy .env.example and fill out values
