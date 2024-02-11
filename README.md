@@ -65,7 +65,6 @@ To use this feature, you need to:
 1. Enable the YouTube v3 API in your project -> [GCP-API-Library](https://console.cloud.google.com/apis/library/youtube.googleapis.com)
 1. Create an `OAuth consent screen` and add yourself (the account of your YouTube channel) to the testers.
 1. Enable the following scopes in the `OAuth consent screen` for your project:
-
 ```
 'https://www.googleapis.com/auth/youtube'
 'https://www.googleapis.com/auth/youtube.upload'
