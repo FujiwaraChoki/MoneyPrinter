@@ -8,9 +8,9 @@
 
  TIKTOK_SESSION_ID: Your TikTok session ID is required. Obtain it by logging into TikTok in your browser and copying the value of the `sessionid` cookie.
 
-    To get the session ID, open TikTok in your browser, log in, and open the developer console. Go to the `Application` tab, and under `Session storage`, copy the value of the `sessionid` .
+    - To get the session ID, open TikTok in your browser, log in, and open the developer console. Go to the `Application` tab, and under `Session storage`, copy the value of the `sessionid` .
 
-        If you are using Chrome or edge, you can also get the session ID by going to `chrome://settings/cookies/detail?site=tiktok.com` and copying the value of the `sessionid` cookie.
+    - If you are using Chrome or edge, you can also get the session ID by going to `chrome://settings/cookies/detail?site=tiktok.com` and copying the value of the `sessionid` cookie.
 
 #### NOTE: 
      The session ID is only valid for a few hours, so you will need to update it regularly.
@@ -20,7 +20,8 @@
 
 - IMAGEMAGICK_BINARY: The filepath to the ImageMagick binary (.exe file) is needed. Obtain it [here](https://imagemagick.org/script/download.php)
 
-       For Windows, the default path is `C:\Program Files\ImageMagick-7.0.11-Q16-HDRI\magick.exe`
+  -For Windows, the default path is
+    `C:\Program Files\ImageMagick-7.0.11-Q16-HDRI\magick.exe`
 
 - PEXELS_API_KEY: Your unique Pexels API key is required. Obtain yours [here](https://www.pexels.com/api/)
 
