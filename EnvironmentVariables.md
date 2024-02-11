@@ -12,9 +12,9 @@
 
     - If you are using Chrome or edge, you can also get the session ID by going to `chrome://settings/cookies/detail?site=tiktok.com` and copying the value of the `sessionid` cookie.
 
-#### NOTE: 
+  #### NOTE: 
      The session ID is only valid for a few hours, so you will need to update it regularly.
-#### To get the session ID in India
+  #### To get the session ID in India
      if you are from India change the region other than india using vpn  in the TikTok website and then get the session ID .
 
 
