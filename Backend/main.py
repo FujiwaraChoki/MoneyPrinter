@@ -51,6 +51,7 @@ def generate():
         data = request.get_json()
         paragraph_number = int(data.get('paragraphNumber', 1))  # Default to 1 if not provided
         ai_model = data.get('aiModel')  # Get the AI model selected by the user
+        n_threads = data.get('threads')  # Amount of threads to use for video generation
 
         # Get 'useMusic' from the request data and default to False if not provided
         use_music = data.get('useMusic', False)
@@ -211,12 +212,11 @@ def generate():
 
         # Concatenate videos
         temp_audio = AudioFileClip(tts_path)
-        print(video_paths)
-        combined_video_path = combine_videos(video_paths, temp_audio.duration, 5)
+        combined_video_path = combine_videos(video_paths, temp_audio.duration, 5, n_threads or 2)
 
         # Put everything together
         try:
-            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path)
+            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2)
         except Exception as e:
             print(colored(f"[-] Error generating final video: {e}", "red"))
             final_video_path = None
@@ -289,7 +289,7 @@ def generate():
             video_clip = video_clip.set_audio(comp_audio)
             video_clip = video_clip.set_fps(30)
             video_clip = video_clip.set_duration(original_duration)
-            video_clip.write_videofile(f"../{final_video_path}", threads=2)
+            video_clip.write_videofile(f"../{final_video_path}", threads=n_threads or 1)
 
 
         # Let user know

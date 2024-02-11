@@ -130,7 +130,7 @@ def generate_subtitles(audio_path: str, sentences: List[str], audio_clips: List[
     return subtitles_path
 
 
-def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration: int) -> str:
+def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration: int, threads: int) -> str:
     """
     Combines a list of videos into one video and returns the path to the combined video.
 
@@ -138,6 +138,7 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
         video_paths (List): A list of paths to the videos to combine.
         max_duration (int): The maximum duration of the combined video.
         max_clip_duration (int): The maximum duration of each clip.
+        threads (int): The number of threads to use for the video processing.
 
     Returns:
         str: The path to the combined video.
@@ -188,12 +189,12 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
 
     final_clip = concatenate_videoclips(clips)
     final_clip = final_clip.set_fps(30)
-    final_clip.write_videofile(combined_video_path, threads=2)
+    final_clip.write_videofile(combined_video_path, threads=threads)
 
     return combined_video_path
 
 
-def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str) -> str:
+def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str, threads: int) -> str:
     """
     This function creates the final video, with subtitles and audio.
 
@@ -201,6 +202,7 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str)
         combined_video_path (str): The path to the combined video.
         tts_path (str): The path to the text-to-speech audio.
         subtitles_path (str): The path to the subtitles.
+        threads (int): The number of threads to use for the video processing.
 
     Returns:
         str: The path to the final video.
