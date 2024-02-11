@@ -25,13 +25,12 @@
     <div class="flex justify-center mt-8">
       <div class="max-w-xl flex flex-col space-y-4 w-full">
         <label for="videoSubject" class="text-blue-600">Subject</label>
-        <textarea
-          rows="3"
-          type="text"
-          name="videoSubject"
-          id="videoSubject"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-        ></textarea>
+        <input
+            type="text"
+            name="videoSubject"
+            id="videoSubject"
+            class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+        />
         <button id="advancedOptionsToggle" class="text-blue-600">
           Show Advanced Options ▼
         </button>
@@ -145,6 +144,15 @@
             min="1"
             max="100"
           />
+          <label for="customPrompt" class="text-blue-600">Custom Prompt:</label>
+            <textarea
+              rows="3"
+              type="text"
+              name="customPrompt"
+              id="customPrompt"
+              class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+              placeholder="only use it if you want to replace the default prompt"
+            ></textarea>
           <label
             for="youtubeUploadToggle"
             class="flex items-center text-blue-600"

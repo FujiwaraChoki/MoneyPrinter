@@ -76,6 +76,8 @@ def generate():
         print(colored("[Video to be generated]", "blue"))
         print(colored("   Subject: " + data["videoSubject"], "blue"))
         print(colored("   AI Model: " + ai_model, "blue"))  # Print the AI model being used
+        print(colored("   Custom Prompt: " + data["customPrompt"], "blue"))  # Print the AI model being used
+
 
 
         if not GENERATING:
@@ -94,7 +96,7 @@ def generate():
             voice = "en_us_001"
 
         # Generate a script
-        script = generate_script(data["videoSubject"], paragraph_number, ai_model, voice)  # Pass the AI model to the script generation
+        script = generate_script(data["videoSubject"], paragraph_number, ai_model, voice, data["customPrompt"])  # Pass the AI model to the script generation
 
         # Generate search terms
         search_terms = get_search_terms(

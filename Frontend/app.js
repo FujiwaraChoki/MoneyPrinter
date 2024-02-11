@@ -5,6 +5,7 @@ const zipUrl = document.querySelector("#zipUrl");
 const paragraphNumber = document.querySelector("#paragraphNumber");
 const youtubeToggle = document.querySelector("#youtubeUploadToggle");
 const useMusicToggle = document.querySelector("#useMusicToggle");
+const customPrompt = document.querySelector("#customPrompt");
 const generateButton = document.querySelector("#generateButton");
 const cancelButton = document.querySelector("#cancelButton");
 
@@ -19,6 +20,7 @@ advancedOptionsToggle.addEventListener("click", () => {
   const advancedOptions = document.querySelector("#advancedOptions");
   advancedOptions.classList.toggle("hidden");
 });
+
 
 const cancelGeneration = () => {
   console.log("Canceling generation...");
@@ -66,6 +68,7 @@ const generateVideo = () => {
   const useMusicToggleState = useMusicToggle.checked;
   const threads = document.querySelector("#threads").value;
   const zipUrlValue = zipUrl.value;
+  const customPromptValue = customPrompt.value;
   const subtitlesPosition = document.querySelector("#subtitlesPosition").value;
 
   const url = "http://localhost:8080/api/generate";
@@ -81,6 +84,7 @@ const generateVideo = () => {
     zipUrl: zipUrlValue,
     threads: threads,
     subtitlesPosition: subtitlesPosition,
+    customPrompt: customPromptValue,
   };
 
   // Send the actual request to the server
