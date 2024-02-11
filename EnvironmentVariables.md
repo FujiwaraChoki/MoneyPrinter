@@ -6,7 +6,7 @@
 
 
 
- TIKTOK_SESSION_ID: Your TikTok session ID is required. Obtain it by logging into TikTok in your browser and copying the value of the `sessionid` cookie.
+- TIKTOK_SESSION_ID: Your TikTok session ID is required. Obtain it by logging into TikTok in your browser and copying the value of the `sessionid` cookie.
 
     - To get the session ID, open TikTok in your browser, log in, and open the developer console. Go to the `Application` tab, and under `Session storage`, copy the value of the `sessionid` .
 
