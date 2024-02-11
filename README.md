@@ -10,8 +10,6 @@ Automate the creation of YouTube Shorts locally, simply by providing a video top
 
 `MoneyPrinter` requires Python 3.11 to run effectively. If you don't have Python installed, you can download it from [here](https://www.python.org/downloads/).
 
-Additionally, you may need to install the `libharfbuzz-dev` package to avoid an ImageMagick error.
-
 After you finished installing Python, you can install `MoneyPrinter` by following the steps below:
 
 ```bash
