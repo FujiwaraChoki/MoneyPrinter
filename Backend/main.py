@@ -55,6 +55,9 @@ def generate():
         # Get 'useMusic' from the request data and default to False if not provided
         use_music = data.get('useMusic', False)
 
+        # Get 'useAsScript' from the request data and default to False if not provided
+        use_as_script = data.get('useAsScript', False)
+
         # Get 'automateYoutubeUpload' from the request data and default to False if not provided
         automate_youtube_upload = data.get('automateYoutubeUpload', False)
 
@@ -92,7 +95,7 @@ def generate():
             voice = "en_us_001"
 
         # Generate a script
-        script = generate_script(data["videoSubject"], paragraph_number, ai_model, voice)  # Pass the AI model to the script generation
+        script = data["videoSubject"] if use_as_script else generate_script(data["videoSubject"], paragraph_number, ai_model, voice) # Pass the AI model to the script generation
 
         # Generate search terms
         search_terms = get_search_terms(

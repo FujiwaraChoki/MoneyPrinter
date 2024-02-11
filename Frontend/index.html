@@ -91,7 +91,7 @@
           id="zipUrl"
           class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
         />
-        <label for="videoSubject" class="text-blue-600">Subject</label>
+        <label for="videoSubject" class="text-blue-600">Subject/Script</label>
         <textarea
           rows="3"
           type="text"
@@ -99,6 +99,18 @@
           id="videoSubject"
           class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
         ></textarea>
+          <label
+          for="useAsScriptToggle"
+          class="flex items-center text-blue-600"
+        >
+          <input
+            type="checkbox"
+            name="useAsScriptToggle"
+            id="useAsScriptToggle"
+            class="mr-2"
+          />
+          Use text as script instead generate script
+        </label>
         <label for="paragraphNumber" class="text-blue-600"
           >Paragraph Number</label
         >
@@ -164,6 +176,7 @@
 
     <script>
       const videoSubject = document.querySelector("#videoSubject");
+      const useAsScriptToggle = document.querySelector("#useAsScriptToggle");
       const aiModel = document.querySelector("#aiModel");
       const voice = document.querySelector("#voice");
       const zipUrl = document.querySelector("#zipUrl");
@@ -212,6 +225,7 @@
 
         // Get values from input fields
         const videoSubjectValue = videoSubject.value;
+        const useAsScript = useAsScriptToggle.checked;
         const aiModelValue = aiModel.value;
         const voiceValue = voice.value;
         const paragraphNumberValue = paragraphNumber.value;
@@ -224,6 +238,7 @@
         // Construct data to be sent to the server
         const data = {
           videoSubject: videoSubjectValue,
+          useAsScript: useAsScript,
           aiModel: aiModelValue,
           voice: voiceValue,
           paragraphNumber: paragraphNumberValue,
