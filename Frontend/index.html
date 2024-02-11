@@ -15,9 +15,11 @@
     />
   </head>
 
-  <body class="bg-blue-100 min-h-screen justify-center p-40">
-    <h1 class="text-4xl text-center mb-4">MoneyPrinter</h1>
-    <p class="text-center text-gray-700">
+  <body class="bg-gray-900 min-h-screen justify-center p-28">
+    <h1 class="text-5xl font-bold text-center mb-4 text-white underline">
+      MoneyPrinter
+    </h1>
+    <p class="text-center text-green-500">
       This Application is intended to automate the creation and uploads of
       YouTube Shorts.
     </p>
@@ -28,7 +30,7 @@
         <select
           name="aiModel"
           id="aiModel"
-          class="w-full border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          class="w-full bg-gray-300 border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
         >
           <option value="g4f">g4f (Free)</option>
           <option value="gpt3.5-turbo">OpenAI GPT-3.5</option>
@@ -38,7 +40,7 @@
         <select
           name="voice"
           id="voice"
-          class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          class="w-min bg-gray-300 border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
         >
           <option value="en_us_ghostface">Ghost Face</option>
           <option value="en_us_chewbacca">Chewbacca</option>
@@ -89,15 +91,16 @@
           type="text"
           name="zipUrl"
           id="zipUrl"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          class="border-2 bg-gray-300 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
         />
         <label for="videoSubject" class="text-blue-600">Subject</label>
         <textarea
           rows="3"
           type="text"
+          placeholder="Stock Market, Cryptocurrency,Silicon Valley, etc."
           name="videoSubject"
           id="videoSubject"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          class="border-2 bg-gray-300 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
         ></textarea>
         <label for="paragraphNumber" class="text-blue-600"
           >Paragraph Number</label
@@ -106,7 +109,7 @@
           type="number"
           name="paragraphNumber"
           id="paragraphNumber"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          class="border-2 bg-gray-300 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
           value="1"
           min="1"
           max="100"
@@ -134,7 +137,7 @@
         </label>
         <button
           id="generateButton"
-          class="bg-blue-500 hover:bg-blue-700 duration-100 linear text-white px-4 py-2 rounded-md"
+          class="bg-blue-500 hover:bg-blue-700 duration-100 linear text-white px-4 py-2 rounded-md "
         >
           Generate
         </button>
@@ -149,7 +152,7 @@
 
     <footer class="flex justify-center mt-8">
       <div class="flex flex-col space-y-4">
-        <p class="text-center text-gray-700">
+        <p class="text-center font-bold text-gray-500">
           Made with ❤️ by
           <a
             class="text-blue-600"
