@@ -85,8 +85,16 @@ def choose_random_song() -> str:
     """
     try:
         songs = os.listdir("../Songs")
+        # Filter out only .mp3 files
+        songs = [file for file in all_files if file.endswith('.mp3')]
+        if not songs:
+            error_message = "No .mp3 files found in the directory."
+            logger.error(colored(error_message, "red"))
+            raise Exception(error_message)
         song = random.choice(songs)
         logger.info(colored(f"Chose song: {song}", "green"))
         return f"../Songs/{song}"
     except Exception as e:
         logger.error(colored(f"Error occurred while choosing random song: {str(e)}", "red"))
+        # Re-raise the exception to signal the calling code about the error
+        raise e
