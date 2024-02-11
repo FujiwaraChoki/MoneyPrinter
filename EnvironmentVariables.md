@@ -25,8 +25,8 @@
 
 - PEXELS_API_KEY: Your unique Pexels API key is required. Obtain yours [here](https://www.pexels.com/api/)
 
-      create an account in pexels and then go to the api key section and get the api key.   
-    The Pexels API key is used to download images from Pexels.
+    - create an account in pexels and then go to the api key section and get the api key.   
+    - The Pexels API key is used to download images from Pexels.
 
 - ChatGPT_API_KEY: Your unique ChatGPT API key is required. Obtain yours [here](https://platform.openai.com/)
     - The ChatGPT API key is used to generate the script for the video.
