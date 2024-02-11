@@ -130,3 +130,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
 document.getElementById("voice").addEventListener("change", (event) => {
   localStorage.setItem("voiceValue", event.target.value);
 });
+
+
+//only enable zipUrl if use music is checked
+useMusicToggle.addEventListener("change", () => {
+  if (useMusicToggle.checked) {
+    zipUrl.disabled = false;
+  } else {
+    zipUrl.disabled = true;
+  }
+});

@@ -31,6 +31,16 @@ cd ../Frontend
 python -m http.server 3000
 ```
 
+## MacOS Users 💻
+
+You may need to first install ImageMagick and ffmepg by running 
+
+```
+$ brew install imagemagick
+$ brew install ffmepg
+
+``` 
+
 See [`.env.example`](.env.example) for the required environment variables.
 
 If you need help, open [EnvironmentVariables.md](EnvironmentVariables.md) for more information.
@@ -45,6 +55,7 @@ If you need help, open [EnvironmentVariables.md](EnvironmentVariables.md) for mo
 1. The video's location is `MoneyPrinter/output.mp4`
 
 ## Music 🎵
+
 
 To use your own music, compress all your MP3 Files into a ZIP file and upload it somewhere. Provide the link to the ZIP file in the Frontend.
 
