@@ -228,6 +228,6 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str,
     audio = AudioFileClip(tts_path)
     result = result.set_audio(audio)
 
-    result.write_videofile("../temp/output.mp4", threads=2)
+    result.write_videofile("../temp/output.mp4", threads=threads or 2)
 
     return "output.mp4"
