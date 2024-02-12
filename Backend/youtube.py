@@ -4,13 +4,13 @@ import time
 import random
 import httplib2
 
-from termcolor import colored
-from oauth2client.file import Storage
+from termcolor import colored 
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
-from oauth2client.tools import argparser, run_flow
-from oauth2client.client import flow_from_clientsecrets
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
 
 # Explicitly tell the underlying HTTP transport library not to retry, since
 # we are handling retry logic ourselves.
@@ -67,19 +67,37 @@ def get_authenticated_service():
     Returns:
         any: The authenticated YouTube service.
     """
-    flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
-                                   scope=SCOPES,
-                                   message=MISSING_CLIENT_SECRETS_MESSAGE)
+    if not os.path.exists(CLIENT_SECRETS_FILE):
+        print(colored(MISSING_CLIENT_SECRETS_MESSAGE, "red"))
+        sys.exit(1)
 
-    storage = Storage(f"{sys.argv[0]}-oauth2.json")
-    credentials = storage.get()
+    credentials = get_or_refresh_credentials()
 
-    if credentials is None or credentials.invalid:
-        flags = argparser.parse_args()
-        credentials = run_flow(flow, storage, flags)
+    try:
+        with open('./credentials.json', 'w') as token:
+            token.write(credentials.to_json())
+    except Exception as e:
+        print(colored(f"[-] An error occurred while writing the credentials to a file: {e}", "red"))
+        sys.exit(1)
 
-    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-                 http=credentials.authorize(httplib2.Http()))
+    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, credentials=credentials)
+
+def get_or_refresh_credentials():
+    """
+    Get existing credentials from file or refresh if expired.
+
+    Returns:
+        Credentials: The valid credentials.
+    """
+    if os.path.exists('./credentials.json'):
+        credentials = Credentials.from_authorized_user_file('./credentials.json', SCOPES)
+        if credentials.expired:
+            credentials.refresh(Request())
+    else:
+        flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, SCOPES)
+        credentials = flow.run_local_server()
+
+    return credentials
 
 def initialize_upload(youtube: any, options: dict):
     """

@@ -12,6 +12,7 @@ images/*
 subtitles/*
 /venv
 client_secret.json
+credentials.json
 main.py-oauth2.json
 .DS_Store
 Backend/output*

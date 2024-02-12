@@ -15,6 +15,7 @@ undetected_chromedriver
 assemblyai
 brotli
 google-api-python-client 
+google_auth_oauthlib
 oauth2client
 openai
 google-generativeai
