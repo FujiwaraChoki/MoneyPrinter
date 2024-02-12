@@ -23,6 +23,8 @@ VOICES = [
     "en_us_stitch",  # Stitch
     "en_us_stormtrooper",  # Stormtrooper
     "en_us_rocket",  # Rocket
+    "en_male_cupid", # Cupid
+    "en_female_samc", # Empathetic
     # ENGLISH VOICES
     "en_au_001",  # English AU - Female
     "en_au_002",  # English AU - Male
