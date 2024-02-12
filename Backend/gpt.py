@@ -17,7 +17,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 openai.api_key = OPENAI_API_KEY
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 genai.configure(api_key=GOOGLE_API_KEY)
-
+OLLAMA_ENDPOINT = os.getenv("OLLAMA_ENDPOINT")
 
 def generate_response(prompt: str, ai_model: str) -> str:
     """
@@ -61,7 +61,7 @@ def generate_response(prompt: str, ai_model: str) -> str:
         response = response_model.text
 
     elif ai_model in ['llama2', 'llama2-uncensored']:
-        url = "http://localhost:11434/api/generate"
+        url = OLLAMA_ENDPOINT
         data = {
             "model": ai_model,
             "prompt": prompt,

@@ -14,6 +14,8 @@
 
 - GOOGLE_API_KEY: Your Gemini API key is essential for Gemini Pro Model. Generate one securely at [Get API key | Google AI Studio](https://makersuite.google.com/app/apikey)
 
-* ASSEMBLY_AI_API_KEY: Your unique AssemblyAI API key is required. You can obtain one [here](https://www.assemblyai.com/app/). This field is optional; if left empty, the subtitle will be created based on the generated script. Subtitles can also be created locally.
+- ASSEMBLY_AI_API_KEY: Your unique AssemblyAI API key is required. You can obtain one [here](https://www.assemblyai.com/app/). This field is optional; if left empty, the subtitle will be created based on the generated script. Subtitles can also be created locally.
+
+- OLLAMA_ENDPOINT_URL: Where to query Ollama for LLAMA2 or other supported models (if your ollama host is the same machine, this would be `http://localhost:11434/api/generate`)
 
 Join the [Discord](https://dsc.gg/fuji-community) for support and updates.
