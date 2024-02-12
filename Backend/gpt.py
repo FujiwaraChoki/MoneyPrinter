@@ -260,4 +260,60 @@ def generate_metadata(video_subject: str, script: str, ai_model: str) -> Tuple[s
     # Generate keywords  
     keywords = get_search_terms(video_subject, 6, script, ai_model)  
 
-    return title, description, keywords  
+    return title, description, keywords
+
+
+def generate_hashtags(video_subject: str, hashtag_cnt: int) -> list:
+    """
+    Generate hashtag list for searching TikTok video, depending on the subject of the video.
+
+    Args:
+        video_subject (str): The subject of the video.
+        hashtag_cnt (int): Number of hashtags.
+
+    Returns:
+        list: list of hashtags related to the subject of the video.
+    """
+
+    # Build prompt
+    prompt = f"""
+    Generate and return JSON ARRAY of TikTok hashtags related to following topic
+    
+    topic: "{video_subject}"
+    
+    Here is an example of a JSON ARRAY:
+    ["A", "B", "C", "D"]
+    
+    YOU MUST ONLY RETURN THE JSON-ARRAY OF STRINGS.
+    JSON-ARRAY MUST BE IN PRINTED SINGLE LINE.
+    
+    HASHTAG MUST BE VERY CLOSELY RELATED TO THE TOPIC.
+    HASHTAG MUST BE VERY LIKELY TO BE SEARCHED ON TIKTOK.
+    HASHTAG MUST BE ONE WORD.
+    HASHTAG MUST NOT INCLUDE EMPTY SPACE.
+    EXCLUDE "#" IN EACH HASHTAG.
+    
+    LENGTH OF THE JSON ARRAY MUST BE MAXIMUM {hashtag_cnt}
+    YOUR ANSWER MUST NOT HAVE ANY TITLE OR DESCRIPTION.
+    """
+
+    # Generate script
+    response = g4f.ChatCompletion.create(
+        model=g4f.models.gpt_35_turbo_16k_0613,
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    # Load response into JSON-Array
+    try:
+        hashtags_str = re.findall(r'\[.*\]', str(response))
+        hashtags = json.loads(hashtags_str[0])
+    except Exception as e:
+        print(colored(f"Error while extracting hashtag, gpt response: {response}", "red"))
+        print(colored(f"Err: {e}", "red"))
+        return []
+
+    # Let user know
+    print(colored(f"\nGenerated hashtags: {', '.join(hashtags)}", "cyan"))
+
+    # Return search terms
+    return hashtags
