@@ -2,6 +2,7 @@ import re
 import json
 import g4f
 import openai
+from openai import OpenAI
 from typing import Tuple, List  
 from termcolor import colored
 from dotenv import load_dotenv
@@ -45,9 +46,11 @@ def generate_response(prompt: str, ai_model: str) -> str:
 
     elif ai_model in ["gpt3.5-turbo", "gpt4"]:
 
+        client = OpenAI()
+
         model_name = "gpt-3.5-turbo" if ai_model == "gpt3.5-turbo" else "gpt-4-1106-preview"
 
-        response = openai.chat.completions.create(
+        response = client.chat.completions.create(
 
             model=model_name,
 
