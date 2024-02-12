@@ -5,6 +5,7 @@ const zipUrl = document.querySelector("#zipUrl");
 const paragraphNumber = document.querySelector("#paragraphNumber");
 const youtubeToggle = document.querySelector("#youtubeUploadToggle");
 const useMusicToggle = document.querySelector("#useMusicToggle");
+const openVideoAfterCreationToggle = document.querySelector("#openVideoAfterCreation");
 const customPrompt = document.querySelector("#customPrompt");
 const generateButton = document.querySelector("#generateButton");
 const cancelButton = document.querySelector("#cancelButton");
@@ -50,6 +51,10 @@ const cancelGeneration = () => {
   generateButton.classList.remove("hidden");
 };
 
+const openInNewTab = (url) => {
+  window.open(url, '_blank').focus();
+}
+
 const generateVideo = () => {
   console.log("Generating video...");
   // Disable button and change text
@@ -66,6 +71,7 @@ const generateVideo = () => {
   const paragraphNumberValue = paragraphNumber.value;
   const youtubeUpload = youtubeToggle.checked;
   const useMusicToggleState = useMusicToggle.checked;
+  const openVideoAfterCreationToggleState = openVideoAfterCreationToggle.checked;
   const threads = document.querySelector("#threads").value;
   const zipUrlValue = zipUrl.value;
   const customPromptValue = customPrompt.value;
@@ -81,6 +87,7 @@ const generateVideo = () => {
     paragraphNumber: paragraphNumberValue,
     automateYoutubeUpload: youtubeUpload,
     useMusic: useMusicToggleState,
+    openVideoAfterCreation: openVideoAfterCreationToggleState,
     zipUrl: zipUrlValue,
     threads: threads,
     subtitlesPosition: subtitlesPosition,
@@ -100,6 +107,9 @@ const generateVideo = () => {
     .then((data) => {
       console.log(data);
       alert(data.message);
+      if (data.link)  {
+        openInNewTab(data.link)
+      }
       // Hide cancel button after generation is complete
       generateButton.disabled = false;
       generateButton.classList.remove("hidden");

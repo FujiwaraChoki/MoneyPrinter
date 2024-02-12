@@ -60,6 +60,7 @@ def generate():
 
         # Get 'useMusic' from the request data and default to False if not provided
         use_music = data.get('useMusic', False)
+        open_video_after_creation = data.get('openVideoAfterCreation', False)
 
         # Get 'automateYoutubeUpload' from the request data and default to False if not provided
         automate_youtube_upload = data.get('automateYoutubeUpload', False)
@@ -227,7 +228,8 @@ def generate():
 
         # Put everything together
         try:
-            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2, subtitles_position)
+            final_video_filename = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2, subtitles_position)
+            final_video_path = f'../Frontend/assets/{final_video_filename}'
         except Exception as e:
             print(colored(f"[-] Error generating final video: {e}", "red"))
             final_video_path = None
@@ -259,7 +261,7 @@ def generate():
                 video_category_id = "28"  # Science & Technology
                 privacyStatus = "private"  # "public", "private", "unlisted"
                 video_metadata = {
-                    'video_path': os.path.abspath(f"../temp/{final_video_path}"),
+                    'video_path': os.path.abspath(f"../temp/{final_video_filename}"),
                     'title': title,
                     'description': description,
                     'category': video_category_id,
@@ -282,7 +284,7 @@ def generate():
                 except HttpError as e:
                     print(f"An HTTP error {e.resp.status} occurred:\n{e.content}")
 
-        video_clip = VideoFileClip(f"../temp/{final_video_path}")
+        video_clip = VideoFileClip(f"../temp/{final_video_filename}")
         if use_music:
             # Select a random song
             song_path = choose_random_song()
@@ -300,9 +302,9 @@ def generate():
             video_clip = video_clip.set_audio(comp_audio)
             video_clip = video_clip.set_fps(30)
             video_clip = video_clip.set_duration(original_duration)
-            video_clip.write_videofile(f"../{final_video_path}", threads=n_threads or 1)
+            video_clip.write_videofile(final_video_path, threads=n_threads or 1)
         else:
-            video_clip.write_videofile(f"../{final_video_path}", threads=n_threads or 1)
+            video_clip.write_videofile(final_video_path, threads=n_threads or 1)
 
 
         # Let user know
@@ -319,13 +321,18 @@ def generate():
         GENERATING = False
 
         # Return JSON
-        return jsonify(
-            {
-                "status": "success",
-                "message": "Video generated! See MoneyPrinter/output.mp4 for result.",
-                "data": final_video_path,
-            }
-        )
+        data = {
+            "status": "success",
+            "data": final_video_path,
+        }
+
+        if open_video_after_creation:
+            data["link"] = "http://localhost:3000/assets/output.mp4"
+            data["message"] = "Video generated! It will automatically open after you close this alert. You can also find it in MoneyPrinter/Frontend/assets/output.mp4"
+        else:
+            data["message"] = "Video generated! See MoneyPrinter/Frontend/assets/output.mp4 for result."
+
+        return jsonify(data)
     except Exception as err:
         print(colored(f"[-] Error: {str(err)}", "red"))
         return jsonify(

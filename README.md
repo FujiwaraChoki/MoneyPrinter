@@ -42,7 +42,7 @@ If you need help, open [EnvironmentVariables.md](EnvironmentVariables.md) for mo
 1. Enter a topic to talk about
 1. Click on the "Generate" button
 1. Wait for the video to be generated
-1. The video's location is `MoneyPrinter/output.mp4`
+1. The video's location is `MoneyPrinter/Frontend/assets/output.mp4`
 
 ## Music 🎵
 
