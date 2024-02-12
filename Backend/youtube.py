@@ -6,9 +6,9 @@ import httplib2
 
 from termcolor import colored
 from oauth2client.file import Storage
-from apiclient.discovery import build
-from apiclient.errors import HttpError
-from apiclient.http import MediaFileUpload
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaFileUpload
 from oauth2client.tools import argparser, run_flow
 from oauth2client.client import flow_from_clientsecrets
 
@@ -22,7 +22,7 @@ MAX_RETRIES = 10
 # Always retry when these exceptions are raised.
 RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error, IOError, httplib2.ServerNotFoundError)
 
-# Always retry when an apiclient.errors.HttpError with one of these status
+# Always retry when an googleapiclient.errors.HttpError with one of these status
 # codes is raised.
 RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
 
