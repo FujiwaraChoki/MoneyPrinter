@@ -1,21 +1,142 @@
 import os
 import uuid
+import random
+import pathlib
 
 import requests
+import pytesseract
+import numpy as np
 import srt_equalizer
 import assemblyai as aai
 
+from PIL import Image
 from typing import List
+from yt_dlp import YoutubeDL
 from moviepy.editor import *
 from termcolor import colored
 from dotenv import load_dotenv
 from datetime import timedelta
+from TikTokApi import TikTokApi
 from moviepy.video.fx.all import crop
+from moviepy.editor import VideoFileClip
 from moviepy.video.tools.subtitles import SubtitlesClip
+
 
 load_dotenv("../.env")
 
 ASSEMBLY_AI_API_KEY = os.getenv("ASSEMBLY_AI_API_KEY")
+TIKTOK_MS_TOKEN = os.getenv("TIKTOK_MS_TOKEN")
+
+
+async def save_tiktok_videos(hashtags: list, video_count: int = 1, directory: str = "../temp") -> list:
+    async with TikTokApi() as api:
+        await api.create_sessions(ms_tokens=[TIKTOK_MS_TOKEN], num_sessions=1, sleep_after=3, headless=False, suppress_resource_load_types=["image", "media", "font", "stylesheet"])
+
+        video_paths = []
+
+        # Search TikTok videos by hashtag
+        hashtag_videos = await __fetch_videos_from_tiktok_by_hashtags(api, hashtags)
+
+        # Download videos from TikTok using hashtag
+        while len(video_paths) < min(video_count, len(hashtag_videos)):
+            video_path = __pick_and_download_tiktok_video(hashtag_videos, directory)
+            if video_path is None:
+                continue
+
+            video_paths.append(video_path)
+            print(colored(f"Current progress: ({len(video_paths)}/{video_count})", "cyan"))
+
+        # Fill insufficient videos with trending TikTok videos
+        trending_videos = await __fetch_trending_videos_from_tiktok(api)
+        while len(video_paths) < video_count:
+            video_path = __pick_and_download_tiktok_video(trending_videos, directory)
+            if video_path is None:
+                continue
+
+            video_paths.append(video_path)
+            print(colored(f"Current progress: ({len(video_paths)}/{video_count})", "cyan"))
+
+    return video_paths
+
+
+async def __fetch_videos_from_tiktok_by_hashtags(api, hashtags: list):
+    videos = []
+    for hashtag in hashtags:
+        try:
+            result = [video async for video in api.hashtag(name=hashtag).videos()]
+            print(colored(f'hashtag: {hashtag}, searched count: {len(result)}', "cyan"))
+            videos.extend(result)
+        except Exception as e:
+            print(f"Err: {e}")
+    return videos
+
+
+async def __fetch_trending_videos_from_tiktok(api):
+    videos = []
+    try:
+        result = [video async for video in api.trending.videos()]
+        print(colored(f'trending video searched count: {len(result)}', "cyan"))
+        videos.extend(result)
+    except Exception as e:
+        print(f"Err: {e}")
+    return videos
+
+
+def __pick_and_download_tiktok_video(videos, directory):
+    # Pick a random video
+    tmp_video = random.choice(videos)
+    videos.remove(tmp_video)
+
+    # Download video
+    video_path = __download_tiktok_video(tmp_video, directory)
+    if video_path is None:
+        return None
+
+    # Check if video has hard subtitles
+    if check_for_subtitles(video_path):
+        print(colored(f"{video_path} has subtitle, therefore discarded", "red"))
+        return None
+
+    print(colored(f"{video_path} was selected.", "cyan"))
+    return video_path
+
+
+def __download_tiktok_video(video, directory):
+    video_id = str(uuid.uuid4())
+    tiktok_url = f"https://www.tiktok.com/@{video.author.username}/video/{video.id}"
+    ydl_opts = {'outtmpl': f'{directory}/{video_id}.%(ext)s'}
+
+    try:
+        with YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(tiktok_url)
+            filename = ydl.prepare_filename(info)
+    except Exception as e:
+        print(f"Err: {e}")
+        return None
+
+    extension = pathlib.Path(filename).suffix
+    if extension != '.mp4':
+        return None
+
+    return f'{directory}/{video_id}.mp4'
+
+
+def check_for_subtitles(video_path, interval_seconds=5):
+    clip = VideoFileClip(video_path)
+
+    # Extract frames
+    frames = []
+    for t in np.arange(0, clip.duration, interval_seconds):
+        frame = clip.get_frame(t)
+        frames.append(frame)
+
+    # Check for subtitles using OCR
+    for frame in frames:
+        img = Image.fromarray(frame)
+        ocr_result = pytesseract.image_to_string(img)
+        if len(ocr_result.strip()) > 0:
+            return True
+    return False
 
 
 def save_video(video_url: str, directory: str = "../temp") -> str:
