@@ -122,21 +122,25 @@ def __download_tiktok_video(video, directory):
 
 
 def check_for_subtitles(video_path, interval_seconds=5):
-    clip = VideoFileClip(video_path)
+    try:
+        clip = VideoFileClip(video_path)
 
-    # Extract frames
-    frames = []
-    for t in np.arange(0, clip.duration, interval_seconds):
-        frame = clip.get_frame(t)
-        frames.append(frame)
+        # Extract frames
+        frames = []
+        for t in np.arange(0, clip.duration, interval_seconds):
+            frame = clip.get_frame(t)
+            frames.append(frame)
 
-    # Check for subtitles using OCR
-    for frame in frames:
-        img = Image.fromarray(frame)
-        ocr_result = pytesseract.image_to_string(img)
-        if len(ocr_result.strip()) > 0:
-            return True
-    return False
+        # Check for subtitles using OCR
+        for frame in frames:
+            img = Image.fromarray(frame)
+            ocr_result = pytesseract.image_to_string(img)
+            if len(ocr_result.strip()) > 0:
+                return True
+        return False
+    except Exception as e:
+        print(f"Err: {e}")
+        return False
 
 
 def save_video(video_url: str, directory: str = "../temp") -> str:
