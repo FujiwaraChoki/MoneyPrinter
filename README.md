@@ -88,6 +88,10 @@ For videos that have been locked as private due to upload via an unverified API 
 
 You can obtain your TikTok session ID by logging into TikTok in your browser and copying the value of the `sessionid` cookie.
 
+### How do I get the TIKTOK_MS_TOKEN?
+
+You can obtain your TIKTOK_MS_TOKEN by visiting TikTok in your browser and copying the value of the `msToken` cookie. Login not required.
+
 ### My ImageMagick binary is not being detected
 
 Make sure you set your path to the ImageMagick binary correctly in the `.env` file, it should look something like this:
