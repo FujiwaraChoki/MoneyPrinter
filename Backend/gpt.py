@@ -192,9 +192,6 @@ def get_search_terms(video_subject: str, amount: int, script: str, ai_model: str
     depending on the subject of a video.
     Subject: {video_subject}
 
-    If the subject of the video is potentially sexual in nature, please avoid using explicit terms.
-    You can use terms that are related to the subject of the video, but not explicit.
-
     The search terms are to be returned as
     a JSON-Array of strings.
 
