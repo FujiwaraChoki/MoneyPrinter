@@ -111,6 +111,10 @@ pip install -U wheel
 pip install -U playsound
 ```
 
+### Troubleshooting
+
+This repository is being updated daily, so if you encounter an issue a few days later after cloning, run `git pull origin main` to stay up to date. Do note that starting from scratch by re-cloning will delete your `.env` file, your `Songs` directory, and any other custom fonts you put in the `fonts` directory.
+
 ## Donate 🎁
 
 If you like and enjoy `MoneyPrinter`, and would like to donate, you can do that by clicking on the button on the right hand side of the repository. ❤️
