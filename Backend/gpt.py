@@ -6,6 +6,7 @@ from typing import Tuple, List
 from termcolor import colored
 from dotenv import load_dotenv
 import os
+import requests
 import google.generativeai as genai
 
 # Load environment variables
@@ -58,6 +59,21 @@ def generate_response(prompt: str, ai_model: str) -> str:
         model = genai.GenerativeModel('gemini-pro')
         response_model = model.generate_content(prompt)
         response = response_model.text
+
+    elif ai_model in ['llama2', 'llama2-uncensored']:
+        url = "http://localhost:11434/api/generate"
+        data = {
+            "model": ai_model,
+            "prompt": prompt,
+            "stream": False,
+            "format": "json" 
+        }
+        response = requests.post(url, json=data)
+        try:
+            response = response.json()['response']
+        except:
+            response = response.text
+            print(colored(f"[-] Error: {response}", "red"))
 
     else:
 
@@ -175,6 +191,9 @@ def get_search_terms(video_subject: str, amount: int, script: str, ai_model: str
     Generate {amount} search terms for stock videos,
     depending on the subject of a video.
     Subject: {video_subject}
+
+    If the subject of the video is potentially sexual in nature, please avoid using explicit terms.
+    You can use terms that are related to the subject of the video, but not explicit.
 
     The search terms are to be returned as
     a JSON-Array of strings.
