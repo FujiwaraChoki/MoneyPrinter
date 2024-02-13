@@ -205,7 +205,7 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
     return combined_video_path
 
 
-def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str, threads: int, subtitles_position: str) -> str:
+def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str, threads: int, subtitles_position: str,  text_color : str) -> str:
     """
     This function creates the final video, with subtitles and audio.
 
@@ -224,7 +224,7 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str,
         txt,
         font="../fonts/bold_font.ttf",
         fontsize=100,
-        color="#FFFF00",
+        color=text_color,
         stroke_color="black",
         stroke_width=5,
     )
