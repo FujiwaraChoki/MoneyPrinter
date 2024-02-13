@@ -44,7 +44,7 @@ If you need help, open [EnvironmentVariables.md](EnvironmentVariables.md) for mo
 1. Wait for the video to be generated
 1. The video's location is `MoneyPrinter/output.mp4`
 
-P.S. If you are accesssing the MP Frontend from a different device (e.g. the MP front and backend  on a server), edit lines 28 and 74 of Frontend/app.js from localhost to whatever the IP of that server is you're running MP on.
+P.S. If you are accesssing the MP Frontend from a different device (e.g. the MP front and backend on a server), edit lines 28 and 74 of Frontend/app.js from localhost to whatever the IP of that server is you're running MP on.
 
 ## Music 🎵
 
@@ -88,7 +88,7 @@ For videos that have been locked as private due to upload via an unverified API 
 
 ### How do I get the TikTok session ID?
 
-You can obtain your TikTok session ID by logging into TikTok in your browser and copying the value of the `sessionid` cookie.
+You can obtain your TikTok session ID by logging into TikTok in your browser and copying the value of the `sessionid` cookie. You can open the console tab, and run the code `console.log(sessionStorage.getItem("webapp_session_id"))` to get the value of the cookie.
 
 ### My ImageMagick binary is not being detected
 
