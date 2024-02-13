@@ -1,22 +1,26 @@
 import os
+from utils import *
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv("../.env")
+# Check if all required environment variables are set
+# This must happen before importing video which uses API keys without checking
+check_env_vars()
 
 from gpt import *
 from video import *
-from utils import *
 from search import *
 from uuid import uuid4
 from tiktokvoice import *
 from flask_cors import CORS
 from termcolor import colored
-from dotenv import load_dotenv
 from youtube import upload_video
 from apiclient.errors import HttpError
 from flask import Flask, request, jsonify
 from moviepy.config import change_settings
 
 
-# Load environment variables
-load_dotenv("../.env")
 
 # Set environment variables
 SESSION_ID = os.getenv("TIKTOK_SESSION_ID")
@@ -53,6 +57,7 @@ def generate():
         ai_model = data.get('aiModel')  # Get the AI model selected by the user
         n_threads = data.get('threads')  # Amount of threads to use for video generation
         subtitles_position = data.get('subtitlesPosition')  # Position of the subtitles in the video
+        text_color = data.get('color') # Color of subtitle text
 
         # Get 'useMusic' from the request data and default to False if not provided
         use_music = data.get('useMusic', False)
@@ -223,7 +228,7 @@ def generate():
 
         # Put everything together
         try:
-            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2, subtitles_position)
+            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2, subtitles_position, text_color or "#FFFF00")
         except Exception as e:
             print(colored(f"[-] Error generating final video: {e}", "red"))
             final_video_path = None

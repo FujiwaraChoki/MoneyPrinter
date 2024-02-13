@@ -70,6 +70,8 @@ const generateVideo = () => {
   const zipUrlValue = zipUrl.value;
   const customPromptValue = customPrompt.value;
   const subtitlesPosition = document.querySelector("#subtitlesPosition").value;
+  const colorHexCode = document.querySelector("#subtitlesColor").value;
+
 
   const url = "http://localhost:8080/api/generate";
 
@@ -85,6 +87,7 @@ const generateVideo = () => {
     threads: threads,
     subtitlesPosition: subtitlesPosition,
     customPrompt: customPromptValue,
+    color: colorHexCode,
   };
 
   // Send the actual request to the server
