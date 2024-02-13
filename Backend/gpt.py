@@ -47,14 +47,14 @@ def generate_response(prompt: str, ai_model: str) -> str:
 
         model_name = "gpt-3.5-turbo" if ai_model == "gpt3.5-turbo" else "gpt-4-1106-preview"
 
-        response = openai.chat.completions.create(
+        response = openai.ChatCompletion.create(
 
             model=model_name,
 
             messages=[{"role": "user", "content": prompt}],
 
         ).choices[0].message.content
-    elif ai_model == 'gemmini':
+    elif ai_model == 'gemini':
         model = genai.GenerativeModel('gemini-pro')
         response_model = model.generate_content(prompt)
         response = response_model.text
