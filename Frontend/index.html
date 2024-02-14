@@ -24,114 +24,173 @@
 
     <div class="flex justify-center mt-8">
       <div class="max-w-xl flex flex-col space-y-4 w-full">
-        <label for="aiModel" class="text-blue-600">AI Model</label>
-        <select
-          name="aiModel"
-          id="aiModel"
-          class="w-full border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-        >
-          <option value="g4f">g4f (Free)</option>
-          <option value="gpt3.5-turbo">OpenAI GPT-3.5</option>
-          <option value="gpt4">OpenAI GPT-4</option>
-        </select>
-        <label for="voice" class="text-blue-600">Voice</label>
-        <select
-          name="voice"
-          id="voice"
-          class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-        >
-          <option value="en_us_ghostface">Ghost Face</option>
-          <option value="en_us_chewbacca">Chewbacca</option>
-          <option value="en_us_c3po">C3PO</option>
-          <option value="en_us_stitch">Stitch</option>
-          <option value="en_us_stormtrooper">Stormtrooper</option>
-          <option value="en_us_rocket">Rocket</option>
-          <option value="en_au_001">English AU - Female</option>
-          <option value="en_au_002">English AU - Male</option>
-          <option value="en_uk_001">English UK - Male 1</option>
-          <option value="en_uk_003">English UK - Male 2</option>
-          <option value="en_us_001">English US - Female (Int. 1)</option>
-          <option value="en_us_002">English US - Female (Int. 2)</option>
-          <option value="en_us_006">English US - Male 1</option>
-          <option value="en_us_007">English US - Male 2</option>
-          <option value="en_us_009">English US - Male 3</option>
-          <option value="en_us_010">English US - Male 4</option>
-          <option value="fr_001">French - Male 1</option>
-          <option value="fr_002">French - Male 2</option>
-          <option value="de_001">German - Female</option>
-          <option value="de_002">German - Male</option>
-          <option value="es_002">Spanish - Male</option>
-          <option value="es_mx_002">Spanish MX - Male</option>
-          <option value="br_001">Portuguese BR - Female 1</option>
-          <option value="br_003">Portuguese BR - Female 2</option>
-          <option value="br_004">Portuguese BR - Female 3</option>
-          <option value="br_005">Portuguese BR - Male</option>
-          <option value="id_001">Indonesian - Female</option>
-          <option value="jp_001">Japanese - Female 1</option>
-          <option value="jp_003">Japanese - Female 2</option>
-          <option value="jp_005">Japanese - Female 3</option>
-          <option value="jp_006">Japanese - Male</option>
-          <option value="kr_002">Korean - Male 1</option>
-          <option value="kr_003">Korean - Female</option>
-          <option value="kr_004">Korean - Male 2</option>
-          <option value="en_female_f08_salut_damour">Alto</option>
-          <option value="en_male_m03_lobby">Tenor</option>
-          <option value="en_female_f08_warmy_breeze">Warmy Breeze</option>
-          <option value="en_male_m03_sunshine_soon">Sunshine Soon</option>
-          <option value="en_male_narration">narrator</option>
-          <option value="en_male_funny">wacky</option>
-          <option value="en_female_emotional">peaceful</option>
-        </select>
-        <label for="zipUrl" class="text-blue-600"
-          >Zip URL (Leave empty for default)</label
-        >
-        <input
-          type="text"
-          name="zipUrl"
-          id="zipUrl"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-        />
         <label for="videoSubject" class="text-blue-600">Subject</label>
-        <textarea
-          rows="3"
-          type="text"
-          name="videoSubject"
-          id="videoSubject"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-        ></textarea>
-        <label for="paragraphNumber" class="text-blue-600"
-          >Paragraph Number</label
+          <textarea
+              rows="3"
+              type="text"
+              name="videoSubject"
+              id="videoSubject"
+              class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          ></textarea>
+        <button id="advancedOptionsToggle" class="text-blue-600">
+          Show Advanced Options ▼
+        </button>
+        <div
+          class="flex flex-col space-y-4 hidden transition-all duration-150 linear"
+          id="advancedOptions"
         >
-        <input
-          type="number"
-          name="paragraphNumber"
-          id="paragraphNumber"
-          class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-          value="1"
-          min="1"
-          max="100"
-        />
-        <label
-          for="youtubeUploadToggle"
-          class="flex items-center text-blue-600"
-        >
+          <label for="aiModel" class="text-blue-600">AI Model</label>
+          <select
+            name="aiModel"
+            id="aiModel"
+            class="w-full border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          >
+            <option value="g4f">g4f (Free)</option>
+            <option value="gpt3.5-turbo">OpenAI GPT-3.5</option>
+            <option value="gpt4">OpenAI GPT-4</option>
+            <option value="gemmini">Gemini Pro</option>
+          </select>
+          <label for="voice" class="text-blue-600">Voice</label>
+          <select
+            name="voice"
+            id="voice"
+            class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          >
+            <option value="en_us_ghostface">Ghost Face</option>
+            <option value="en_us_chewbacca">Chewbacca</option>
+            <option value="en_us_c3po">C3PO</option>
+            <option value="en_us_stitch">Stitch</option>
+            <option value="en_us_stormtrooper">Stormtrooper</option>
+            <option value="en_us_rocket">Rocket</option>
+            <option value="en_au_001">English AU - Female</option>
+            <option value="en_au_002">English AU - Male</option>
+            <option value="en_uk_001">English UK - Male 1</option>
+            <option value="en_uk_003">English UK - Male 2</option>
+            <option value="en_us_001">English US - Female (Int. 1)</option>
+            <option value="en_us_002">English US - Female (Int. 2)</option>
+            <option value="en_us_006">English US - Male 1</option>
+            <option value="en_us_007">English US - Male 2</option>
+            <option value="en_us_009">English US - Male 3</option>
+            <option value="en_us_010">English US - Male 4</option>
+            <option value="fr_001">French - Male 1</option>
+            <option value="fr_002">French - Male 2</option>
+            <option value="de_001">German - Female</option>
+            <option value="de_002">German - Male</option>
+            <option value="es_002">Spanish - Male</option>
+            <option value="es_mx_002">Spanish MX - Male</option>
+            <option value="br_001">Portuguese BR - Female 1</option>
+            <option value="br_003">Portuguese BR - Female 2</option>
+            <option value="br_004">Portuguese BR - Female 3</option>
+            <option value="br_005">Portuguese BR - Male</option>
+            <option value="id_001">Indonesian - Female</option>
+            <option value="jp_001">Japanese - Female 1</option>
+            <option value="jp_003">Japanese - Female 2</option>
+            <option value="jp_005">Japanese - Female 3</option>
+            <option value="jp_006">Japanese - Male</option>
+            <option value="kr_002">Korean - Male 1</option>
+            <option value="kr_003">Korean - Female</option>
+            <option value="kr_004">Korean - Male 2</option>
+            <option value="en_female_f08_salut_damour">Alto</option>
+            <option value="en_male_m03_lobby">Tenor</option>
+            <option value="en_female_f08_warmy_breeze">Warmy Breeze</option>
+            <option value="en_male_m03_sunshine_soon">Sunshine Soon</option>
+            <option value="en_male_narration">narrator</option>
+            <option value="en_male_funny">wacky</option>
+            <option value="en_female_emotional">peaceful</option>
+          </select>
+          <label for="subtitlesPosition" class="text-blue-600"
+            >Subtitles Position</label
+          >
+          <select
+            name="subtitlesPosition"
+            id="subtitlesPosition"
+            class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          >
+            <option value="center,top">Center - Top</option>
+            <option value="center,bottom">Center - Bottom</option>
+            <option value="center,center">Center - Center</option>
+            <option value="left,center">Left - Center</option>
+            <option value="left,bottom">Left - Bottom</option>
+            <option value="right,center">Right - Center</option>
+            <option value="right,bottom">Right - Bottom</option>
+          </select>
+          <label for="subtitlesColor" class="text-blue-600"
+            >Subtitles Color</label>
+          <select
+            name="subtitlesColor"
+            id="subtitlesColor"
+            class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+          >
+            <option value="#FFFF00">Yellow (Default)</option>
+            <option value="#f4a261">Orange</option>
+            <option value="#e63946">Red</option>
+            <option value="#1d3557">Blue</option>
+            <option value="#fff">White</option>
+            <option value="#03071e">Black</option>
+          </select>
+          <label for="zipUrl" class="text-blue-600"
+            >Zip URL (Leave empty for default)</label
+          >
           <input
-            type="checkbox"
-            name="youtubeUploadToggle"
-            id="youtubeUploadToggle"
-            class="mr-2"
+            type="text"
+            name="zipUrl"
+            id="zipUrl"
+            class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
           />
-          Automate YouTube Uploads
-        </label>
-        <label for="useMusicToggle" class="flex items-center text-blue-600">
+          <label for="threads" class="text-blue-600">Threads</label>
           <input
-            type="checkbox"
-            name="useMusicToggle"
-            id="useMusicToggle"
-            class="mr-2"
+            type="number"
+            name="threads"
+            id="threads"
+            class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+            value="2"
+            min="1"
+            max="100"
+            placeholder="2 (Default)"
           />
-          Use Music
-        </label>
+          <label for="paragraphNumber" class="text-blue-600"
+            >Paragraph Number</label
+          >
+          <input
+            type="number"
+            name="paragraphNumber"
+            id="paragraphNumber"
+            class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+            value="1"
+            min="1"
+            max="100"
+          />
+          <label for="customPrompt" class="text-blue-600">Custom Prompt:</label>
+            <textarea
+              rows="3"
+              type="text"
+              name="customPrompt"
+              id="customPrompt"
+              class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+              placeholder="only use it if you want to replace the default prompt"
+            ></textarea>
+          <label
+            for="youtubeUploadToggle"
+            class="flex items-center text-blue-600"
+          >
+            <input
+              type="checkbox"
+              name="youtubeUploadToggle"
+              id="youtubeUploadToggle"
+              class="mr-2"
+            />
+            Upload to YouTube
+          </label>
+          <label for="useMusicToggle" class="flex items-center text-blue-600">
+            <input
+              type="checkbox"
+              name="useMusicToggle"
+              id="useMusicToggle"
+              class="mr-2"
+            />
+            Use Music
+          </label>
+        </div>
         <button
           id="generateButton"
           class="bg-blue-500 hover:bg-blue-700 duration-100 linear text-white px-4 py-2 rounded-md"
@@ -144,18 +203,6 @@
         >
           Cancel
         </button>
-        <label
-        for="reuseChoicesToggle"
-        class="flex items-center text-blue-600"
-      >
-        <input
-          type="checkbox"
-          name="reuseChoicesToggle"
-          id="reuseChoicesToggle"
-          class="mr-2"
-        />
-        Reuse Choices?
-      </label>
       </div>
     </div>
 
@@ -174,142 +221,6 @@
       </div>
     </footer>
 
-    <script>
-      const videoSubject = document.querySelector("#videoSubject");
-      const aiModel = document.querySelector("#aiModel");
-      const voice = document.querySelector("#voice");
-      const zipUrl = document.querySelector("#zipUrl");
-      const paragraphNumber = document.querySelector("#paragraphNumber");
-      const youtubeToggle = document.querySelector("#youtubeUploadToggle");
-      const useMusicToggle = document.querySelector("#useMusicToggle");
-      const generateButton = document.querySelector("#generateButton");
-      const cancelButton = document.querySelector("#cancelButton");
-
-      const cancelGeneration = () => {
-        console.log("Canceling generation...");
-        // Send request to /cancel
-        fetch("http://localhost:8080/api/cancel", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            alert(data.message);
-            console.log(data);
-          })
-          .catch((error) => {
-            alert("An error occurred. Please try again later.");
-            console.log(error);
-          });
-
-        // Hide cancel button
-        cancelButton.classList.add("hidden");
-
-        // Enable generate button
-        generateButton.disabled = false;
-        generateButton.classList.remove("hidden");
-      };
-
-      const generateVideo = () => {
-        console.log("Generating video...");
-        // Disable button and change text
-        generateButton.disabled = true;
-        generateButton.classList.add("hidden");
-
-        // Show cancel button
-        cancelButton.classList.remove("hidden");
-
-        // Get values from input fields
-        const videoSubjectValue = videoSubject.value;
-        const aiModelValue = aiModel.value;
-        const voiceValue = voice.value;
-        const paragraphNumberValue = paragraphNumber.value;
-        const youtubeUpload = youtubeToggle.checked;
-        const useMusicToggleState = useMusicToggle.checked;
-        const zipUrlValue = zipUrl.value;
-
-        const url = "http://localhost:8080/api/generate";
-
-        // Construct data to be sent to the server
-        const data = {
-          videoSubject: videoSubjectValue,
-          aiModel: aiModelValue,
-          voice: voiceValue,
-          paragraphNumber: paragraphNumberValue,
-          automateYoutubeUpload: youtubeUpload,
-          useMusic: useMusicToggleState,
-          zipUrl: zipUrlValue,
-        };
-
-        // Send the actual request to the server
-        fetch(url, {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            alert(data.message);
-            // Hide cancel button after generation is complete
-            generateButton.disabled = false;
-            generateButton.classList.remove("hidden");
-            cancelButton.classList.add("hidden");
-          })
-          .catch((error) => {
-            alert("An error occurred. Please try again later.");
-            console.log(error);
-          });
-      };
-
-      generateButton.addEventListener("click", generateVideo);
-      cancelButton.addEventListener("click", cancelGeneration);
-
-      videoSubject.addEventListener("keyup", (event) => {
-        if (event.key === "Enter") {
-          generateVideo();
-        }
-      });
-
-      toggles = ["youtubeUploadToggle", "useMusicToggle", "reuseChoicesToggle"];
-      fields = ["aiModel", "voice", "paragraphNumber", "videoSubject", "zipUrl"];
-
-      document.addEventListener("DOMContentLoaded", () => {
-        toggles.forEach((id) => {
-          const toggle = document.getElementById(id);
-          const storedValue = localStorage.getItem(`${id}Value`);
-          const storedReuseValue = localStorage.getItem("reuseChoicesToggleValue");
-
-          if (toggle && storedValue !== null && storedReuseValue === "true") {
-              toggle.checked = storedValue === "true";
-          }
-          // Attach change listener to update localStorage
-          toggle.addEventListener("change", (event) => {
-              localStorage.setItem(`${id}Value`, event.target.checked);
-          });
-        });
-
-        fields.forEach((id) => {
-          const select = document.getElementById(id);
-          const storedValue = localStorage.getItem(`${id}Value`);
-          const storedReuseValue = localStorage.getItem("reuseChoicesToggleValue");
-
-          if (storedValue && storedReuseValue === "true") {
-            select.value = storedValue;
-          }
-          // Attach change listener to update localStorage
-          select.addEventListener("change", (event) => {
-            localStorage.setItem(`${id}Value`, event.target.value);
-          });
-        });
-      });
-
-    </script>
+    <script src="app.js"></script>
   </body>
 </html>
