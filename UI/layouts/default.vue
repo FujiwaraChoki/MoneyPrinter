@@ -14,6 +14,11 @@ import type { MenuLinkRoute } from "@bg-dev/nuxt-naiveui";
 
 const menuOptions: MenuLinkRoute[] = [
   {
+    label: "Settings",
+    path: "/settings",
+    icon: "mdi:gamepad-circle",
+  },
+  {
     label: "Generate script",
     path: "/",
     icon: "mdi:script-text-outline",

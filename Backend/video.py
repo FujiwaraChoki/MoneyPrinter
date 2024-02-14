@@ -5,6 +5,8 @@ import requests
 import srt_equalizer
 import assemblyai as aai
 
+
+from settings import *
 from typing import List
 from moviepy.editor import *
 from termcolor import colored
@@ -228,19 +230,25 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str,
     # PRINT STATE
     print(colored("[+] Starting video generation...", "green"))
 
+    # Get the Settings
+    settings = get_settings()
     # Make a generator that returns a TextClip when called with consecutive
     generator = lambda txt: TextClip(
         txt,
-        font="../fonts/bold_font.ttf",
-        fontsize=100,
-        color="#FFFF00",
-        stroke_color="black",
-        stroke_width=5,
+        font=settings["font"],
+        fontsize=settings["fontsize"],
+        color=settings["color"],
+        stroke_color=settings["stroke_color"],
+        stroke_width=settings["stroke_width"],
     )
 
     # Split the subtitles position into horizontal and vertical
-    horizontal_subtitles_position, vertical_subtitles_position = subtitles_position.split(",")
+    horizontal_subtitles_position, vertical_subtitles_position = settings["subtitles_position"].split(",")
 
+    # if subtitle position is not the same as the setting we override
+    if subtitles_position != settings["subtitles_position"]:
+        horizontal_subtitles_position, vertical_subtitles_position = subtitles_position.split(",")
+        
     # Burn the subtitles into the video
     subtitles = SubtitlesClip(subtitles_path, generator)
     result = CompositeVideoClip([

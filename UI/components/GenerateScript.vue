@@ -16,6 +16,8 @@ const availableSongs = ref<string[]>([]);
 const finalVideo = ref("");
 const router = useRouter();
 
+const API_URL = "http://localhost:8080";
+
 const formModel = ref({
   videoSubject: "",
   aiModel: "g4f",
@@ -52,11 +54,11 @@ const isLoading = ref(false);
 
 onMounted(async () => {
   const { data: songsResponse } = await $fetch<{ data: { songs: string[] } }>(
-    `http://localhost:8080/api/getSongs`
+    `${API_URL}/api/getSongs`
   );
   availableSongs.value = songsResponse.songs;
   const { data } = await $fetch<{ data: { voices: string[] } }>(
-    `http://localhost:8080/api/models`
+    `${API_URL}/api/models`
   );
   voiceOptions.value = data.voices.map((voice) => {
     return { label: voice, value: voice };
@@ -85,7 +87,7 @@ const HandleGenerateSubject = async () => {
     isLoading.value = !isLoading.value;
     const { data } = await $fetch<{
       data: { script: string; search: string[] };
-    }>(`http://localhost:8080/api/script`, {
+    }>(`${API_URL}/api/script`, {
       method: "POST",
       body: formModel.value,
     });
@@ -111,7 +113,7 @@ const HandleGenerateVideo = async () => {
         subtitles: string;
         finalVideo: string;
       };
-    }>(`http://localhost:8080/api/search-and-download`, {
+    }>(`${API_URL}/api/search-and-download`, {
       method: "POST",
       body: {
         script: videoModel.value.script,
@@ -135,7 +137,7 @@ const HandleAddAudio = async () => {
   try {
     isLoading.value = !isLoading.value;
     const { data } = await $fetch<{ data: { finalVideo: string } }>(
-      `http://localhost:8080/api/addAudio`,
+      `${API_URL}/api/addAudio`,
       {
         method: "POST",
         body: {
@@ -285,7 +287,7 @@ const HandleAddAudio = async () => {
               class="mb-5"
             >
               <source
-                :src="`http://localhost:8080/static/Songs/${song}`"
+                :src="`${API_URL}/static/Songs/${song}`"
                 type="audio/mp4"
               />
             </audio>
