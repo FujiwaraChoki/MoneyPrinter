@@ -133,7 +133,36 @@ document.addEventListener("DOMContentLoaded", (event) => {
   }
 });
 
-// When the voice select field changes, store the new value in localStorage.
-document.getElementById("voice").addEventListener("change", (event) => {
-  localStorage.setItem("voiceValue", event.target.value);
+// Save the data to localStorage when the user changes the value
+toggles = ["youtubeUploadToggle", "useMusicToggle", "reuseChoicesToggle"];
+fields = ["aiModel", "voice", "paragraphNumber", "videoSubject", "zipUrl", "customPrompt", "threads", "subtitlesPosition", "subtitlesColor"];
+
+document.addEventListener("DOMContentLoaded", () => {
+  toggles.forEach((id) => {
+    const toggle = document.getElementById(id);
+    const storedValue = localStorage.getItem(`${id}Value`);
+    const storedReuseValue = localStorage.getItem("reuseChoicesToggleValue");
+
+    if (toggle && storedValue !== null && storedReuseValue === "true") {
+        toggle.checked = storedValue === "true";
+    }
+    // Attach change listener to update localStorage
+    toggle.addEventListener("change", (event) => {
+        localStorage.setItem(`${id}Value`, event.target.checked);
+    });
+  });
+
+  fields.forEach((id) => {
+    const select = document.getElementById(id);
+    const storedValue = localStorage.getItem(`${id}Value`);
+    const storedReuseValue = localStorage.getItem("reuseChoicesToggleValue");
+
+    if (storedValue && storedReuseValue === "true") {
+      select.value = storedValue;
+    }
+    // Attach change listener to update localStorage
+    select.addEventListener("change", (event) => {
+      localStorage.setItem(`${id}Value`, event.target.value);
+    });
+  });
 });
