@@ -107,6 +107,8 @@ pip install -U wheel
 pip install -U playsound
 ```
 
+If you were not able to find your solution, please ask in the discord or create a new issue, so that the community can help you.
+
 ## Donate 🎁
 
 If you like and enjoy `MoneyPrinter`, and would like to donate, you can do that by clicking on the button on the right hand side of the repository. ❤️
