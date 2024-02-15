@@ -114,7 +114,7 @@ You will have your name (and/or logo) added to this repository as a supporter as
 
 ## Contributing 🤝
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Pull Requests will not be accepted for the time-being.
 
 ## Star History 🌟
 
