@@ -57,6 +57,7 @@ def generate():
         ai_model = data.get('aiModel')  # Get the AI model selected by the user
         n_threads = data.get('threads')  # Amount of threads to use for video generation
         subtitles_position = data.get('subtitlesPosition')  # Position of the subtitles in the video
+        font_name = data.get('fontName')  # Extract the font name
         text_color = data.get('color') # Color of subtitle text
 
         # Get 'useMusic' from the request data and default to False if not provided
@@ -228,7 +229,7 @@ def generate():
 
         # Put everything together
         try:
-            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2, subtitles_position, text_color or "#FFFF00")
+            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2, subtitles_position, text_color or "#FFFF00", font_name)
         except Exception as e:
             print(colored(f"[-] Error generating final video: {e}", "red"))
             final_video_path = None
@@ -346,6 +347,25 @@ def cancel():
     GENERATING = False
 
     return jsonify({"status": "success", "message": "Cancelled video generation."})
+
+
+@app.route("/api/font", methods=["GET"])
+def get_available_fonts():
+    # Define the path to the fonts directory relative to this script
+    fonts_dir = os.path.join(os.path.dirname(__file__), "../fonts/")
+    
+    # List all files in the fonts directory
+    try:
+        files = os.listdir(fonts_dir)
+    except FileNotFoundError:
+        return jsonify({"status": "error", "message": "Fonts directory not found."}), 404
+
+    # Filter files to only include .ttf files
+    ttf_files = [file for file in files if file.endswith(".ttf")]
+
+    # Return the list of ttf files as a JSON response
+    return jsonify({"status": "success", "fonts": ttf_files})
+
 
 
 if __name__ == "__main__":

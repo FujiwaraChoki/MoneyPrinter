@@ -70,6 +70,7 @@ const generateVideo = () => {
   const zipUrlValue = zipUrl.value;
   const customPromptValue = customPrompt.value;
   const subtitlesPosition = document.querySelector("#subtitlesPosition").value;
+  const subtitlesFontName = document.querySelector("#subtitlesFont").value;
   const colorHexCode = document.querySelector("#subtitlesColor").value;
 
 
@@ -87,6 +88,7 @@ const generateVideo = () => {
     threads: threads,
     subtitlesPosition: subtitlesPosition,
     customPrompt: customPromptValue,
+    fontName: subtitlesFontName,
     color: colorHexCode,
   };
 
@@ -123,10 +125,35 @@ videoSubject.addEventListener("keyup", (event) => {
   }
 });
 
+
+// Function to fetch available fonts and populate the subtitle font select element
+const fetchAndPopulateFonts = () => {
+  fetch("http://localhost:8080/api/font")
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "success") {
+        const subtitlesFontSelect = document.querySelector("#subtitlesFont");
+        // Clear existing options first
+        subtitlesFontSelect.innerHTML = "";
+        // Populate the select element with the fonts received from the server
+        data.fonts.forEach((font) => {
+          const option = document.createElement("option");
+          option.value = font;
+          option.textContent = font.replace(".ttf", ""); // Remove the .ttf extension for display
+          subtitlesFontSelect.appendChild(option);
+        });
+      } else {
+        console.error("Failed to fetch fonts:", data.message);
+      }
+    })
+    .catch((error) => console.error("Error fetching fonts:", error));
+};
+
 // Load the data from localStorage on page load
 document.addEventListener("DOMContentLoaded", (event) => {
   const voiceSelect = document.getElementById("voice");
   const storedVoiceValue = localStorage.getItem("voiceValue");
+  fetchAndPopulateFonts();
 
   if (storedVoiceValue) {
     voiceSelect.value = storedVoiceValue;

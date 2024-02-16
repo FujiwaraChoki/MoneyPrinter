@@ -205,7 +205,7 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
     return combined_video_path
 
 
-def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str, threads: int, subtitles_position: str,  text_color : str) -> str:
+def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str, threads: int, subtitles_position: str,  text_color : str, font_name: str) -> str:
     """
     This function creates the final video, with subtitles and audio.
 
@@ -215,14 +215,20 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str,
         subtitles_path (str): The path to the subtitles.
         threads (int): The number of threads to use for the video processing.
         subtitles_position (str): The position of the subtitles.
+        text_color (str): The color of the subtitle text.
+        font_name (str): The name of the font to use for the subtitles.
 
     Returns:
         str: The path to the final video.
     """
-    # Make a generator that returns a TextClip when called with consecutive
+    # Define the path to the fonts directory
+    fonts_dir = "../fonts/"
+    font_path = os.path.join(fonts_dir, font_name)
+
+    # Make a generator that returns a TextClip using the specified font
     generator = lambda txt: TextClip(
         txt,
-        font="../fonts/bold_font.ttf",
+        font=font_path,  # Use the dynamically specified font path
         fontsize=100,
         color=text_color,
         stroke_color="black",
