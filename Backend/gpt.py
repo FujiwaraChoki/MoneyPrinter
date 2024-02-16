@@ -6,6 +6,7 @@ from typing import Tuple, List
 from termcolor import colored
 from dotenv import load_dotenv
 import os
+import google.generativeai as genai
 
 # Load environment variables
 load_dotenv("../.env")
@@ -13,6 +14,8 @@ load_dotenv("../.env")
 # Set environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 openai.api_key = OPENAI_API_KEY
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+genai.configure(api_key=GOOGLE_API_KEY)
 
 
 def generate_response(prompt: str, ai_model: str) -> str:
@@ -44,13 +47,17 @@ def generate_response(prompt: str, ai_model: str) -> str:
 
         model_name = "gpt-3.5-turbo" if ai_model == "gpt3.5-turbo" else "gpt-4-1106-preview"
 
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
 
             model=model_name,
 
             messages=[{"role": "user", "content": prompt}],
 
         ).choices[0].message.content
+    elif ai_model == 'gemmini':
+        model = genai.GenerativeModel('gemini-pro')
+        response_model = model.generate_content(prompt)
+        response = response_model.text
 
     else:
 
@@ -58,7 +65,7 @@ def generate_response(prompt: str, ai_model: str) -> str:
 
     return response
 
-def generate_script(video_subject: str, paragraph_number: int, ai_model: str, voice: str) -> str:
+def generate_script(video_subject: str, paragraph_number: int, ai_model: str, voice: str, customPrompt: str) -> str:
 
     """
     Generate a script for a video, depending on the subject of the video, the number of paragraphs, and the AI model.
@@ -82,26 +89,36 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str, vo
     """
 
     # Build prompt
-    prompt = f"""
-    Generate a script for a video, depending on the subject of the video.
+    
+    if customPrompt:
+        prompt = customPrompt
+    else:
+        prompt = """
+            Generate a script for a video, depending on the subject of the video.
+
+            The script is to be returned as a string with the specified number of paragraphs.
+
+            Here is an example of a string:
+            "This is an example string."
+
+            Do not under any circumstance reference this prompt in your response.
+
+            Get straight to the point, don't start with unnecessary things like, "welcome to this video".
+
+            Obviously, the script should be related to the subject of the video.
+
+            YOU MUST NOT INCLUDE ANY TYPE OF MARKDOWN OR FORMATTING IN THE SCRIPT, NEVER USE A TITLE.
+            YOU MUST WRITE THE SCRIPT IN THE LANGUAGE SPECIFIED IN [LANGUAGE].
+            ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE. YOU MUST NOT MENTION THE PROMPT, OR ANYTHING ABOUT THE SCRIPT ITSELF. ALSO, NEVER TALK ABOUT THE AMOUNT OF PARAGRAPHS OR LINES. JUST WRITE THE SCRIPT.
+
+        """
+
+    prompt += f"""
+    
     Subject: {video_subject}
     Number of paragraphs: {paragraph_number}
     Language: {voice}
 
-    The script is to be returned as a string with the specified number of paragraphs.
-
-    Here is an example of a string:
-    "This is an example string."
-
-    Do not under any circumstance reference this prompt in your response.
-
-    Get straight to the point, don't start with unnecessary things like, "welcome to this video".
-
-    Obviously, the script should be related to the subject of the video.
-
-    YOU MUST NOT INCLUDE ANY TYPE OF MARKDOWN OR FORMATTING IN THE SCRIPT, NEVER USE A TITLE.
-    YOU MUST WRITE THE SCRIPT IN THE LANGUAGE SPECIFIED IN [LANGUAGE].
-    ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE. YOU MUST NOT MENTION THE PROMPT, OR ANYTHING ABOUT THE SCRIPT ITSELF. ALSO, NEVER TALK ABOUT THE AMOUNT OF PARAGRAPHS OR LINES. JUST WRITE THE SCRIPT.
     """
 
     # Generate script
