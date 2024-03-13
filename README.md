@@ -1,6 +1,6 @@
 # MoneyPrinter 💸
 
-THIS IS DEPRECATED; CHECK OUT VERSION 2 [HERE](https://github.com/FujiwaraChoki/MoneyPrinterV2).
+> MP has been **unarchived**, feel free to open new PRs with new features again.
 
 Automate the creation of YouTube Shorts locally, simply by providing a video topic to talk about.
 
