@@ -45,7 +45,7 @@ def search_for_stock_videos(query: str, api_key: str, it: int, min_dur: int) -> 
             # loop through each url to determine the best quality
             for video in raw_urls:
                 # Check if video has a valid download link
-                if ".com/external" in video["link"]:
+                if ".com/video-files" in video["link"]:
                     # Only save the URL with the largest resolution
                     if (video["width"]*video["height"]) > video_res:
                         temp_video_url = video["link"]

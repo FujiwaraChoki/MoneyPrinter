@@ -1,12 +1,14 @@
 import re
-import json
+import os
 import g4f
+import json
 import openai
-from typing import Tuple, List  
+import google.generativeai as genai
+
+from g4f.client import Client
 from termcolor import colored
 from dotenv import load_dotenv
-import os
-import google.generativeai as genai
+from typing import Tuple, List
 
 # Load environment variables
 load_dotenv("../.env")
@@ -34,14 +36,13 @@ def generate_response(prompt: str, ai_model: str) -> str:
     """
 
     if ai_model == 'g4f':
-
-        response = g4f.ChatCompletion.create(
-
-            model=g4f.models.gpt_35_turbo_16k_0613,
-
+        # Newest G4F Architecture
+        client = Client()
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            provider=g4f.Provider.You, 
             messages=[{"role": "user", "content": prompt}],
-
-        )
+        ).choices[0].message.content
 
     elif ai_model in ["gpt3.5-turbo", "gpt4"]:
 
@@ -196,6 +197,7 @@ def get_search_terms(video_subject: str, amount: int, script: str, ai_model: str
 
     # Generate search terms
     response = generate_response(prompt, ai_model)
+    print(response)
 
     # Parse response into a list of search terms
     search_terms = []
@@ -206,17 +208,20 @@ def get_search_terms(video_subject: str, amount: int, script: str, ai_model: str
             raise ValueError("Response is not a list of strings.")
 
     except (json.JSONDecodeError, ValueError):
+        # Get everything between the first and last square brackets
+        response = response[response.find("[") + 1:response.rfind("]")]
+
         print(colored("[*] GPT returned an unformatted response. Attempting to clean...", "yellow"))
 
         # Attempt to extract list-like string and convert to list
         match = re.search(r'\["(?:[^"\\]|\\.)*"(?:,\s*"[^"\\]*")*\]', response)
+        print(match.group())
         if match:
             try:
                 search_terms = json.loads(match.group())
             except json.JSONDecodeError:
                 print(colored("[-] Could not parse response.", "red"))
                 return []
-
 
 
     # Let user know
