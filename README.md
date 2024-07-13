@@ -8,12 +8,7 @@ Automate the creation of YouTube Shorts, simply by providing a video topic to ta
 
 > **🎥** Watch the video on [YouTube](https://youtu.be/mkZsaDA2JnA?si=pNne3MnluRVkWQbE).
 
-There are two ways to use `MoneyPrinter`, either:
-
-- the [hosted, no-code version](https://rhea.azen.app) (rebranded as `Rhea`), or
-- the [local version](Local.md).
-
-Check out the instructions for the local version [here](Local.md). If you want to use the hosted version, please visit [Rhea](https://rhea.azen.app).
+Check out the instructions for the local version [here](Local.md).
 
 ## FAQ 🤔
 
