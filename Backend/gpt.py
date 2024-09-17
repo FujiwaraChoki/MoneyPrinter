@@ -209,7 +209,7 @@ def get_search_terms(video_subject: str, amount: int, script: str, ai_model: str
 
     except (json.JSONDecodeError, ValueError):
         # Get everything between the first and last square brackets
-        response = response[response.find("["):response.rfind("]") + 1]
+        response = response[response.find("[") + 1:response.rfind("]")]
 
         print(colored("[*] GPT returned an unformatted response. Attempting to clean...", "yellow"))
 
