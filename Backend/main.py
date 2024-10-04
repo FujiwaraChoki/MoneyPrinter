@@ -58,7 +58,6 @@ def generate():
         n_threads = data.get('threads')  # Amount of threads to use for video generation
         subtitles_position = data.get('subtitlesPosition')  # Position of the subtitles in the video
         text_color = data.get('color') # Color of subtitle text
-
         # Get 'useMusic' from the request data and default to False if not provided
         use_music = data.get('useMusic', False)
 
@@ -111,7 +110,7 @@ def generate():
         search_terms = get_search_terms(
             data["videoSubject"], AMOUNT_OF_STOCK_VIDEOS, script, ai_model
         )
-
+        print('search_terms:',search_terms)
         # Search for a video of the given search term
         video_urls = []
 

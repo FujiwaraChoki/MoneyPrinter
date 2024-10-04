@@ -14,13 +14,12 @@ const advancedOptionsToggle = document.querySelector("#advancedOptionsToggle");
 advancedOptionsToggle.addEventListener("click", () => {
   // Change Emoji, from ▼ to ▲ and vice versa
   const emoji = advancedOptionsToggle.textContent;
-  advancedOptionsToggle.textContent = emoji.includes("▼")
-    ? "Show less Options ▲"
-    : "Show Advanced Options ▼";
+  advancedOptionsToggle.textContent = emoji.includes("\u25BC")
+    ? "Show less Options \u25B2"
+    : "Show Advanced Options \u25BC";
   const advancedOptions = document.querySelector("#advancedOptions");
   advancedOptions.classList.toggle("hidden");
 });
-
 
 const cancelGeneration = () => {
   console.log("Canceling generation...");
@@ -71,7 +70,6 @@ const generateVideo = () => {
   const customPromptValue = customPrompt.value;
   const subtitlesPosition = document.querySelector("#subtitlesPosition").value;
   const colorHexCode = document.querySelector("#subtitlesColor").value;
-
 
   const url = "http://localhost:8080/api/generate";
 
