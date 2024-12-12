@@ -173,7 +173,7 @@ def upload_video(video_path, title, description, category, keywords, privacy_sta
         # Initialize the upload process
         video_response = initialize_upload(youtube, {
             'file': video_path, # The path to the video file
-            'title': title,
+            'title': title.strip('"'),
             'description': description,
             'category': category, 
             'keywords': keywords,
@@ -187,7 +187,7 @@ def upload_video(video_path, title, description, category, keywords, privacy_sta
             youtube = get_authenticated_service() # This will prompt for re-authentication if necessary
             video_response = initialize_upload(youtube, {
                 'file': video_path,
-                'title': title,
+                'title': title.strip('"'),
                 'description': description,
                 'category': category,
                 'keywords': keywords,
