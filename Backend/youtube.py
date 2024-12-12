@@ -162,6 +162,9 @@ def resumable_upload(insert_request: MediaFileUpload):
   
 def upload_video(video_path, title, description, category, keywords, privacy_status):
     try:
+        # Sanitize title by removing leading/trailing double quotes if they exist
+        title = title.strip('"') 
+              
         # Get the authenticated YouTube service
         youtube = get_authenticated_service()
 
