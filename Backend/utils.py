@@ -5,8 +5,10 @@ import random
 import logging
 import zipfile
 import requests
-
+from dotenv import load_dotenv
 from termcolor import colored
+
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

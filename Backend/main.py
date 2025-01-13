@@ -53,6 +53,7 @@ def generate():
 
         # Parse JSON
         data = request.get_json()
+        print(data)
         paragraph_number = int(data.get('paragraphNumber', 1))  # Default to 1 if not provided
         ai_model = data.get('aiModel')  # Get the AI model selected by the user
         n_threads = data.get('threads')  # Amount of threads to use for video generation
@@ -228,7 +229,7 @@ def generate():
 
         # Put everything together
         try:
-            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2, subtitles_position, text_color or "#FFFF00")
+            final_video_path = generate_video(combined_video_path, tts_path, subtitles_path, n_threads or 2, subtitles_position, text_color or "#FFFF00",data["videoSubject"])
         except Exception as e:
             print(colored(f"[-] Error generating final video: {e}", "red"))
             final_video_path = None

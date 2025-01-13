@@ -1,0 +1,12 @@
+proglog-0.1.10.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+proglog-0.1.10.dist-info/LICENSE,sha256=akVjFR4jDJtNakzf3avomKdfddMyA9WHJ5aVV08efxY,1081
+proglog-0.1.10.dist-info/METADATA,sha256=7HqXAeqQ_WotmBFY28nag6MAHWRdXYCY0x1Xmv49hKI,639
+proglog-0.1.10.dist-info/RECORD,,
+proglog-0.1.10.dist-info/WHEEL,sha256=G16H4A3IeoQmnOrYV4ueZGKSjhipXx8zc8nu9FGlvMA,92
+proglog-0.1.10.dist-info/top_level.txt,sha256=KeCzTcuXoZxru4GWsCpIwgVBfHdDrI0ujnDKu61sFXE,8
+proglog/__init__.py,sha256=m68k-TnqoChy0FjkHWqSfPuEiQgl69Cfs-N4Kp7k-tU,302
+proglog/__pycache__/__init__.cpython-312.pyc,,
+proglog/__pycache__/proglog.cpython-312.pyc,,
+proglog/__pycache__/version.cpython-312.pyc,,
+proglog/proglog.py,sha256=qWQSpWM-pR_pyh5vrrlVBU094bkatfj9prbz5PJpK7U,13250
+proglog/version.py,sha256=z0zCHFTcKSR0tJ6h5qrpNmRVP21QIPP8N0p7quCnnm0,23

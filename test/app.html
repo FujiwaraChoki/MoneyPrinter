@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test MoneyPrinter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-4 text-center">MoneyPrinter Test</h1>
+        
+        <form id="testForm">
+            <div class="mb-4">
+                <label for="videoSubject" class="block mb-2">Video Subject</label>
+                <input 
+                    type="text" 
+                    id="videoSubject" 
+                    class="w-full px-3 py-2 border rounded"
+                    placeholder="Enter video subject"
+                    required
+                >
+            </div>
+
+            <div class="mb-4">
+                <label for="aiModel" class="block mb-2">AI Model</label>
+                <select 
+                    id="aiModel" 
+                    class="w-full px-3 py-2 border rounded"
+                >
+                    <option value="ryzendesu">Ryzendesu</option>
+                    <option value="g4f">G4F</option>
+                    <option value="gpt3.5-turbo">GPT-3.5 Turbo</option>
+                </select>
+            </div>
+
+            <button 
+                type="submit" 
+                class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+            >
+                Generate Video
+            </button>
+        </form>
+
+        <div id="status" class="mt-4 text-center"></div>
+    </div>
+
+    <script>
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = 'Sending request...';
+
+            const data = {
+                videoSubject: document.getElementById('videoSubject').value,
+                aiModel: document.getElementById('aiModel').value
+            };
+
+            try {
+                console.log('Sending data:', data);
+                
+                const response = await fetch('http://localhost:8080/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                console.log('Response status:', response.status);
+                
+                const result = await response.json();
+                console.log('Response body:', result);
+
+                if (response.ok) {
+                    statusEl.textContent = `Success: ${result.message}`;
+                    statusEl.style.color = 'green';
+                } else {
+                    statusEl.textContent = `Error: ${result.message}`;
+                    statusEl.style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Detailed error:', error);
+                statusEl.textContent = `Network Error: ${error.message}`;
+                statusEl.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
