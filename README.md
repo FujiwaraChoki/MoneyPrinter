@@ -1,5 +1,11 @@
 # MoneyPrinter 💸
 
+> ♥︎ If you're interested in using a hosted version, sign up for the waitlist on [shiori.ai](https://www.shiori.ai), an AI tool that combines all other AI tools into one.
+
+---
+
+> 𝕏 Also, follow me on X: [@DevBySami](https://x.com/DevBySami).
+
 Automate the creation of YouTube Shorts, simply by providing a video topic to talk about.
 
 <a href="https://trendshift.io/repositories/7545" target="_blank"><img src="https://trendshift.io/api/badge/repositories/7545" alt="FujiwaraChoki%2FMoneyPrinter | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
