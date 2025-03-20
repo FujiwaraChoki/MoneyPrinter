@@ -1,23 +1,31 @@
 import re
 import os
-import g4f
 import json
-import openai
-import google.generativeai as genai
-
-from g4f.client import Client
+import subprocess
 from termcolor import colored
 from dotenv import load_dotenv
 from typing import Tuple, List
+import sys
 
 # Load environment variables
 load_dotenv("../.env")
 
-# Set environment variables
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-openai.api_key = OPENAI_API_KEY
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
-genai.configure(api_key=GOOGLE_API_KEY)
+# Function to generate response using Ollama LLaMA model
+def generate_response_llama(prompt: str) -> str:
+    try:
+        # Run LLaMA model using shell command without --prompt flag
+        result = subprocess.run(
+            ["ollama", "run", "llama3.1:latest", prompt],
+            stdout=sys.stdout, stderr=sys.stderr, text=True
+        )
+
+        if result.returncode != 0:
+            print(colored(f"[-] LLaMA generation failed: {result.stderr}", "red"))
+            return ""
+        return result.stdout.strip()
+    except Exception as e:
+        print(colored(f"[-] An error occurred: {str(e)}", "red"))
+        return ""
 
 
 def generate_response(prompt: str, ai_model: str) -> str:
@@ -25,14 +33,11 @@ def generate_response(prompt: str, ai_model: str) -> str:
     Generate a script for a video, depending on the subject of the video.
 
     Args:
-        video_subject (str): The subject of the video.
+        prompt (str): The subject of the video.
         ai_model (str): The AI model to use for generation.
 
-
     Returns:
-
         str: The response from the AI model.
-
     """
 
     if ai_model == 'g4f':
@@ -40,57 +45,39 @@ def generate_response(prompt: str, ai_model: str) -> str:
         client = Client()
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            provider=g4f.Provider.You, 
+            provider=g4f.Provider.You,
             messages=[{"role": "user", "content": prompt}],
         ).choices[0].message.content
 
-    elif ai_model in ["gpt3.5-turbo", "gpt4"]:
+    elif ai_model == 'llama':
+        # Use LLaMA model via Ollama
+        response = generate_response_llama(prompt)
 
-        model_name = "gpt-3.5-turbo" if ai_model == "gpt3.5-turbo" else "gpt-4-1106-preview"
-
-        response = openai.chat.completions.create(
-
-            model=model_name,
-
-            messages=[{"role": "user", "content": prompt}],
-
-        ).choices[0].message.content
     elif ai_model == 'gemmini':
         model = genai.GenerativeModel('gemini-pro')
         response_model = model.generate_content(prompt)
         response = response_model.text
 
     else:
-
         raise ValueError("Invalid AI model selected.")
 
     return response
 
-def generate_script(video_subject: str, paragraph_number: int, ai_model: str, voice: str, customPrompt: str) -> str:
 
+def generate_script(video_subject: str, paragraph_number: int, ai_model: str, voice: str, customPrompt: str) -> str:
     """
     Generate a script for a video, depending on the subject of the video, the number of paragraphs, and the AI model.
 
-
-
     Args:
-
         video_subject (str): The subject of the video.
-
         paragraph_number (int): The number of paragraphs to generate.
-
         ai_model (str): The AI model to use for generation.
 
-
-
     Returns:
-
         str: The script for the video.
-
     """
 
     # Build prompt
-    
     if customPrompt:
         prompt = customPrompt
     else:
@@ -111,7 +98,6 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str, vo
             YOU MUST NOT INCLUDE ANY TYPE OF MARKDOWN OR FORMATTING IN THE SCRIPT, NEVER USE A TITLE.
             YOU MUST WRITE THE SCRIPT IN THE LANGUAGE SPECIFIED IN [LANGUAGE].
             ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE. YOU MUST NOT MENTION THE PROMPT, OR ANYTHING ABOUT THE SCRIPT ITSELF. ALSO, NEVER TALK ABOUT THE AMOUNT OF PARAGRAPHS OR LINES. JUST WRITE THE SCRIPT.
-
         """
 
     prompt += f"""
@@ -152,10 +138,11 @@ def generate_script(video_subject: str, paragraph_number: int, ai_model: str, vo
 
         return final_script
     else:
-        print(colored("[-] GPT returned an empty response.", "red"))
+        print(colored("[-] LLaMA returned an empty response.", "red"))
         return None
 
 
+# Placeholder function to avoid undefined error
 def get_search_terms(video_subject: str, amount: int, script: str, ai_model: str) -> List[str]:
     """
     Generate a JSON-Array of search terms for stock videos,
@@ -230,39 +217,3 @@ def get_search_terms(video_subject: str, amount: int, script: str, ai_model: str
     # Return search terms
     return search_terms
 
-
-def generate_metadata(video_subject: str, script: str, ai_model: str) -> Tuple[str, str, List[str]]:  
-    """  
-    Generate metadata for a YouTube video, including the title, description, and keywords.  
-  
-    Args:  
-        video_subject (str): The subject of the video.  
-        script (str): The script of the video.  
-        ai_model (str): The AI model to use for generation.  
-  
-    Returns:  
-        Tuple[str, str, List[str]]: The title, description, and keywords for the video.  
-    """  
-  
-    # Build prompt for title  
-    title_prompt = f"""  
-    Generate a catchy and SEO-friendly title for a YouTube shorts video about {video_subject}.  
-    """  
-  
-    # Generate title  
-    title = generate_response(title_prompt, ai_model).strip()  
-    
-    # Build prompt for description  
-    description_prompt = f"""  
-    Write a brief and engaging description for a YouTube shorts video about {video_subject}.  
-    The video is based on the following script:  
-    {script}  
-    """  
-  
-    # Generate description  
-    description = generate_response(description_prompt, ai_model).strip()  
-  
-    # Generate keywords  
-    keywords = get_search_terms(video_subject, 6, script, ai_model)  
-
-    return title, description, keywords  
