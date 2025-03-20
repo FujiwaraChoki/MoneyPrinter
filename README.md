@@ -1,6 +1,6 @@
 # MoneyPrinter 💸
 
-> ♥︎ If you're interested in using a hosted version, sign up for the waitlist on [shiori.ai](https://www.shiori.ai), an AI tool that combines all other AI tools into one.
+> ♥︎ If you're interested in using the newer, better version, sign up at [shiori.ai](https://www.shiori.ai), an AI tool that combines all other AI tools into one. Use code `MONEYPRINTER` for 20% off 🫶.
 
 ---
 
