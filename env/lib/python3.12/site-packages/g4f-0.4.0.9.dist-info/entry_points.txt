@@ -1,0 +1,2 @@
+[console_scripts]
+g4f = g4f.cli:main

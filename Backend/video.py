@@ -205,7 +205,7 @@ def combine_videos(video_paths: List[str], max_duration: int, max_clip_duration:
     return combined_video_path
 
 
-def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str, threads: int, subtitles_position: str,  text_color : str) -> str:
+def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str, threads: int, subtitles_position: str,  text_color : str, video_subject: str) -> str:
     """
     This function creates the final video, with subtitles and audio.
 
@@ -243,6 +243,11 @@ def generate_video(combined_video_path: str, tts_path: str, subtitles_path: str,
     audio = AudioFileClip(tts_path)
     result = result.set_audio(audio)
 
-    result.write_videofile("../temp/output.mp4", threads=threads or 2)
+    # Membuat nama file yang aman
+    safe_filename = "".join(x for x in video_subject if x.isalnum() or x in (' ','-','_')).rstrip()
+    safe_filename = safe_filename.replace(' ', '_').lower()
+    output_path = f"../temp/{safe_filename}.mp4"
 
-    return "output.mp4"
+    # Menyimpan video dengan nama baru
+    result.write_videofile(output_path, threads=threads or 2)
+    return f"{safe_filename}.mp4"

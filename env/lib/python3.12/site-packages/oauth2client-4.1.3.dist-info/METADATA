@@ -1,0 +1,34 @@
+Metadata-Version: 2.1
+Name: oauth2client
+Version: 4.1.3
+Summary: OAuth 2.0 client library
+Home-page: http://github.com/google/oauth2client/
+Author: Google Inc.
+Author-email: jonwayne+oauth2client@google.com
+License: Apache 2.0
+Keywords: google oauth 2.0 http client
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Development Status :: 7 - Inactive
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: POSIX
+Classifier: Topic :: Internet :: WWW/HTTP
+Requires-Dist: httplib2 (>=0.9.1)
+Requires-Dist: pyasn1 (>=0.1.7)
+Requires-Dist: pyasn1-modules (>=0.0.5)
+Requires-Dist: rsa (>=3.1.4)
+Requires-Dist: six (>=1.6.1)
+
+oauth2client is a client library for OAuth 2.0.
+
+Note: oauth2client is now deprecated. No more features will be added to the
+    libraries and the core team is turning down support. We recommend you use
+    `google-auth <https://google-auth.readthedocs.io>`__ and
+    `oauthlib <http://oauthlib.readthedocs.io/>`__.
+
+

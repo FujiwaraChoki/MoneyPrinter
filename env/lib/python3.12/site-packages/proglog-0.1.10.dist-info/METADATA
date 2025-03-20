@@ -1,0 +1,34 @@
+Metadata-Version: 2.1
+Name: proglog
+Version: 0.1.10
+Summary: Log and progress bar manager for console, notebooks, web...
+Author: Zulko
+License: MIT
+Keywords: logger log progress bar
+Platform: UNKNOWN
+License-File: LICENSE
+Requires-Dist: tqdm
+
+Proglog
+=======
+
+Proglog is a progress logging system for Python. It allows to build complex
+libraries while giving the user control on the management of logs, callbacks and progress bars.
+
+
+Infos
+-----
+
+**PIP installation:**
+
+.. code:: bash
+
+  pip install proglog
+
+**Github Page**
+
+`<https://github.com/Edinburgh-Genome-Foundry/Proglog>`_
+
+**License:** MIT, Copyright Edinburgh Genome Foundry
+
+

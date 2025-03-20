@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoneyPrinter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white p-8 rounded-xl shadow-lg">
+        <h1 class="text-4xl font-bold text-center text-blue-600 mb-6">MoneyPrinter</h1>
+        
+        <form id="videoGeneratorForm" class="space-y-4">
+            <div>
+                <label for="videoSubject" class="block text-sm font-medium text-gray-700">Video Subject</label>
+                <textarea 
+                    id="videoSubject" 
+                    rows="3" 
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                    placeholder="Enter your video subject"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="aiModel" class="block text-sm font-medium text-gray-700">AI Model</label>
+                    <select 
+                        id="aiModel" 
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                        <option value="ryzendesu">Ryzendesu</option>
+                        <option value="g4f">G4F</option>
+                        <option value="gpt3.5-turbo">GPT-3.5 Turbo</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="voice" class="block text-sm font-medium text-gray-700">Voice</label>
+                    <select 
+                        id="voice" 
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                        <option value="en_us_001">English US Female</option>
+                        <option value="en_us_002">English US Male</option>
+                        <option value="id_001">Indonesian Female</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="paragraphNumber" class="block text-sm font-medium text-gray-700">Paragraphs</label>
+                    <input 
+                        type="number" 
+                        id="paragraphNumber" 
+                        min="1" 
+                        max="5" 
+                        value="1"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                </div>
+
+                <div>
+                    <label for="threads" class="block text-sm font-medium text-gray-700">Threads</label>
+                    <input 
+                        type="number" 
+                        id="threads" 
+                        min="1" 
+                        max="8" 
+                        value="2"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="subtitlesPosition" class="block text-sm font-medium text-gray-700">Subtitles Position</label>
+                    <select 
+                        id="subtitlesPosition" 
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                        <option value="center,bottom">Center Bottom</option>
+                        <option value="center,top">Center Top</option>
+                        <option value="left,bottom">Left Bottom</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="color" class="block text-sm font-medium text-gray-700">Subtitle Color</label>
+                    <select 
+                        id="color" 
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                        <option value="#FFFF00">Yellow</option>
+                        <option value="#FFFFFF">White</option>
+                        <option value="#000000">Black</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="inline-flex items-center">
+                        <input 
+                            type="checkbox" 
+                            id="useMusic" 
+                            class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                        >
+                        <span class="ml-2 text-sm text-gray-700">Use Background Music</span>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="inline-flex items-center">
+                        <input 
+                            type="checkbox" 
+                            id="automateYoutubeUpload" 
+                            class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                        >
+                        <span class="ml-2 text-sm text-gray-700">Auto YouTube Upload</span>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label for="customPrompt" class="block text-sm font-medium text-gray-700">Custom Prompt (Optional)</label>
+                <textarea 
+                    id="customPrompt" 
+                    rows="3" 
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                    placeholder="Enter custom prompt if needed"
+                ></textarea>
+            </div>
+
+            <div class="flex space-x-4">
+                <button 
+                    type="submit" 
+                    id="generateButton"
+                    class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
+                >
+                    Generate Video
+                </button>
+                <button 
+                    type="button" 
+                    id="cancelButton"
+                    class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition duration-300 hidden"
+                >
+                    Cancel Generation
+                </button>
+            </div>
+        </form>
+
+        <div id="statusMessage" class="mt-4 text-center text-gray-600"></div>
+    </div>
+
+     ```html
+    <script>
+        const form = document.getElementById('videoGeneratorForm');
+        const statusMessage = document.getElementById('statusMessage');
+        const cancelButton = document.getElementById('cancelButton');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            statusMessage.textContent = 'Generating video...';
+            cancelButton.classList.remove('hidden');
+
+            const formData = {
+                videoSubject: document.getElementById('videoSubject').value,
+                aiModel: document.getElementById('aiModel').value,
+                voice: document.getElementById('voice').value,
+                paragraphNumber: document.getElementById('paragraphNumber').value,
+                threads: document.getElementById('threads').value,
+                subtitlesPosition: document.getElementById('subtitlesPosition').value,
+                color: document.getElementById('color').value,
+                useMusic: document.getElementById('useMusic').checked,
+                automateYoutubeUpload: document.getElementById('automateYoutubeUpload').checked,
+                customPrompt: document.getElementById('customPrompt').value,
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                const result = await response.json();
+                if (result.status === 'success') {
+                    statusMessage.textContent = result.message;
+                } else {
+                    statusMessage.textContent = `Error: ${result.message}`;
+                }
+            } catch (error) {
+                statusMessage.textContent = `Error: ${error.message}`;
+            } finally {
+                cancelButton.classList.add('hidden');
+            }
+        });
+
+        cancelButton.addEventListener('click', async () => {
+            const response = await fetch('http://localhost:8080/api/cancel', {
+                method: 'POST',
+            });
+            const result = await response.json();
+            statusMessage.textContent = result.message;
+            cancelButton.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
