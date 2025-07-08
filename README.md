@@ -1,3 +1,34 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="right">
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=en">English</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=zh-CN">简体中文</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=zh-TW">繁體中文</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=ja">日本語</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=ko">한국어</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=hi">हिन्दी</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=th">ไทย</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=fr">Français</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=de">Deutsch</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=es">Español</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=it">Itapano</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=ru">Русский</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=pt">Português</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=nl">Nederlands</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=pl">Polski</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=ar">العربية</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=fa">فارسی</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=tr">Türkçe</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=vi">Tiếng Việt</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=FujiwaraChoki&project=MoneyPrinter&lang=id">Bahasa Indonesia</a></p>
+      </div>
+    </div>
+  </details>
+</div>
+
 # MoneyPrinter 💸
 
 > ♥︎ Sponsor: The Best AI Chat App: [shiori.ai](https://www.shiori.ai)
