@@ -28,7 +28,10 @@ services:
       - TIKTOK_SESSION_ID=${TIKTOK_SESSION_ID}
       - IMAGEMAGICK_BINARY=/usr/local/bin/magick
       - PEXELS_API_KEY=${PEXELS_API_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1:8b}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - frontend
     restart: always

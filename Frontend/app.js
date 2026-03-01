@@ -1,168 +1,407 @@
-const videoSubject = document.querySelector("#videoSubject");
-const aiModel = document.querySelector("#aiModel");
-const voice = document.querySelector("#voice");
-const zipUrl = document.querySelector("#zipUrl");
-const paragraphNumber = document.querySelector("#paragraphNumber");
-const youtubeToggle = document.querySelector("#youtubeUploadToggle");
-const useMusicToggle = document.querySelector("#useMusicToggle");
-const customPrompt = document.querySelector("#customPrompt");
-const generateButton = document.querySelector("#generateButton");
-const cancelButton = document.querySelector("#cancelButton");
+// ===== DOM REFS =====
+const videoSubject = document.getElementById("videoSubject");
+const aiModel = document.getElementById("aiModel");
+const voice = document.getElementById("voice");
+const songFiles = document.getElementById("songFiles");
+const paragraphNumber = document.getElementById("paragraphNumber");
+const youtubeToggle = document.getElementById("youtubeUploadToggle");
+const useMusicToggle = document.getElementById("useMusicToggle");
+const customPrompt = document.getElementById("customPrompt");
+const generateButton = document.getElementById("generateButton");
+const cancelButton = document.getElementById("cancelButton");
+const advancedOptionsToggle = document.getElementById("advancedOptionsToggle");
+const advancedPanel = document.getElementById("advancedOptions");
+const statusArea = document.getElementById("statusArea");
+const colorDot = document.getElementById("colorDot");
+const subtitlesColor = document.getElementById("subtitlesColor");
+const logViewer = document.getElementById("logViewer");
+const logViewerBody = document.getElementById("logViewerBody");
+const logClearBtn = document.getElementById("logClearBtn");
+const backendHost = window.location.hostname || "localhost";
+const backendProtocol = window.location.protocol || "http:";
+const API_BASE_URL = `${backendProtocol}//${backendHost}:8080`;
+const API_FALLBACK_URL = `http://${backendHost}:8080`;
 
-const advancedOptionsToggle = document.querySelector("#advancedOptionsToggle");
+let eventSource = null;
 
+// ===== API HELPERS =====
+async function apiRequest(path, options = {}) {
+  const endpoint = path.startsWith("/") ? path : `/${path}`;
+
+  async function request(baseUrl) {
+    const response = await fetch(`${baseUrl}${endpoint}`, options);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || `Request failed with status ${response.status}`);
+    }
+    return data;
+  }
+
+  try {
+    return await request(API_BASE_URL);
+  } catch (firstError) {
+    if (API_BASE_URL !== API_FALLBACK_URL) {
+      return request(API_FALLBACK_URL);
+    }
+    throw firstError;
+  }
+}
+
+function setModelOptions(models, preferredModel) {
+  aiModel.innerHTML = "";
+
+  models.forEach((modelName) => {
+    const option = document.createElement("option");
+    option.value = modelName;
+    option.textContent = modelName;
+    aiModel.appendChild(option);
+  });
+
+  if (preferredModel && models.includes(preferredModel)) {
+    aiModel.value = preferredModel;
+  } else if (models.length > 0) {
+    aiModel.value = models[0];
+  }
+}
+
+async function loadOllamaModels(reuseEnabled) {
+  const fallbackModel = localStorage.getItem("aiModelValue") || "llama3.1:8b";
+
+  try {
+    const data = await apiRequest("/api/models", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    const models = Array.isArray(data.models)
+      ? data.models.filter((item) => typeof item === "string" && item.trim())
+      : [];
+    const defaultModel =
+      typeof data.default === "string" && data.default.trim()
+        ? data.default.trim()
+        : fallbackModel;
+    const preferredModel =
+      reuseEnabled && localStorage.getItem("aiModelValue")
+        ? localStorage.getItem("aiModelValue")
+        : defaultModel;
+
+    if (data.status && data.status !== "success" && data.message) {
+      showToast(data.message, "error");
+    }
+
+    if (models.length === 0) {
+      setModelOptions([defaultModel], preferredModel);
+      showToast("No Ollama models found. Pull one with: ollama pull llama3.1:8b", "error");
+      return;
+    }
+
+    setModelOptions(models, preferredModel);
+  } catch {
+    setModelOptions([fallbackModel], fallbackModel);
+    showToast("Could not load Ollama models. Is backend/Ollama running?", "error");
+  }
+}
+
+// ===== TOAST NOTIFICATIONS =====
+function showToast(message, type = "info") {
+  const container = document.getElementById("toastContainer");
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `
+    <span class="toast-dot"></span>
+    <span class="toast-msg">${message}</span>
+    <button class="toast-close" aria-label="Close">&times;</button>
+  `;
+  toast.querySelector(".toast-close").addEventListener("click", () => {
+    dismissToast(toast);
+  });
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => toast.classList.add("show"));
+  });
+
+  setTimeout(() => dismissToast(toast), 5000);
+}
+
+function dismissToast(toast) {
+  toast.classList.remove("show");
+  toast.addEventListener("transitionend", () => toast.remove(), { once: true });
+}
+
+// ===== COLOR DOT =====
+function updateColorDot() {
+  if (colorDot && subtitlesColor) {
+    colorDot.style.backgroundColor = subtitlesColor.value;
+  }
+}
+updateColorDot();
+subtitlesColor.addEventListener("change", updateColorDot);
+
+// ===== ADVANCED OPTIONS TOGGLE =====
 advancedOptionsToggle.addEventListener("click", () => {
-  // Change Emoji, from ▼ to ▲ and vice versa
-  const emoji = advancedOptionsToggle.textContent;
-  advancedOptionsToggle.textContent = emoji.includes("▼")
-    ? "Show less Options ▲"
-    : "Show Advanced Options ▼";
-  const advancedOptions = document.querySelector("#advancedOptions");
-  advancedOptions.classList.toggle("hidden");
+  advancedOptionsToggle.classList.toggle("open");
+  advancedPanel.classList.toggle("open");
 });
 
+// ===== LOG STREAM (SSE) =====
+function formatTimestamp(ts) {
+  const d = new Date(ts * 1000);
+  return d.toLocaleTimeString("en-GB", { hour12: false });
+}
 
-const cancelGeneration = () => {
-  console.log("Canceling generation...");
-  // Send request to /cancel
-  fetch("http://localhost:8080/api/cancel", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      alert(data.message);
-      console.log(data);
-    })
-    .catch((error) => {
-      alert("An error occurred. Please try again later.");
-      console.log(error);
-    });
+function appendLogEntry(entry) {
+  const row = document.createElement("div");
+  row.className = "log-entry";
 
-  // Hide cancel button
-  cancelButton.classList.add("hidden");
+  const time = document.createElement("span");
+  time.className = "log-time";
+  time.textContent = formatTimestamp(entry.timestamp);
 
-  // Enable generate button
-  generateButton.disabled = false;
-  generateButton.classList.remove("hidden");
-};
+  const msg = document.createElement("span");
+  msg.className = `log-msg log-${entry.level || "info"}`;
+  msg.textContent = entry.message;
 
-const generateVideo = () => {
-  console.log("Generating video...");
-  // Disable button and change text
-  generateButton.disabled = true;
-  generateButton.classList.add("hidden");
+  row.appendChild(time);
+  row.appendChild(msg);
+  logViewerBody.appendChild(row);
 
-  // Show cancel button
-  cancelButton.classList.remove("hidden");
+  // Auto-scroll to bottom
+  logViewerBody.scrollTop = logViewerBody.scrollHeight;
+}
 
-  // Get values from input fields
-  const videoSubjectValue = videoSubject.value;
-  const aiModelValue = aiModel.value;
-  const voiceValue = voice.value;
-  const paragraphNumberValue = paragraphNumber.value;
-  const youtubeUpload = youtubeToggle.checked;
-  const useMusicToggleState = useMusicToggle.checked;
-  const threads = document.querySelector("#threads").value;
-  const zipUrlValue = zipUrl.value;
-  const customPromptValue = customPrompt.value;
-  const subtitlesPosition = document.querySelector("#subtitlesPosition").value;
-  const colorHexCode = document.querySelector("#subtitlesColor").value;
+function connectLogStream() {
+  disconnectLogStream();
 
+  logViewer.classList.add("active");
 
-  const url = "http://localhost:8080/api/generate";
+  const url = `${API_BASE_URL}/api/logs`;
+  eventSource = new EventSource(url);
 
-  // Construct data to be sent to the server
-  const data = {
-    videoSubject: videoSubjectValue,
-    aiModel: aiModelValue,
-    voice: voiceValue,
-    paragraphNumber: paragraphNumberValue,
-    automateYoutubeUpload: youtubeUpload,
-    useMusic: useMusicToggleState,
-    zipUrl: zipUrlValue,
-    threads: threads,
-    subtitlesPosition: subtitlesPosition,
-    customPrompt: customPromptValue,
-    color: colorHexCode,
+  eventSource.onmessage = (event) => {
+    let entry;
+    try {
+      entry = JSON.parse(event.data);
+    } catch {
+      return;
+    }
+
+    if (entry.type === "log") {
+      appendLogEntry(entry);
+    } else if (entry.type === "complete") {
+      appendLogEntry({ timestamp: entry.timestamp, message: entry.message, level: "success" });
+      showToast(entry.message, "success");
+      setGeneratingState(false);
+      disconnectLogStream();
+    } else if (entry.type === "error") {
+      appendLogEntry({ timestamp: entry.timestamp, message: entry.message, level: "error" });
+      showToast(entry.message, "error");
+      setGeneratingState(false);
+      disconnectLogStream();
+    } else if (entry.type === "cancelled") {
+      appendLogEntry({ timestamp: entry.timestamp, message: entry.message || "Generation cancelled.", level: "warning" });
+      disconnectLogStream();
+    }
   };
 
-  // Send the actual request to the server
-  fetch(url, {
+  eventSource.onerror = () => {
+    // Connection lost — will auto-reconnect via EventSource spec,
+    // but if generation is done the server closed the stream.
+    // No action needed; terminal events above handle cleanup.
+  };
+}
+
+function disconnectLogStream() {
+  if (eventSource) {
+    eventSource.close();
+    eventSource = null;
+  }
+}
+
+// ===== GENERATE / CANCEL =====
+function setGeneratingState(active) {
+  if (active) {
+    generateButton.classList.add("hidden");
+    cancelButton.classList.remove("hidden");
+    statusArea.classList.add("active");
+  } else {
+    generateButton.classList.remove("hidden");
+    cancelButton.classList.add("hidden");
+    statusArea.classList.remove("active");
+    generateButton.disabled = false;
+    logViewer.classList.remove("active");
+  }
+}
+
+function cancelGeneration() {
+  disconnectLogStream();
+
+  apiRequest("/api/cancel", {
     method: "POST",
-    body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
     },
   })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      alert(data.message);
-      // Hide cancel button after generation is complete
-      generateButton.disabled = false;
-      generateButton.classList.remove("hidden");
-      cancelButton.classList.add("hidden");
-    })
-    .catch((error) => {
-      alert("An error occurred. Please try again later.");
-      console.log(error);
+    .then((data) => showToast(data.message, "success"))
+    .catch(() => showToast("Failed to cancel. Is the server running?", "error"));
+
+  setGeneratingState(false);
+}
+
+async function uploadSongs() {
+  const files = songFiles.files;
+  if (!files || files.length === 0) return true;
+
+  const mp3s = Array.from(files).filter((f) => f.name.toLowerCase().endsWith(".mp3"));
+  if (mp3s.length === 0) {
+    showToast("No MP3 files found in the selected folder.", "error");
+    return false;
+  }
+
+  const formData = new FormData();
+  mp3s.forEach((file) => formData.append("songs", file));
+
+  try {
+    await apiRequest("/api/upload-songs", {
+      method: "POST",
+      body: formData,
     });
-};
+    return true;
+  } catch {
+    showToast("Failed to upload songs.", "error");
+    return false;
+  }
+}
+
+async function generateVideo() {
+  const subject = videoSubject.value.trim();
+  if (!subject) {
+    showToast("Please enter a video subject.", "error");
+    videoSubject.focus();
+    return;
+  }
+
+  generateButton.disabled = true;
+  setGeneratingState(true);
+
+  // Clear previous log entries
+  logViewerBody.innerHTML = "";
+
+  // Upload songs first if a folder was selected
+  if (useMusicToggle.checked && songFiles.files.length > 0) {
+    const uploaded = await uploadSongs();
+    if (!uploaded) {
+      setGeneratingState(false);
+      return;
+    }
+  }
+
+  const data = {
+    videoSubject: subject,
+    aiModel: aiModel.value || "llama3.1:8b",
+    voice: voice.value,
+    paragraphNumber: paragraphNumber.value,
+    automateYoutubeUpload: youtubeToggle.checked,
+    useMusic: useMusicToggle.checked,
+    threads: document.getElementById("threads").value,
+    subtitlesPosition: document.getElementById("subtitlesPosition").value,
+    customPrompt: customPrompt.value,
+    color: subtitlesColor.value,
+  };
+
+  try {
+    const result = await apiRequest("/api/generate", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+
+    if (result.status === "success") {
+      // Generation started — connect to the log stream
+      connectLogStream();
+    } else {
+      showToast(result.message, "error");
+      setGeneratingState(false);
+    }
+  } catch {
+    showToast("Connection error. Is the backend server running?", "error");
+    setGeneratingState(false);
+  }
+}
 
 generateButton.addEventListener("click", generateVideo);
 cancelButton.addEventListener("click", cancelGeneration);
 
-videoSubject.addEventListener("keyup", (event) => {
-  if (event.key === "Enter") {
+videoSubject.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
     generateVideo();
   }
 });
 
-// Load the data from localStorage on page load
-document.addEventListener("DOMContentLoaded", (event) => {
-  const voiceSelect = document.getElementById("voice");
-  const storedVoiceValue = localStorage.getItem("voiceValue");
-
-  if (storedVoiceValue) {
-    voiceSelect.value = storedVoiceValue;
-  }
+// ===== LOG CLEAR BUTTON =====
+logClearBtn.addEventListener("click", () => {
+  logViewerBody.innerHTML = "";
 });
 
-// Save the data to localStorage when the user changes the value
-toggles = ["youtubeUploadToggle", "useMusicToggle", "reuseChoicesToggle"];
-fields = ["aiModel", "voice", "paragraphNumber", "videoSubject", "zipUrl", "customPrompt", "threads", "subtitlesPosition", "subtitlesColor"];
+// ===== LOCAL STORAGE PERSISTENCE =====
+const toggleIds = [
+  "youtubeUploadToggle",
+  "useMusicToggle",
+  "reuseChoicesToggle",
+];
+const fieldIds = [
+  "voice",
+  "paragraphNumber",
+  "videoSubject",
+  "customPrompt",
+  "threads",
+  "subtitlesPosition",
+  "subtitlesColor",
+];
 
-document.addEventListener("DOMContentLoaded", () => {
-  toggles.forEach((id) => {
-    const toggle = document.getElementById(id);
-    const storedValue = localStorage.getItem(`${id}Value`);
-    const storedReuseValue = localStorage.getItem("reuseChoicesToggleValue");
+document.addEventListener("DOMContentLoaded", async () => {
+  const reuseEnabled =
+    localStorage.getItem("reuseChoicesToggleValue") === "true";
 
-    if (toggle && storedValue !== null && storedReuseValue === "true") {
-        toggle.checked = storedValue === "true";
+  await loadOllamaModels(reuseEnabled);
+
+  aiModel.addEventListener("change", (e) => {
+    localStorage.setItem("aiModelValue", e.target.value);
+  });
+
+  // Restore toggles
+  toggleIds.forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const stored = localStorage.getItem(`${id}Value`);
+    if (stored !== null && reuseEnabled) {
+      el.checked = stored === "true";
     }
-    // Attach change listener to update localStorage
-    toggle.addEventListener("change", (event) => {
-        localStorage.setItem(`${id}Value`, event.target.checked);
+    el.addEventListener("change", (e) => {
+      localStorage.setItem(`${id}Value`, e.target.checked);
     });
   });
 
-  fields.forEach((id) => {
-    const select = document.getElementById(id);
-    const storedValue = localStorage.getItem(`${id}Value`);
-    const storedReuseValue = localStorage.getItem("reuseChoicesToggleValue");
-
-    if (storedValue && storedReuseValue === "true") {
-      select.value = storedValue;
+  // Restore fields
+  fieldIds.forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const stored = localStorage.getItem(`${id}Value`);
+    if (stored && reuseEnabled) {
+      el.value = stored;
     }
-    // Attach change listener to update localStorage
-    select.addEventListener("change", (event) => {
-      localStorage.setItem(`${id}Value`, event.target.value);
+    el.addEventListener("change", (e) => {
+      localStorage.setItem(`${id}Value`, e.target.value);
     });
   });
+
+  // Update color dot after restoring values
+  updateColorDot();
 });

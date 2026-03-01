@@ -5,7 +5,9 @@
 
 > 𝕏 Also, follow me on X: [@DevBySami](https://x.com/DevBySami).
 
-Automate the creation of YouTube Shorts, simply by providing a video topic to talk about.
+Automate the creation of YouTube Shorts by providing a video topic.
+
+MoneyPrinter is Ollama-first: script generation and metadata are fully powered by local Ollama models.
 
 <a href="https://trendshift.io/repositories/7545" target="_blank"><img src="https://trendshift.io/api/badge/repositories/7545" alt="FujiwaraChoki%2FMoneyPrinter | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
@@ -13,9 +15,25 @@ Automate the creation of YouTube Shorts, simply by providing a video topic to ta
 
 > **🎥** Watch the video on [YouTube](https://youtu.be/mkZsaDA2JnA?si=pNne3MnluRVkWQbE).
 
-Check out the instructions for the local version [here](Local.md).
+## Documentation
+
+Docs are centralized in [`docs/`](docs/README.md):
+
+- [Quickstart](docs/quickstart.md)
+- [Configuration](docs/configuration.md)
+- [Docker](docs/docker.md)
+- [Troubleshooting](docs/troubleshooting.md)
 
 ## FAQ 🤔
+
+### Which AI provider does MoneyPrinter use?
+
+MoneyPrinter is fully Ollama-based. Start Ollama, pull a model, and select the model in the UI.
+
+```bash
+ollama serve
+ollama pull llama3.1:8b
+```
 
 ### How do I get the TikTok session ID?
 
@@ -23,7 +41,7 @@ You can obtain your TikTok session ID by logging into TikTok in your browser and
 
 ### My ImageMagick binary is not being detected
 
-Make sure you set your path to the ImageMagick binary correctly in the `.env` file, it should look something like this:
+MoneyPrinter auto-detects ImageMagick from your `PATH` on Linux, macOS, and Windows. If auto-detection fails, set the executable path manually in `.env`, for example:
 
 ```env
 IMAGEMAGICK_BINARY="C:\\Program Files\\ImageMagick-7.1.0-Q16\\magick.exe"
@@ -36,11 +54,11 @@ Don't forget to use double backslashes (`\\`) in the path, instead of one.
 If you're having trouble installing `playsound`, you can try installing it using the following command:
 
 ```bash
-pip install -U wheel
-pip install -U playsound
+uv pip install -U wheel
+uv pip install -U playsound
 ```
 
-If you were not able to find your solution, please ask in the discord or create a new issue, so that the community can help you.
+If you were not able to find your solution, check [Troubleshooting](docs/troubleshooting.md), ask in Discord, or create an issue.
 
 ## Donate 🎁
 

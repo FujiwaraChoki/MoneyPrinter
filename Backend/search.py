@@ -1,7 +1,7 @@
 import requests
 
 from typing import List
-from termcolor import colored
+from logstream import log
 
 def search_for_stock_videos(query: str, api_key: str, it: int, min_dur: int) -> List[str]:
     """
@@ -56,11 +56,11 @@ def search_for_stock_videos(query: str, api_key: str, it: int, min_dur: int) -> 
                 video_url.append(temp_video_url)
                 
     except Exception as e:
-        print(colored("[-] No Videos found.", "red"))
-        print(colored(e, "red"))
+        log("[-] No Videos found.", "error")
+        log(str(e), "error")
 
     # Let user know
-    print(colored(f"\t=> \"{query}\" found {len(video_url)} Videos", "cyan"))
+    log(f"\t=> \"{query}\" found {len(video_url)} Videos", "info")
 
     # Return the video url
     return video_url

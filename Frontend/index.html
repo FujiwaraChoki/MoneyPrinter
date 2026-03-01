@@ -8,232 +8,1045 @@
       rel="icon"
       href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>"
     />
-
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.0.2/tailwind.min.css"
     />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #f6f5f0;
+        --card: #ffffff;
+        --input-bg: #f2f1ec;
+        --input-bg-focus: #ffffff;
+        --border: #e5e3dc;
+        --border-focus: #16a34a;
+        --text: #1c1917;
+        --text-2: #57534e;
+        --text-3: #a8a29e;
+        --accent: #16a34a;
+        --accent-hover: #15803d;
+        --accent-light: rgba(22, 163, 74, 0.07);
+        --accent-ring: rgba(22, 163, 74, 0.12);
+        --danger: #dc2626;
+        --danger-light: rgba(220, 38, 38, 0.06);
+        --radius: 10px;
+        --radius-lg: 20px;
+        --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.03),
+          0 2px 8px rgba(28, 25, 23, 0.04);
+        --shadow: 0 1px 3px rgba(28, 25, 23, 0.03),
+          0 6px 24px rgba(28, 25, 23, 0.06);
+        --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.02),
+          0 12px 40px rgba(28, 25, 23, 0.08);
+        --font-display: "Fraunces", serif;
+        --font-body: "Plus Jakarta Sans", sans-serif;
+      }
+
+      html {
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        line-height: 1.55;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #d6d3cd;
+      }
+
+      /* ===== LAYOUT ===== */
+      .container {
+        max-width: 660px;
+        margin: 0 auto;
+        padding: 72px 24px 48px;
+      }
+
+      /* ===== HEADER ===== */
+      .header {
+        text-align: center;
+        margin-bottom: 36px;
+        animation: fadeUp 0.5s ease both;
+      }
+
+      .title {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: clamp(2.2rem, 5.5vw, 3rem);
+        color: var(--text);
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+
+      .title-emoji {
+        display: inline-block;
+        margin-left: 2px;
+        font-style: normal;
+      }
+
+      .subtitle {
+        font-size: 0.95rem;
+        font-weight: 400;
+        color: var(--text-2);
+        margin-top: 8px;
+      }
+
+      /* ===== CARD ===== */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        box-shadow: var(--shadow);
+        animation: fadeUp 0.5s ease 0.08s both;
+      }
+
+      /* ===== FORM ELEMENTS ===== */
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-2);
+      }
+
+      .label-hint {
+        font-weight: 400;
+        color: var(--text-3);
+      }
+
+      .form-input,
+      .form-textarea,
+      .form-select {
+        width: 100%;
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: var(--text);
+        background: var(--input-bg);
+        border: 1.5px solid transparent;
+        border-radius: var(--radius);
+        padding: 10px 13px;
+        outline: none;
+        transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      }
+
+      .form-input:hover,
+      .form-textarea:hover,
+      .form-select:hover {
+        border-color: var(--border);
+      }
+
+      .form-input:focus,
+      .form-textarea:focus,
+      .form-select:focus {
+        background: var(--input-bg-focus);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-ring);
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 44px;
+        line-height: 1.55;
+      }
+
+      .form-select {
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2378716c' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+      }
+
+      .form-select optgroup {
+        font-weight: 600;
+        color: var(--text-2);
+      }
+
+      .form-input::placeholder,
+      .form-textarea::placeholder {
+        color: var(--text-3);
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      /* ===== COLOR DOT ===== */
+      .color-field {
+        position: relative;
+      }
+
+      .color-dot {
+        position: absolute;
+        top: 50%;
+        left: 13px;
+        transform: translateY(-50%);
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid rgba(0, 0, 0, 0.06);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .color-field .form-select {
+        padding-left: 36px;
+      }
+
+      /* ===== DIVIDER ===== */
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+
+      /* ===== ADVANCED TOGGLE ===== */
+      .advanced-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-2);
+        transition: color 0.2s;
+      }
+
+      .advanced-toggle:hover {
+        color: var(--text);
+      }
+
+      .advanced-toggle.open {
+        color: var(--accent);
+      }
+
+      .chevron {
+        width: 14px;
+        height: 14px;
+        transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        flex-shrink: 0;
+      }
+
+      .advanced-toggle.open .chevron {
+        transform: rotate(180deg);
+      }
+
+      /* ===== ADVANCED PANEL ===== */
+      .advanced-panel {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .advanced-panel.open {
+        grid-template-rows: 1fr;
+      }
+
+      .advanced-inner {
+        overflow: hidden;
+      }
+
+      .advanced-content {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        padding-top: 20px;
+      }
+
+      /* ===== TOGGLE SWITCHES ===== */
+      .toggles-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px 24px;
+        padding-top: 2px;
+      }
+
+      .toggle {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .toggle input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+      }
+
+      .toggle-track {
+        position: relative;
+        width: 36px;
+        height: 20px;
+        background: #d6d3cd;
+        border-radius: 10px;
+        flex-shrink: 0;
+        transition: background 0.25s;
+      }
+
+      .toggle-thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .toggle input:checked + .toggle-track {
+        background: var(--accent);
+      }
+
+      .toggle input:checked + .toggle-track .toggle-thumb {
+        transform: translateX(16px);
+      }
+
+      .toggle-text {
+        font-size: 0.84rem;
+        font-weight: 500;
+        color: var(--text-2);
+        transition: color 0.15s;
+      }
+
+      .toggle:hover .toggle-text {
+        color: var(--text);
+      }
+
+      /* ===== STATUS AREA ===== */
+      .status-area {
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        padding: 22px 18px 16px;
+        background: var(--accent-light);
+        border: 1px solid rgba(22, 163, 74, 0.12);
+        border-radius: var(--radius);
+        margin-top: 12px;
+      }
+
+      .status-area.active {
+        display: flex;
+      }
+
+      .progress-track {
+        width: 100%;
+        height: 3px;
+        background: rgba(22, 163, 74, 0.12);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 30%;
+        background: var(--accent);
+        border-radius: 2px;
+        animation: indeterminate 1.6s ease-in-out infinite;
+      }
+
+      .status-text {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--accent);
+      }
+
+      /* ===== LOG VIEWER ===== */
+      .log-viewer {
+        display: none;
+        flex-direction: column;
+        margin-top: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(28, 25, 23, 0.08);
+      }
+
+      .log-viewer.active {
+        display: flex;
+      }
+
+      .log-viewer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: #292524;
+        border-bottom: 1px solid #3f3a36;
+      }
+
+      .log-viewer-title {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #a8a29e;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .log-viewer-clear {
+        background: none;
+        border: none;
+        color: #78716c;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 0 4px;
+        line-height: 1;
+        transition: color 0.15s;
+      }
+
+      .log-viewer-clear:hover {
+        color: #d6d3cd;
+      }
+
+      .log-viewer-body {
+        background: #1c1917;
+        max-height: 240px;
+        overflow-y: auto;
+        padding: 10px 12px;
+        font-family: "SF Mono", "Cascadia Code", "Fira Code", "Consolas",
+          monospace;
+        font-size: 0.75rem;
+        line-height: 1.6;
+      }
+
+      .log-viewer-body::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .log-viewer-body::-webkit-scrollbar-track {
+        background: #1c1917;
+      }
+
+      .log-viewer-body::-webkit-scrollbar-thumb {
+        background: #3f3a36;
+        border-radius: 3px;
+      }
+
+      .log-viewer-body::-webkit-scrollbar-thumb:hover {
+        background: #57534e;
+      }
+
+      .log-entry {
+        display: flex;
+        gap: 8px;
+        padding: 1px 0;
+      }
+
+      .log-time {
+        color: #57534e;
+        flex-shrink: 0;
+      }
+
+      .log-msg {
+        color: #d6d3cd;
+        word-break: break-word;
+        white-space: pre-wrap;
+      }
+
+      .log-msg.log-success {
+        color: #4ade80;
+      }
+
+      .log-msg.log-error {
+        color: #f87171;
+      }
+
+      .log-msg.log-warning {
+        color: #facc15;
+      }
+
+      .log-msg.log-info {
+        color: #a8a29e;
+      }
+
+      /* ===== BUTTONS ===== */
+      .actions {
+        margin-top: 24px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 13px 24px;
+        font-family: var(--font-body);
+        font-size: 0.92rem;
+        font-weight: 700;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+      }
+
+      .btn:active {
+        transform: scale(0.985);
+      }
+
+      .btn-generate {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .btn-generate:hover {
+        background: var(--accent-hover);
+        box-shadow: 0 4px 14px rgba(22, 163, 74, 0.2);
+      }
+
+      .btn-generate .btn-icon {
+        width: 17px;
+        height: 17px;
+      }
+
+      .btn-cancel {
+        background: var(--danger-light);
+        color: var(--danger);
+        border: 1px solid rgba(220, 38, 38, 0.12);
+        margin-top: 8px;
+      }
+
+      .btn-cancel:hover {
+        background: rgba(220, 38, 38, 0.1);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ===== FOOTER ===== */
+      .footer {
+        text-align: center;
+        padding: 36px 0 20px;
+        animation: fadeUp 0.5s ease 0.16s both;
+      }
+
+      .footer p {
+        font-size: 0.8rem;
+        color: var(--text-3);
+      }
+
+      .footer a {
+        color: var(--text-2);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.15s;
+      }
+
+      .footer a:hover {
+        color: var(--accent);
+      }
+
+      /* ===== TOASTS ===== */
+      .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        pointer-events: none;
+      }
+
+      .toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 13px 16px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text);
+        max-width: 380px;
+        box-shadow: var(--shadow-lg);
+        transform: translateX(120%);
+        opacity: 0;
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+          opacity 0.3s ease;
+      }
+
+      .toast.show {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      .toast-success {
+        border-left: 3px solid var(--accent);
+      }
+
+      .toast-error {
+        border-left: 3px solid var(--danger);
+      }
+
+      .toast-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: var(--text-3);
+      }
+
+      .toast-success .toast-dot {
+        background: var(--accent);
+      }
+
+      .toast-error .toast-dot {
+        background: var(--danger);
+      }
+
+      .toast-msg {
+        flex: 1;
+        line-height: 1.4;
+      }
+
+      .toast-close {
+        background: none;
+        border: none;
+        color: var(--text-3);
+        cursor: pointer;
+        padding: 2px;
+        font-size: 1.1rem;
+        line-height: 1;
+        transition: color 0.15s;
+        flex-shrink: 0;
+      }
+
+      .toast-close:hover {
+        color: var(--text);
+      }
+
+      /* ===== ANIMATIONS ===== */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes indeterminate {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(430%);
+        }
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 600px) {
+        .container {
+          padding: 40px 16px 32px;
+        }
+
+        .card {
+          padding: 22px 18px;
+          border-radius: 16px;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .toggles-row {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .toast-container {
+          left: 12px;
+          right: 12px;
+        }
+
+        .toast {
+          max-width: 100%;
+        }
+      }
+    </style>
   </head>
 
-  <body class="bg-blue-100 min-h-screen justify-center p-40">
-    <h1 class="text-4xl text-center mb-4">MoneyPrinter</h1>
-    <p class="text-center text-gray-700">
-      This Application is intended to automate the creation and uploads of
-      YouTube Shorts.
-    </p>
+  <body>
+    <main class="container">
+      <header class="header">
+        <h1 class="title">
+          MoneyPrinter<span class="title-emoji"> 💸</span>
+        </h1>
+        <p class="subtitle">Automate YouTube Shorts with AI</p>
+      </header>
 
-    <div class="flex justify-center mt-8">
-      <div class="max-w-xl flex flex-col space-y-4 w-full">
-        <label for="videoSubject" class="text-blue-600">Subject</label>
+      <div class="card">
+        <!-- Subject -->
+        <div class="form-group">
+          <label for="videoSubject" class="label">Video Subject</label>
           <textarea
-              rows="3"
-              type="text"
-              name="videoSubject"
-              id="videoSubject"
-              class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+            id="videoSubject"
+            name="videoSubject"
+            class="form-textarea"
+            rows="3"
+            placeholder="What should the video be about?"
           ></textarea>
-        <button id="advancedOptionsToggle" class="text-blue-600">
-          Show Advanced Options ▼
-        </button>
-        <div
-          class="flex flex-col space-y-4 hidden transition-all duration-150 linear"
-          id="advancedOptions"
-        >
-          <label for="aiModel" class="text-blue-600">AI Model</label>
-          <select
-            name="aiModel"
-            id="aiModel"
-            class="w-full border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-          >
-            <option value="g4f">g4f (Free)</option>
-            <option value="gpt3.5-turbo">OpenAI GPT-3.5</option>
-            <option value="gpt4">OpenAI GPT-4</option>
-            <option value="gemmini">Gemini Pro</option>
-          </select>
-          <label for="voice" class="text-blue-600">Voice</label>
-          <select
-            name="voice"
-            id="voice"
-            class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-          >
-            <option value="en_us_ghostface">Ghost Face</option>
-            <option value="en_us_chewbacca">Chewbacca</option>
-            <option value="en_us_c3po">C3PO</option>
-            <option value="en_us_stitch">Stitch</option>
-            <option value="en_us_stormtrooper">Stormtrooper</option>
-            <option value="en_us_rocket">Rocket</option>
-            <option value="en_au_001">English AU - Female</option>
-            <option value="en_au_002">English AU - Male</option>
-            <option value="en_uk_001">English UK - Male 1</option>
-            <option value="en_uk_003">English UK - Male 2</option>
-            <option value="en_us_001">English US - Female (Int. 1)</option>
-            <option value="en_us_002">English US - Female (Int. 2)</option>
-            <option value="en_us_006">English US - Male 1</option>
-            <option value="en_us_007">English US - Male 2</option>
-            <option value="en_us_009">English US - Male 3</option>
-            <option value="en_us_010">English US - Male 4</option>
-            <option value="fr_001">French - Male 1</option>
-            <option value="fr_002">French - Male 2</option>
-            <option value="de_001">German - Female</option>
-            <option value="de_002">German - Male</option>
-            <option value="es_002">Spanish - Male</option>
-            <option value="es_mx_002">Spanish MX - Male</option>
-            <option value="br_001">Portuguese BR - Female 1</option>
-            <option value="br_003">Portuguese BR - Female 2</option>
-            <option value="br_004">Portuguese BR - Female 3</option>
-            <option value="br_005">Portuguese BR - Male</option>
-            <option value="id_001">Indonesian - Female</option>
-            <option value="jp_001">Japanese - Female 1</option>
-            <option value="jp_003">Japanese - Female 2</option>
-            <option value="jp_005">Japanese - Female 3</option>
-            <option value="jp_006">Japanese - Male</option>
-            <option value="kr_002">Korean - Male 1</option>
-            <option value="kr_003">Korean - Female</option>
-            <option value="kr_004">Korean - Male 2</option>
-            <option value="en_female_f08_salut_damour">Alto</option>
-            <option value="en_male_m03_lobby">Tenor</option>
-            <option value="en_female_f08_warmy_breeze">Warmy Breeze</option>
-            <option value="en_male_m03_sunshine_soon">Sunshine Soon</option>
-            <option value="en_male_narration">narrator</option>
-            <option value="en_male_funny">wacky</option>
-            <option value="en_female_emotional">peaceful</option>
-          </select>
-          <label for="subtitlesPosition" class="text-blue-600"
-            >Subtitles Position</label
-          >
-          <select
-            name="subtitlesPosition"
-            id="subtitlesPosition"
-            class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-          >
-            <option value="center,top">Center - Top</option>
-            <option value="center,bottom">Center - Bottom</option>
-            <option value="center,center">Center - Center</option>
-            <option value="left,center">Left - Center</option>
-            <option value="left,bottom">Left - Bottom</option>
-            <option value="right,center">Right - Center</option>
-            <option value="right,bottom">Right - Bottom</option>
-          </select>
-          <label for="subtitlesColor" class="text-blue-600"
-            >Subtitles Color</label>
-          <select
-            name="subtitlesColor"
-            id="subtitlesColor"
-            class="w-min border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-          >
-            <option value="#FFFF00">Yellow (Default)</option>
-            <option value="#f4a261">Orange</option>
-            <option value="#e63946">Red</option>
-            <option value="#1d3557">Blue</option>
-            <option value="#fff">White</option>
-            <option value="#03071e">Black</option>
-          </select>
-          <label for="zipUrl" class="text-blue-600"
-            >Zip URL (Leave empty for default)</label
-          >
-          <input
-            type="text"
-            name="zipUrl"
-            id="zipUrl"
-            class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-          />
-          <label for="threads" class="text-blue-600">Threads</label>
-          <input
-            type="number"
-            name="threads"
-            id="threads"
-            class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-            value="2"
-            min="1"
-            max="100"
-            placeholder="2 (Default)"
-          />
-          <label for="paragraphNumber" class="text-blue-600"
-            >Paragraph Number</label
-          >
-          <input
-            type="number"
-            name="paragraphNumber"
-            id="paragraphNumber"
-            class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-            value="1"
-            min="1"
-            max="100"
-          />
-          <label for="customPrompt" class="text-blue-600">Custom Prompt:</label>
-            <textarea
-              rows="3"
-              type="text"
-              name="customPrompt"
-              id="customPrompt"
-              class="border-2 border-blue-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-              placeholder="Only provide this option in case you want to replace the default prompt"
-            ></textarea>
-          <label
-            for="youtubeUploadToggle"
-            class="flex items-center text-blue-600"
-          >
-            <input
-              type="checkbox"
-              name="youtubeUploadToggle"
-              id="youtubeUploadToggle"
-              class="mr-2"
-            />
-            Upload to YouTube
-          </label>
-          <label for="useMusicToggle" class="flex items-center text-blue-600">
-            <input
-              type="checkbox"
-              name="useMusicToggle"
-              id="useMusicToggle"
-              class="mr-2"
-            />
-            Use Music
-          </label>
-          <label
-            for="reuseChoicesToggle"
-            class="flex items-center text-blue-600"
-          >
-            <input
-              type="checkbox"
-              name="reuseChoicesToggle"
-              id="reuseChoicesToggle"
-              class="mr-2"
-            />
-            Reuse Choices?
-          </label>
         </div>
-        <button
-          id="generateButton"
-          class="bg-blue-500 hover:bg-blue-700 duration-100 linear text-white px-4 py-2 rounded-md"
-        >
-          Generate
-        </button>
-        <button
-          id="cancelButton"
-          class="bg-red-500 hover:bg-red-700 duration-100 linear text-white px-4 py-2 rounded-md hidden"
-        >
-          Cancel
-        </button>
 
-      </div>
-    </div>
+        <div class="divider"></div>
 
-    <footer class="flex justify-center mt-8">
-      <div class="flex flex-col space-y-4">
-        <p class="text-center text-gray-700">
-          Made with ❤️ by
-          <a
-            class="text-blue-600"
-            target="href"
-            href="https://github.com/FujiwaraChoki"
+        <!-- Advanced Options Toggle -->
+        <button
+          type="button"
+          id="advancedOptionsToggle"
+          class="advanced-toggle"
+        >
+          <svg
+            class="chevron"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           >
-            Fuji Codes
-          </a>
-        </p>
-      </div>
-    </footer>
+            <path d="M4 6l4 4 4-4" />
+          </svg>
+          <span>Advanced Options</span>
+        </button>
 
+        <!-- Advanced Panel -->
+        <div id="advancedOptions" class="advanced-panel">
+          <div class="advanced-inner">
+            <div class="advanced-content">
+              <!-- AI Model + Voice -->
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="aiModel" class="label">Ollama Model</label>
+                  <select id="aiModel" name="aiModel" class="form-select">
+                    <option value="">Loading Ollama models...</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="voice" class="label">Voice</label>
+                  <select id="voice" name="voice" class="form-select">
+                    <optgroup label="Character">
+                      <option value="en_us_ghostface">Ghost Face</option>
+                      <option value="en_us_chewbacca">Chewbacca</option>
+                      <option value="en_us_c3po">C3PO</option>
+                      <option value="en_us_stitch">Stitch</option>
+                      <option value="en_us_stormtrooper">Stormtrooper</option>
+                      <option value="en_us_rocket">Rocket</option>
+                    </optgroup>
+                    <optgroup label="English (AU)">
+                      <option value="en_au_001">Female</option>
+                      <option value="en_au_002">Male</option>
+                    </optgroup>
+                    <optgroup label="English (UK)">
+                      <option value="en_uk_001">Male 1</option>
+                      <option value="en_uk_003">Male 2</option>
+                    </optgroup>
+                    <optgroup label="English (US)">
+                      <option value="en_us_001">Female 1</option>
+                      <option value="en_us_002">Female 2</option>
+                      <option value="en_us_006">Male 1</option>
+                      <option value="en_us_007">Male 2</option>
+                      <option value="en_us_009">Male 3</option>
+                      <option value="en_us_010">Male 4</option>
+                    </optgroup>
+                    <optgroup label="French">
+                      <option value="fr_001">Male 1</option>
+                      <option value="fr_002">Male 2</option>
+                    </optgroup>
+                    <optgroup label="German">
+                      <option value="de_001">Female</option>
+                      <option value="de_002">Male</option>
+                    </optgroup>
+                    <optgroup label="Spanish">
+                      <option value="es_002">Male</option>
+                      <option value="es_mx_002">Mexican Male</option>
+                    </optgroup>
+                    <optgroup label="Portuguese (BR)">
+                      <option value="br_001">Female 1</option>
+                      <option value="br_003">Female 2</option>
+                      <option value="br_004">Female 3</option>
+                      <option value="br_005">Male</option>
+                    </optgroup>
+                    <optgroup label="Indonesian">
+                      <option value="id_001">Female</option>
+                    </optgroup>
+                    <optgroup label="Japanese">
+                      <option value="jp_001">Female 1</option>
+                      <option value="jp_003">Female 2</option>
+                      <option value="jp_005">Female 3</option>
+                      <option value="jp_006">Male</option>
+                    </optgroup>
+                    <optgroup label="Korean">
+                      <option value="kr_002">Male 1</option>
+                      <option value="kr_003">Female</option>
+                      <option value="kr_004">Male 2</option>
+                    </optgroup>
+                    <optgroup label="Singing">
+                      <option value="en_female_f08_salut_damour">Alto</option>
+                      <option value="en_male_m03_lobby">Tenor</option>
+                      <option value="en_female_f08_warmy_breeze">
+                        Warmy Breeze
+                      </option>
+                      <option value="en_male_m03_sunshine_soon">
+                        Sunshine Soon
+                      </option>
+                    </optgroup>
+                    <optgroup label="Effects">
+                      <option value="en_male_narration">Narrator</option>
+                      <option value="en_male_funny">Wacky</option>
+                      <option value="en_female_emotional">Peaceful</option>
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Subtitles Position + Color -->
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="subtitlesPosition" class="label"
+                    >Subtitles Position</label
+                  >
+                  <select
+                    id="subtitlesPosition"
+                    name="subtitlesPosition"
+                    class="form-select"
+                  >
+                    <option value="center,top">Center &middot; Top</option>
+                    <option value="center,bottom">
+                      Center &middot; Bottom
+                    </option>
+                    <option value="center,center">
+                      Center &middot; Center
+                    </option>
+                    <option value="left,center">Left &middot; Center</option>
+                    <option value="left,bottom">Left &middot; Bottom</option>
+                    <option value="right,center">Right &middot; Center</option>
+                    <option value="right,bottom">Right &middot; Bottom</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="subtitlesColor" class="label"
+                    >Subtitle Color</label
+                  >
+                  <div class="color-field">
+                    <span class="color-dot" id="colorDot"></span>
+                    <select
+                      id="subtitlesColor"
+                      name="subtitlesColor"
+                      class="form-select"
+                    >
+                      <option value="#FFFF00">Yellow</option>
+                      <option value="#f4a261">Orange</option>
+                      <option value="#e63946">Red</option>
+                      <option value="#1d3557">Blue</option>
+                      <option value="#fff">White</option>
+                      <option value="#03071e">Black</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Threads + Paragraphs -->
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="threads" class="label">Threads</label>
+                  <input
+                    type="number"
+                    id="threads"
+                    name="threads"
+                    class="form-input"
+                    value="2"
+                    min="1"
+                    max="100"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="paragraphNumber" class="label">Paragraphs</label>
+                  <input
+                    type="number"
+                    id="paragraphNumber"
+                    name="paragraphNumber"
+                    class="form-input"
+                    value="1"
+                    min="1"
+                    max="100"
+                  />
+                </div>
+              </div>
+
+              <!-- Songs Folder -->
+              <div class="form-group">
+                <label for="songFiles" class="label"
+                  >Songs Folder
+                  <span class="label-hint"
+                    >&mdash; select a folder with MP3 files</span
+                  ></label
+                >
+                <input
+                  type="file"
+                  id="songFiles"
+                  name="songFiles"
+                  class="form-input"
+                  accept=".mp3"
+                  webkitdirectory
+                />
+              </div>
+
+              <!-- Custom Prompt -->
+              <div class="form-group">
+                <label for="customPrompt" class="label">Custom Prompt</label>
+                <textarea
+                  id="customPrompt"
+                  name="customPrompt"
+                  class="form-textarea"
+                  rows="3"
+                  placeholder="Override the default AI prompt"
+                ></textarea>
+              </div>
+
+              <!-- Toggles -->
+              <div class="toggles-row">
+                <label class="toggle">
+                  <input
+                    type="checkbox"
+                    id="youtubeUploadToggle"
+                    name="youtubeUploadToggle"
+                  />
+                  <span class="toggle-track">
+                    <span class="toggle-thumb"></span>
+                  </span>
+                  <span class="toggle-text">Upload to YouTube</span>
+                </label>
+
+                <label class="toggle">
+                  <input
+                    type="checkbox"
+                    id="useMusicToggle"
+                    name="useMusicToggle"
+                  />
+                  <span class="toggle-track">
+                    <span class="toggle-thumb"></span>
+                  </span>
+                  <span class="toggle-text">Use Music</span>
+                </label>
+
+                <label class="toggle">
+                  <input
+                    type="checkbox"
+                    id="reuseChoicesToggle"
+                    name="reuseChoicesToggle"
+                  />
+                  <span class="toggle-track">
+                    <span class="toggle-thumb"></span>
+                  </span>
+                  <span class="toggle-text">Reuse Choices</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Area -->
+        <div class="status-area" id="statusArea">
+          <div class="progress-track">
+            <div class="progress-fill"></div>
+          </div>
+          <span class="status-text">Generating your video&hellip;</span>
+          <div class="log-viewer" id="logViewer">
+            <div class="log-viewer-header">
+              <span class="log-viewer-title">Live Output</span>
+              <button type="button" class="log-viewer-clear" id="logClearBtn">&times;</button>
+            </div>
+            <div class="log-viewer-body" id="logViewerBody"></div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+          <button type="button" id="generateButton" class="btn btn-generate">
+            <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"
+              />
+            </svg>
+            Generate
+          </button>
+          <button
+            type="button"
+            id="cancelButton"
+            class="btn btn-cancel hidden"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>
+          Made with &hearts; by
+          <a href="https://github.com/FujiwaraChoki" target="_blank"
+            >Fuji Codes</a
+          >
+        </p>
+      </footer>
+    </main>
+
+    <div id="toastContainer" class="toast-container"></div>
     <script src="app.js"></script>
   </body>
 </html>

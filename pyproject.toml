@@ -1,0 +1,25 @@
+[project]
+name = "moneyprinter"
+version = "1.0.0"
+description = "Automate the creation of YouTube Shorts by providing a video topic."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests==2.31.0",
+    "ollama==0.5.1",
+    "moviepy==2.2.1",
+    "termcolor==2.4.0",
+    "flask==3.0.0",
+    "curl-cffi",
+    "flask-cors==4.0.0",
+    "playsound==1.2.2",
+    "pillow==9.5.0",
+    "python-dotenv==1.0.0",
+    "srt-equalizer==0.1.8",
+    "platformdirs==4.1.0",
+    "undetected-chromedriver",
+    "assemblyai",
+    "brotli",
+    "google-api-python-client",
+    "oauth2client",
+]
