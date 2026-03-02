@@ -156,6 +156,58 @@ check_prereqs() {
   return 0
 }
 
+configure_local_database_url() {
+  if [ ! -f .env ]; then
+    return 0
+  fi
+
+  db_result="$(python3 - <<'PY'
+from pathlib import Path
+
+env_path = Path('.env')
+text = env_path.read_text(encoding='utf-8')
+has_trailing_newline = text.endswith('\n')
+lines = text.splitlines()
+target = 'DATABASE_URL="sqlite:///moneyprinter.db"'
+
+for index, line in enumerate(lines):
+    if not line.startswith('DATABASE_URL='):
+        continue
+
+    value = line.split('=', 1)[1].strip().strip('"').strip("'")
+    if value == '' or value.startswith('postgresql+psycopg://'):
+        lines[index] = target
+        env_path.write_text(
+            '\n'.join(lines) + ('\n' if has_trailing_newline else ''),
+            encoding='utf-8',
+        )
+        print('updated')
+    else:
+        print('kept')
+    break
+else:
+    lines.append(target)
+    env_path.write_text(
+        '\n'.join(lines) + ('\n' if has_trailing_newline or lines else ''),
+        encoding='utf-8',
+    )
+    print('added')
+PY
+)"
+
+  case "$db_result" in
+    updated)
+      info 'Set DATABASE_URL to local SQLite default in .env'
+      ;;
+    added)
+      info 'Added DATABASE_URL local SQLite default to .env'
+      ;;
+    *)
+      info 'Keeping existing DATABASE_URL in .env'
+      ;;
+  esac
+}
+
 setup_env_file() {
   if [ ! -f .env.example ]; then
     warn '.env.example is missing; skipping env setup.'
@@ -173,6 +225,8 @@ setup_env_file() {
     cp .env.example .env
     ok 'Created .env from .env.example'
   fi
+
+  configure_local_database_url
 
   if ask_yes_no 'Open .env now to edit required keys?' 'y'; then
     if [ -n "${EDITOR:-}" ] && command_exists "$EDITOR"; then
@@ -237,8 +291,9 @@ check_ollama_models() {
 print_next_steps() {
   printf '\n%sNext steps%s\n' "$BOLD" "$RESET"
   printf '%s1.%s Start backend: %suv run python Backend/main.py%s\n' "$CYAN" "$RESET" "$BOLD" "$RESET"
-  printf '%s2.%s Start frontend (new terminal): %spython3 -m http.server 3000 --directory Frontend%s\n' "$CYAN" "$RESET" "$BOLD" "$RESET"
-  printf '%s3.%s Open: %shttp://localhost:3000%s\n\n' "$CYAN" "$RESET" "$BOLD" "$RESET"
+  printf '%s2.%s Start worker (new terminal): %suv run python Backend/worker.py%s\n' "$CYAN" "$RESET" "$BOLD" "$RESET"
+  printf '%s3.%s Start frontend (new terminal): %spython3 -m http.server 3000 --directory Frontend%s\n' "$CYAN" "$RESET" "$BOLD" "$RESET"
+  printf '%s4.%s Open: %shttp://localhost:3000%s\n\n' "$CYAN" "$RESET" "$BOLD" "$RESET"
 }
 
 main() {
