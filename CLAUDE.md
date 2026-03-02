@@ -18,13 +18,14 @@ ollama pull llama3.1:8b     # pull default model
 
 ### Run (local)
 ```bash
-uv run python Backend/main.py                              # backend on :8080
+uv run python Backend/main.py                              # API on :8080
+uv run python Backend/worker.py                            # queue worker
 python3 -m http.server 3000 --directory Frontend           # frontend on :3000
 ```
 
 ### Run (Docker)
 ```bash
-docker compose up --build   # frontend :8001, backend :8080
+docker compose up --build   # frontend :8001, backend :8080, postgres :5432
 ```
 
 ### Verify
@@ -45,7 +46,8 @@ uv run pytest tests/test_file.py::test_name -q             # single test
 ### Video Generation Pipeline (end-to-end flow)
 
 ```
-User input (Frontend) → POST /api/generate → Background thread in main.py
+User input (Frontend) → POST /api/generate → generation_jobs (Postgres queue)
+  → worker.py claims queued job
   → gpt.py: generate_script() via Ollama
   → gpt.py: get_search_terms() → JSON keywords
   → search.py: Pexels API → download stock clips to temp/
@@ -59,24 +61,26 @@ User input (Frontend) → POST /api/generate → Background thread in main.py
 ```
 
 ### Frontend ↔ Backend Communication
-- **REST**: JSON payloads to Flask endpoints (`/api/generate`, `/api/cancel`, `/api/models`, `/api/upload-songs`)
-- **SSE**: Real-time log streaming via `/api/logs` (logstream.py). Event types: `log`, `complete`, `error`, `cancelled`
+- **REST**: JSON payloads to Flask endpoints (`/api/generate`, `/api/jobs/:id`, `/api/jobs/:id/events`, `/api/jobs/:id/cancel`, `/api/models`, `/api/upload-songs`)
+- **Polling**: frontend polls job status and persisted generation events.
 
 ### Key Backend Modules
 | File | Responsibility |
 |------|---------------|
-| `main.py` | Flask app, API endpoints, generation orchestration (background thread) |
+| `main.py` | Flask app and queue/job endpoints |
+| `worker.py` | Job consumer that executes generation pipeline |
+| `db.py`/`models.py`/`repository.py` | DB engine, schema, queue/event persistence |
 | `gpt.py` | Ollama client: script generation, search terms, YouTube metadata |
 | `video.py` | Video processing: combine clips, burn subtitles, merge audio |
 | `search.py` | Pexels stock video search and download |
 | `tiktokvoice.py` | TikTok TTS API (60+ voices, 300-char chunking, threaded) |
 | `youtube.py` | YouTube upload via Google API with OAuth2 |
 | `utils.py` | Path constants, env validation, ImageMagick detection |
-| `logstream.py` | Thread-safe SSE log queue |
+| `pipeline.py` | Reusable generation pipeline used by worker |
 
 ### Frontend
 - `index.html`: UI with inline CSS, form fields, live log viewer
-- `app.js`: API client (`apiRequest()`), SSE log stream, localStorage persistence
+- `app.js`: API client (`apiRequest()`), job polling UI, localStorage persistence
 
 ### Runtime Directories
 - `temp/`: intermediate video/audio files (cleared each generation)
@@ -90,13 +94,13 @@ User input (Frontend) → POST /api/generate → Background thread in main.py
 - `PEXELS_API_KEY` — stock video API
 - `IMAGEMAGICK_BINARY` — leave empty to auto-detect from PATH
 
-Optional: `OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `ASSEMBLY_AI_API_KEY`
+Optional: `OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `ASSEMBLY_AI_API_KEY`, `DATABASE_URL`
 
 ## Conventions
 
 - **Python**: 4-space indent, `snake_case`, type hints on all new/modified signatures, `pathlib.Path` for filesystem ops
 - **JS**: `camelCase`, centralized API calls via `apiRequest()`
 - **API responses**: `{"status": "success|error", ...}` with proper HTTP codes
-- **Long-running work**: background thread pattern with global `GENERATING` flag, SSE streaming
-- **Concurrency**: only one video generation at a time (enforced by `GENERATING` flag)
+- **Long-running work**: database-backed queue and separate worker process
+- **Concurrency**: multiple jobs can be queued; worker processes them safely via DB locking
 - Update `docs/` when setup, env vars, or runtime behavior changes
