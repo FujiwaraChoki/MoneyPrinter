@@ -2,7 +2,28 @@
 
 Run MoneyPrinter locally with an Ollama model.
 
-## 1) Prerequisites
+## 1) Clone repository
+
+```bash
+git clone https://github.com/FujiwaraChoki/MoneyPrinter.git
+cd MoneyPrinter
+```
+
+## 2) Quick setup (recommended)
+
+Run the interactive setup script:
+
+```bash
+./setup.sh
+```
+
+This script checks dependencies, sets up `.env`, installs Python packages with `uv`, and can optionally pull an Ollama model.
+
+## 3) Manual setup
+
+Use this path if you prefer to run each step yourself.
+
+### Prerequisites
 
 - Python 3.11+
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
@@ -10,11 +31,9 @@ Run MoneyPrinter locally with an Ollama model.
 - ImageMagick
 - Ollama
 
-## 2) Clone and install
+### Install and create env file
 
 ```bash
-git clone https://github.com/FujiwaraChoki/MoneyPrinter.git
-cd MoneyPrinter
 uv sync
 cp .env.example .env
 ```
@@ -25,7 +44,7 @@ Windows PowerShell for `.env` copy:
 Copy-Item .env.example .env
 ```
 
-## 3) Configure environment
+## 4) Configure environment
 
 Set required values in `.env`:
 
@@ -34,7 +53,14 @@ Set required values in `.env`:
 
 See [Configuration](configuration.md) for all variables.
 
-## 4) Start Ollama and pull a model
+## Optional: Run tests
+
+```bash
+uv sync --group dev
+uv run pytest
+```
+
+## 5) Start Ollama and pull a model
 
 ```bash
 ollama serve
@@ -43,13 +69,21 @@ ollama pull llama3.1:8b
 
 If Ollama runs on another machine/port, set `OLLAMA_BASE_URL` in `.env`.
 
-## 5) Run backend
+## 6) Run backend
 
 ```bash
 uv run python Backend/main.py
 ```
 
-## 6) Run frontend
+## 7) Run worker
+
+In a new terminal:
+
+```bash
+uv run python Backend/worker.py
+```
+
+## 8) Run frontend
 
 In a new terminal:
 
@@ -60,7 +94,7 @@ python3 -m http.server 3000
 
 Open `http://localhost:3000`.
 
-## 7) Generate video
+## 9) Generate video
 
 1. Enter a video subject.
 2. Expand advanced options.
