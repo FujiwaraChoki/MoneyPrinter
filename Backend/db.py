@@ -15,7 +15,10 @@ class Base(DeclarativeBase):
 
 
 def _database_url() -> str:
-    return os.getenv("DATABASE_URL", "sqlite:///moneyprinter.db")
+    database_url = os.getenv("DATABASE_URL")
+    if database_url:
+        return database_url
+    return "sqlite:///moneyprinter.db"
 
 
 DATABASE_URL = _database_url()

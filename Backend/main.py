@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from sqlalchemy import and_, select
+from sqlalchemy import and_, case, select
 
 from db import SessionLocal, init_db
 from gpt import list_ollama_models
@@ -163,7 +163,10 @@ def cancel_latest_running_job():
         stmt = (
             select(GenerationJob)
             .where(and_(GenerationJob.status.in_(["queued", "running"])))
-            .order_by(GenerationJob.created_at.desc())
+            .order_by(
+                case((GenerationJob.status == "running", 0), else_=1),
+                GenerationJob.created_at.desc(),
+            )
             .limit(1)
         )
         latest_job = session.scalars(stmt).first()
