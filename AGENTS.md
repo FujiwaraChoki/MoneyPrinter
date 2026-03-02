@@ -5,7 +5,7 @@ Follow it before making changes.
 
 ## 1) Repository Layout
 
-- `Backend/`: Flask API and video generation pipeline.
+- `Backend/`: Flask API, DB-backed job queue, and video generation pipeline.
 - `Frontend/`: static HTML/JS client served by `python -m http.server`.
 - `docs/`: source-of-truth setup and runtime docs.
 - `fonts/`, `Songs/`, `subtitles/`, `temp/`: runtime assets/output folders.
@@ -25,12 +25,13 @@ Follow it before making changes.
 - Create local env file: `cp .env.example .env`.
 - Install dependencies: `uv sync`.
 - Run backend: `uv run python Backend/main.py`.
+- Run worker (new terminal): `uv run python Backend/worker.py`.
 - Run frontend (new terminal): `python3 -m http.server 3000 --directory Frontend`.
 - Docker workflow: `docker compose up --build`.
 
 ## 4) Build, Lint, and Test Commands
 
-This project currently has no formal lint/test toolchain checked in (no `pytest`/`ruff` config present).
+This project has a baseline `pytest` setup for backend repository tests.
 Use the commands below as the expected agent workflow.
 
 ### 4.1 Build / Runtime Verification
@@ -38,7 +39,8 @@ Use the commands below as the expected agent workflow.
 - Backend syntax check: `uv run python -m compileall Backend`.
 - Frontend syntax sanity (lightweight): open `Frontend/index.html` in browser and run generation flow.
 - API smoke check after backend start: `curl http://localhost:8080/api/models`.
-- Full local run: backend + frontend servers, then generate a short sample video.
+- Queue smoke check: `curl -X POST http://localhost:8080/api/generate -H "Content-Type: application/json" -d '{"videoSubject":"test","voice":"en_us_001","paragraphNumber":1,"customPrompt":""}'`.
+- Full local run: backend + worker + frontend servers, then generate a short sample video.
 
 ### 4.2 Lint / Formatting (Recommended)
 
@@ -51,13 +53,11 @@ Use the commands below as the expected agent workflow.
 
 ### 4.3 Test Commands (Current and Future)
 
-- No committed test suite exists yet.
-- If tests are introduced with `pytest`, use:
-  - Run all tests: `uv run pytest -q`
-  - Run one file: `uv run pytest tests/test_file.py -q`
-  - Run a single test: `uv run pytest tests/test_file.py::test_name -q`
-  - Run a single class test: `uv run pytest tests/test_file.py::TestClass::test_name -q`
-- If tests live under `Backend/tests/`, keep the same selectors with that path.
+- Run all tests: `uv run pytest`
+- Run one file: `uv run pytest tests/test_file.py`
+- Run a single test: `uv run pytest tests/test_file.py::test_name`
+- Run a single class test: `uv run pytest tests/test_file.py::TestClass::test_name`
+- Current suite location: `tests/`.
 
 ## 5) High-Confidence Conventions from Existing Code
 
@@ -110,8 +110,8 @@ These conventions are inferred from current source and should guide new changes.
 
 - Keep endpoint payloads consistent with `{"status": "success|error", ...}`.
 - Use appropriate HTTP status codes for conflict/client errors (e.g., `409`, `400`).
-- Long-running work should remain off request thread (background thread pattern exists).
-- Preserve cancellation semantics using global generation state and SSE log streaming.
+- Long-running work should run in worker process from DB queue, not on request thread.
+- Preserve cancellation semantics using per-job cancellation and persisted job events.
 
 ### 5.8 Frontend Patterns
 
@@ -132,13 +132,14 @@ These conventions are inferred from current source and should guide new changes.
 
 - Ran relevant command(s) from section 4.
 - Confirmed backend still starts (`uv run python Backend/main.py`).
+- Confirmed worker still starts (`uv run python Backend/worker.py`).
 - Confirmed frontend still loads (`python3 -m http.server 3000 --directory Frontend`).
 - Verified changed endpoints still return JSON and preserve `status` field.
 - Checked no secrets were added to tracked files.
 
 ## 8) Notes for Future Tooling PRs
 
-- If adding tests, standardize on `pytest` and document exact paths/selectors here.
+- Keep tests standardized on `pytest` and document exact paths/selectors here.
 - If adding linting, prefer `ruff` for lint + format and commit config files.
 - If adding type checks, document command and strictness level (`mypy` or equivalent).
 - Keep this file updated whenever workflow commands change.

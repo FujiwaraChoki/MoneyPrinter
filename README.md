@@ -9,6 +9,8 @@ Automate the creation of YouTube Shorts by providing a video topic.
 
 MoneyPrinter is Ollama-first: script generation and metadata are fully powered by local Ollama models.
 
+MoneyPrinter now uses a DB-backed generation queue (API + worker + Postgres in Docker) for reliable, restart-safe processing.
+
 <a href="https://trendshift.io/repositories/7545" target="_blank"><img src="https://trendshift.io/api/badge/repositories/7545" alt="FujiwaraChoki%2FMoneyPrinter | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 > **Important** Please make sure you look through existing/closed issues before opening your own. If it's just a question, please join our [discord](https://dsc.gg/fuji-community) and ask there.
@@ -19,9 +21,12 @@ MoneyPrinter is Ollama-first: script generation and metadata are fully powered b
 
 Docs are centralized in [`docs/`](docs/README.md):
 
+- [Interactive Setup Script](setup.sh)
 - [Quickstart](docs/quickstart.md)
 - [Configuration](docs/configuration.md)
+- [Architecture](docs/architecture.md)
 - [Docker](docs/docker.md)
+- [Testing](docs/testing.md)
 - [Troubleshooting](docs/troubleshooting.md)
 
 ## FAQ 🤔

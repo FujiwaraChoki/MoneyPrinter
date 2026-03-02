@@ -22,7 +22,9 @@ const backendProtocol = window.location.protocol || "http:";
 const API_BASE_URL = `${backendProtocol}//${backendHost}:8080`;
 const API_FALLBACK_URL = `http://${backendHost}:8080`;
 
-let eventSource = null;
+let activeJobId = null;
+let pollHandle = null;
+let lastEventId = 0;
 
 // ===== API HELPERS =====
 async function apiRequest(path, options = {}) {
@@ -148,7 +150,7 @@ advancedOptionsToggle.addEventListener("click", () => {
 
 // ===== LOG STREAM (SSE) =====
 function formatTimestamp(ts) {
-  const d = new Date(ts * 1000);
+  const d = new Date((ts || Date.now() / 1000) * 1000);
   return d.toLocaleTimeString("en-GB", { hour12: false });
 }
 
@@ -172,51 +174,66 @@ function appendLogEntry(entry) {
   logViewerBody.scrollTop = logViewerBody.scrollHeight;
 }
 
-function connectLogStream() {
-  disconnectLogStream();
+async function pollJob() {
+  if (!activeJobId) return;
 
-  logViewer.classList.add("active");
+  try {
+    const eventsResult = await apiRequest(`/api/jobs/${activeJobId}/events?after=${lastEventId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
 
-  const url = `${API_BASE_URL}/api/logs`;
-  eventSource = new EventSource(url);
+    const events = Array.isArray(eventsResult.events) ? eventsResult.events : [];
+    events.forEach((event) => {
+      appendLogEntry({
+        timestamp: event.timestamp,
+        message: event.message,
+        level: event.level || "info",
+      });
+      lastEventId = Math.max(lastEventId, event.id || 0);
+    });
 
-  eventSource.onmessage = (event) => {
-    let entry;
-    try {
-      entry = JSON.parse(event.data);
-    } catch {
-      return;
-    }
+    const jobResult = await apiRequest(`/api/jobs/${activeJobId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
 
-    if (entry.type === "log") {
-      appendLogEntry(entry);
-    } else if (entry.type === "complete") {
-      appendLogEntry({ timestamp: entry.timestamp, message: entry.message, level: "success" });
-      showToast(entry.message, "success");
+    const state = jobResult?.job?.state;
+    if (state === "completed") {
+      showToast("Video generated successfully.", "success");
+      stopJobPolling();
       setGeneratingState(false);
-      disconnectLogStream();
-    } else if (entry.type === "error") {
-      appendLogEntry({ timestamp: entry.timestamp, message: entry.message, level: "error" });
-      showToast(entry.message, "error");
+    } else if (state === "failed") {
+      showToast(jobResult?.job?.errorMessage || "Generation failed.", "error");
+      stopJobPolling();
       setGeneratingState(false);
-      disconnectLogStream();
-    } else if (entry.type === "cancelled") {
-      appendLogEntry({ timestamp: entry.timestamp, message: entry.message || "Generation cancelled.", level: "warning" });
-      disconnectLogStream();
+    } else if (state === "cancelled") {
+      showToast("Generation cancelled.", "warning");
+      stopJobPolling();
+      setGeneratingState(false);
     }
-  };
-
-  eventSource.onerror = () => {
-    // Connection lost — will auto-reconnect via EventSource spec,
-    // but if generation is done the server closed the stream.
-    // No action needed; terminal events above handle cleanup.
-  };
+  } catch {
+    // Ignore transient polling failures.
+  }
 }
 
-function disconnectLogStream() {
-  if (eventSource) {
-    eventSource.close();
-    eventSource = null;
+function startJobPolling(jobId) {
+  stopJobPolling();
+  activeJobId = jobId;
+  lastEventId = 0;
+  logViewer.classList.add("active");
+  pollHandle = setInterval(pollJob, 1200);
+  pollJob();
+}
+
+function stopJobPolling() {
+  if (pollHandle) {
+    clearInterval(pollHandle);
+    pollHandle = null;
   }
 }
 
@@ -227,6 +244,8 @@ function setGeneratingState(active) {
     cancelButton.classList.remove("hidden");
     statusArea.classList.add("active");
   } else {
+    stopJobPolling();
+    activeJobId = null;
     generateButton.classList.remove("hidden");
     cancelButton.classList.add("hidden");
     statusArea.classList.remove("active");
@@ -236,9 +255,9 @@ function setGeneratingState(active) {
 }
 
 function cancelGeneration() {
-  disconnectLogStream();
+  const targetPath = activeJobId ? `/api/jobs/${activeJobId}/cancel` : "/api/cancel";
 
-  apiRequest("/api/cancel", {
+  apiRequest(targetPath, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -247,8 +266,6 @@ function cancelGeneration() {
   })
     .then((data) => showToast(data.message, "success"))
     .catch(() => showToast("Failed to cancel. Is the server running?", "error"));
-
-  setGeneratingState(false);
 }
 
 async function uploadSongs() {
@@ -323,8 +340,12 @@ async function generateVideo() {
     });
 
     if (result.status === "success") {
-      // Generation started — connect to the log stream
-      connectLogStream();
+      if (!result.jobId) {
+        showToast("Generation queued, but no job ID was returned.", "error");
+        setGeneratingState(false);
+        return;
+      }
+      startJobPolling(result.jobId);
     } else {
       showToast(result.message, "error");
       setGeneratingState(false);

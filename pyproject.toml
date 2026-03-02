@@ -22,4 +22,15 @@ dependencies = [
     "brotli",
     "google-api-python-client",
     "oauth2client",
+    "sqlalchemy==2.0.36",
+    "psycopg[binary]==3.2.3",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest==8.4.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

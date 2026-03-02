@@ -1,5 +1,23 @@
 version: "3"
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: "postgres"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-moneyprinter}
+      - POSTGRES_USER=${POSTGRES_USER:-moneyprinter}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-moneyprinter}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-moneyprinter} -d ${POSTGRES_DB:-moneyprinter}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
   frontend:
     build:
       context: .
@@ -30,11 +48,40 @@ services:
       - PEXELS_API_KEY=${PEXELS_API_KEY}
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1:8b}
+      - DATABASE_URL=${DATABASE_URL:-postgresql+psycopg://moneyprinter:moneyprinter@postgres:5432/moneyprinter}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
+      - frontend
+      - postgres
+    restart: always
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "worker"
+    command: ["python3", "backend/worker.py"]
+    volumes:
+      - ./files:/temp
+      - ./Backend:/app/backend
+      - ./fonts:/app/fonts
+    environment:
+      - ASSEMBLY_AI_API_KEY=${ASSEMBLY_AI_API_KEY}
+      - TIKTOK_SESSION_ID=${TIKTOK_SESSION_ID}
+      - IMAGEMAGICK_BINARY=/usr/local/bin/magick
+      - PEXELS_API_KEY=${PEXELS_API_KEY}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1:8b}
+      - DATABASE_URL=${DATABASE_URL:-postgresql+psycopg://moneyprinter:moneyprinter@postgres:5432/moneyprinter}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - postgres
+      - backend
       - frontend
     restart: always
 
 volumes:
   files:
+  postgres_data:
