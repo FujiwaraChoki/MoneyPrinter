@@ -1,4 +1,13 @@
 import os
+import sys
+
+
+#Version check before the code continues to mitigate torch incompat later on. 
+py_version = sys.version
+if py_version != '3.12.0':
+    print(py_version)
+    raise Exception("Python Version must be 3.12.0 or earlier")
+
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
