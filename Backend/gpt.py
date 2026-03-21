@@ -1,3 +1,4 @@
+#Requires Python 3.12 or sooner
 import re
 import os
 import json

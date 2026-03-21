@@ -1,3 +1,4 @@
+#Requires Python 3.12 or sooner
 import time
 
 from dotenv import load_dotenv

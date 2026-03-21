@@ -1,3 +1,4 @@
+#Requires Python 3.12 or sooner
 import json
 import queue
 import re

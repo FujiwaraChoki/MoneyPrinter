@@ -4,9 +4,12 @@ import sys
 
 #Version check before the code continues to mitigate torch incompat later on. 
 py_version = sys.version
-if py_version != '3.12.0':
-    print(py_version)
-    raise Exception("Python Version must be 3.12.0 or earlier")
+print(py_version)
+if '3.11' or '3.12' in py_version:
+    pass
+if '3.13' in py_version:
+    raise Exception("Need Python Version 3.12 or 3.11")
+
 
 
 from dotenv import load_dotenv
