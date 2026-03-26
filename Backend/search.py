@@ -1,3 +1,4 @@
+#Requires Python 3.12 or sooner
 import requests
 
 from typing import List

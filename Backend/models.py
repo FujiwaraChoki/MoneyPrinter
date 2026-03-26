@@ -1,3 +1,4 @@
+#Requires Python 3.12 or sooner
 from datetime import datetime
 from typing import Optional
 

@@ -3,7 +3,7 @@
 # topic: TikTok-Voice-TTS
 # version: 1.0
 # credits: https://github.com/oscie57/tiktok-voice
-
+#Requires Python 3.12 or sooner
 # --- MODIFIED VERSION --- #
 
 import base64

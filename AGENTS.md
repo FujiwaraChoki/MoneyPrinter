@@ -20,7 +20,7 @@ Follow it before making changes.
 
 ## 3) Environment and Setup Commands
 
-- Python version: `>=3.11` (from `pyproject.toml`).
+- Python version: `>=3.12` (from `pyproject.toml`).
 - Dependency manager used in docs: `uv`.
 - Create local env file: `cp .env.example .env`.
 - Install dependencies: `uv sync`.
