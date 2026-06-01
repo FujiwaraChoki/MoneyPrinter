@@ -6,7 +6,7 @@ from flask_cors import CORS
 from sqlalchemy import and_, case, select
 
 from db import SessionLocal, init_db
-from gpt import list_ollama_models
+from gpt import list_models, LLM_PROVIDER, LITELLM_MODEL
 from logstream import log
 from repository import create_job, get_job, list_job_events, request_cancel
 from utils import ENV_FILE, SONGS_DIR, check_env_vars, clean_dir
@@ -26,7 +26,7 @@ PORT = 8080
 @app.route("/api/models", methods=["GET"])
 def models():
     try:
-        available_models, default_model = list_ollama_models()
+        available_models, default_model = list_models()
         return jsonify(
             {
                 "status": "success",
@@ -35,13 +35,14 @@ def models():
             }
         )
     except Exception as err:
-        log(f"[-] Error fetching Ollama models: {str(err)}", "error")
+        log(f"[-] Error fetching models: {str(err)}", "error")
+        fallback = LITELLM_MODEL if LLM_PROVIDER == "litellm" else os.getenv("OLLAMA_MODEL", "llama3.1:8b")
         return jsonify(
             {
                 "status": "error",
-                "message": "Could not fetch Ollama models. Is Ollama running?",
-                "models": [os.getenv("OLLAMA_MODEL", "llama3.1:8b")],
-                "default": os.getenv("OLLAMA_MODEL", "llama3.1:8b"),
+                "message": f"Could not fetch models from {LLM_PROVIDER}.",
+                "models": [fallback],
+                "default": fallback,
             }
         )
 

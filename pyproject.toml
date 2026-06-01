@@ -26,6 +26,9 @@ dependencies = [
     "psycopg[binary]==3.2.3",
 ]
 
+[project.optional-dependencies]
+litellm = ["litellm>=1.80.0,<1.87.0"]
+
 [dependency-groups]
 dev = [
     "pytest==8.4.1",
