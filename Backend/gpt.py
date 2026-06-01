@@ -19,7 +19,11 @@ OLLAMA_TIMEOUT = float(os.getenv("OLLAMA_TIMEOUT", "180"))
 # LLM provider: "ollama" (default) or "litellm"
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama").lower()
 LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gpt-4o-mini")
-LITELLM_API_KEY = os.getenv("LITELLM_API_KEY")
+LITELLM_TIMEOUT = float(os.getenv("LITELLM_TIMEOUT", str(OLLAMA_TIMEOUT)))
+
+if LLM_PROVIDER not in ("ollama", "litellm"):
+    log(f"[!] Unknown LLM_PROVIDER '{LLM_PROVIDER}', falling back to 'ollama'", "warning")
+    LLM_PROVIDER = "ollama"
 
 
 def _ollama_client() -> Client:
@@ -102,51 +106,47 @@ def _list_ollama_models() -> Tuple[List[str], str]:
     return unique_names, default_model
 
 
-def _litellm_generate_response(prompt: str, ai_model: str) -> str:
+def _litellm_generate_response(prompt: str, model_name: str) -> str:
     """Generate a response using the LiteLLM SDK."""
     import litellm
 
-    model_name = (ai_model or "").strip() or LITELLM_MODEL
-
-    params = {
-        "model": model_name,
-        "messages": [{"role": "user", "content": prompt}],
-        "stream": False,
-        "drop_params": True,
-    }
-    if LITELLM_API_KEY:
-        params["api_key"] = LITELLM_API_KEY
-
     try:
-        response = litellm.completion(**params)
+        response = litellm.completion(
+            model=model_name,
+            messages=[{"role": "user", "content": prompt}],
+            stream=False,
+            drop_params=True,
+            timeout=LITELLM_TIMEOUT,
+        )
     except Exception as err:
         raise RuntimeError(f"LiteLLM request failed: {err}") from err
 
-    content = response.choices[0].message.content
-    if not content or not content.strip():
+    if not response.choices:
+        raise RuntimeError("LiteLLM returned no choices.")
+
+    content = (response.choices[0].message.content or "").strip()
+    if not content:
         raise RuntimeError("LiteLLM returned an empty response.")
-    return content.strip()
+    return content
 
 
 def generate_response(prompt: str, ai_model: str) -> str:
     """
-    Generate a script for a video, depending on the subject of the video.
+    Generate a response from the configured LLM provider.
 
     Args:
-        video_subject (str): The subject of the video.
-        ai_model (str): The AI model to use for generation.
-
+        prompt (str): The prompt to send to the model.
+        ai_model (str): The model identifier to use.
 
     Returns:
-
         str: The response from the AI model.
-
     """
 
-    if LLM_PROVIDER == "litellm":
-        return _litellm_generate_response(prompt, ai_model)
+    default_model = LITELLM_MODEL if LLM_PROVIDER == "litellm" else OLLAMA_MODEL
+    model_name = (ai_model or "").strip() or default_model
 
-    model_name = (ai_model or "").strip() or OLLAMA_MODEL
+    if LLM_PROVIDER == "litellm":
+        return _litellm_generate_response(prompt, model_name)
 
     try:
         client = _ollama_client()
