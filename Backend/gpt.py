@@ -16,6 +16,11 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").rstrip(
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1:8b")
 OLLAMA_TIMEOUT = float(os.getenv("OLLAMA_TIMEOUT", "180"))
 
+# LLM provider: "ollama" (default) or "litellm"
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama").lower()
+LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gpt-4o-mini")
+LITELLM_API_KEY = os.getenv("LITELLM_API_KEY")
+
 
 def _ollama_client() -> Client:
     return Client(host=OLLAMA_BASE_URL, timeout=OLLAMA_TIMEOUT)
@@ -31,7 +36,40 @@ def _extract_model_name(model_obj) -> str:
     return ""
 
 
-def list_ollama_models() -> Tuple[List[str], str]:
+def list_models() -> Tuple[List[str], str]:
+    """
+    Returns available model names and configured default model.
+    Delegates to Ollama or LiteLLM depending on LLM_PROVIDER.
+
+    Returns:
+        Tuple[List[str], str]: (available model names, default model)
+    """
+    if LLM_PROVIDER == "litellm":
+        return _list_litellm_models()
+    return _list_ollama_models()
+
+
+def _list_litellm_models() -> Tuple[List[str], str]:
+    """Returns a curated list of popular LiteLLM model identifiers."""
+    models = [
+        LITELLM_MODEL,
+        "gpt-4.1",
+        "gpt-4.1-mini",
+        "anthropic/claude-sonnet-4-20250514",
+        "anthropic/claude-haiku-4-5-20251001",
+        "groq/llama-3.3-70b-versatile",
+        "bedrock/anthropic.claude-sonnet-4-20250514-v1:0",
+        "vertex_ai/gemini-2.5-flash",
+    ]
+    unique = list(dict.fromkeys(models))
+    return unique, LITELLM_MODEL
+
+
+# Keep old name as alias for backward compatibility
+list_ollama_models = list_models
+
+
+def _list_ollama_models() -> Tuple[List[str], str]:
     """
     Returns available Ollama model names and configured default model.
 
@@ -64,6 +102,32 @@ def list_ollama_models() -> Tuple[List[str], str]:
     return unique_names, default_model
 
 
+def _litellm_generate_response(prompt: str, ai_model: str) -> str:
+    """Generate a response using the LiteLLM SDK."""
+    import litellm
+
+    model_name = (ai_model or "").strip() or LITELLM_MODEL
+
+    params = {
+        "model": model_name,
+        "messages": [{"role": "user", "content": prompt}],
+        "stream": False,
+        "drop_params": True,
+    }
+    if LITELLM_API_KEY:
+        params["api_key"] = LITELLM_API_KEY
+
+    try:
+        response = litellm.completion(**params)
+    except Exception as err:
+        raise RuntimeError(f"LiteLLM request failed: {err}") from err
+
+    content = response.choices[0].message.content
+    if not content or not content.strip():
+        raise RuntimeError("LiteLLM returned an empty response.")
+    return content.strip()
+
+
 def generate_response(prompt: str, ai_model: str) -> str:
     """
     Generate a script for a video, depending on the subject of the video.
@@ -78,6 +142,9 @@ def generate_response(prompt: str, ai_model: str) -> str:
         str: The response from the AI model.
 
     """
+
+    if LLM_PROVIDER == "litellm":
+        return _litellm_generate_response(prompt, ai_model)
 
     model_name = (ai_model or "").strip() or OLLAMA_MODEL
 
