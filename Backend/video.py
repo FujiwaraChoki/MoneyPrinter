@@ -265,12 +265,24 @@ def combine_videos(
     return str(combined_video_path)
 
 
+def _parse_subtitles_position(
+    subtitles_position: str | None,
+) -> tuple[str, str]:
+    raw = (subtitles_position or "").strip() or "center,center"
+    parts = [part.strip() for part in raw.split(",")]
+    if len(parts) != 2 or not all(parts):
+        raise ValueError(
+            f"Invalid subtitles_position '{subtitles_position}'. Expected 'horizontal,vertical'."
+        )
+    return parts[0], parts[1]
+
+
 def generate_video(
     combined_video_path: str,
     tts_path: str,
     subtitles_path: str,
     threads: int,
-    subtitles_position: str,
+    subtitles_position: str | None,
     text_color: str,
 ) -> str:
     """
@@ -299,7 +311,7 @@ def generate_video(
 
     # Split the subtitles position into horizontal and vertical
     horizontal_subtitles_position, vertical_subtitles_position = (
-        subtitles_position.split(",")
+        _parse_subtitles_position(subtitles_position)
     )
 
     # Burn the subtitles into the video

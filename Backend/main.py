@@ -46,11 +46,46 @@ def models():
         )
 
 
+def _parse_positive_int(value, field_name: str, default: int | None = None) -> int | None:
+    if value is None or value == "":
+        return default
+    if isinstance(value, bool):
+        raise ValueError(f"{field_name} must be a positive integer.")
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError) as err:
+        raise ValueError(f"{field_name} must be a positive integer.") from err
+    if parsed < 1:
+        raise ValueError(f"{field_name} must be a positive integer.")
+    return parsed
+
+
+def _validate_subtitles_position(value) -> None:
+    if value is None or value == "":
+        return
+    if not isinstance(value, str):
+        raise ValueError("subtitlesPosition must be formatted as 'horizontal,vertical'.")
+    parts = [part.strip() for part in value.split(",")]
+    if len(parts) != 2 or not all(parts):
+        raise ValueError("subtitlesPosition must be formatted as 'horizontal,vertical'.")
+
+
 @app.route("/api/generate", methods=["POST"])
 def generate():
-    data = request.get_json() or {}
-    if not data.get("videoSubject"):
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"status": "error", "message": "Invalid JSON payload."}), 400
+
+    video_subject = data.get("videoSubject")
+    if not isinstance(video_subject, str) or not video_subject.strip():
         return jsonify({"status": "error", "message": "videoSubject is required."}), 400
+
+    try:
+        _parse_positive_int(data.get("paragraphNumber"), "paragraphNumber", default=1)
+        _parse_positive_int(data.get("threads"), "threads", default=None)
+        _validate_subtitles_position(data.get("subtitlesPosition"))
+    except ValueError as err:
+        return jsonify({"status": "error", "message": str(err)}), 400
 
     with SessionLocal() as session:
         job = create_job(session, payload=data)
@@ -162,7 +197,12 @@ def cancel_latest_running_job():
 
         stmt = (
             select(GenerationJob)
-            .where(and_(GenerationJob.status.in_(["queued", "running"])))
+            .where(
+                and_(
+                    GenerationJob.status.in_(["queued", "running"]),
+                    GenerationJob.cancel_requested.is_(False),
+                )
+            )
             .order_by(
                 case((GenerationJob.status == "running", 0), else_=1),
                 GenerationJob.created_at.desc(),
