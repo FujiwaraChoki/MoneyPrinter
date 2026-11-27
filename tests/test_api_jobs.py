@@ -127,3 +127,78 @@ def test_cancel_latest_running_job_cancels_active_job(client, session_factory):
         assert newer is not None
         cancelled_count = int(older.cancel_requested) + int(newer.cancel_requested)
         assert cancelled_count == 1
+
+
+def test_generate_rejects_malformed_or_non_object_json(client):
+    malformed = client.post(
+        "/api/generate", data="not-json", content_type="application/json"
+    )
+    assert malformed.status_code == 400
+    assert malformed.get_json()["status"] == "error"
+
+    non_object = client.post("/api/generate", json=["list-payload"])
+    assert non_object.status_code == 400
+    assert non_object.get_json()["status"] == "error"
+
+
+def test_generate_rejects_blank_subject_and_invalid_parameters(client):
+    blank = client.post("/api/generate", json={"videoSubject": "   "})
+    assert blank.status_code == 400
+    assert blank.get_json()["message"] == "videoSubject is required."
+
+    bad_paragraphs = client.post(
+        "/api/generate", json={"videoSubject": "test", "paragraphNumber": 0}
+    )
+    assert bad_paragraphs.status_code == 400
+    assert bad_paragraphs.get_json()["status"] == "error"
+
+    bad_threads = client.post(
+        "/api/generate", json={"videoSubject": "test", "threads": "abc"}
+    )
+    assert bad_threads.status_code == 400
+    assert bad_threads.get_json()["status"] == "error"
+
+    bad_position = client.post(
+        "/api/generate",
+        json={"videoSubject": "test", "subtitlesPosition": "center-only"},
+    )
+    assert bad_position.status_code == 400
+    assert bad_position.get_json()["status"] == "error"
+
+
+def test_generate_accepts_frontend_string_threads_and_empty_optional_fields(client):
+    response = client.post(
+        "/api/generate",
+        json={
+            "videoSubject": "test",
+            "paragraphNumber": "2",
+            "threads": "",
+            "subtitlesPosition": "",
+        },
+    )
+    assert response.status_code == 200
+    assert response.get_json()["status"] == "success"
+
+
+def test_cancel_latest_running_job_skips_already_cancelling_running_job(
+    client, session_factory
+):
+    from repository import claim_next_queued_job, request_cancel
+
+    with session_factory() as session:
+        running_job = create_job(session, payload={"videoSubject": "running"})
+        queued_job = create_job(session, payload={"videoSubject": "queued"})
+        claimed = claim_next_queued_job(session)
+        assert claimed is not None and claimed.id == running_job.id
+        request_cancel(session, running_job.id)
+
+    response = client.post("/api/cancel")
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["jobId"] == queued_job.id
+
+    with session_factory() as session:
+        updated_queued = get_job(session, queued_job.id)
+        assert updated_queued is not None
+        assert updated_queued.status == "cancelled"
+        assert updated_queued.cancel_requested is True

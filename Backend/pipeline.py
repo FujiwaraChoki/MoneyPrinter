@@ -32,6 +32,20 @@ class PipelineCancelled(Exception):
     pass
 
 
+DEFAULT_SUBTITLES_POSITION = "center,center"
+
+
+def _parse_optional_positive_int(value, default: int | None = None) -> int | None:
+    if value is None or value == "":
+        return default
+    if isinstance(value, bool):
+        raise ValueError("Expected a positive integer.")
+    parsed = int(value)
+    if parsed < 1:
+        raise ValueError("Expected a positive integer.")
+    return parsed
+
+
 def run_generation_pipeline(
     data: dict,
     is_cancelled,
@@ -47,18 +61,27 @@ def run_generation_pipeline(
         if is_cancelled and is_cancelled():
             raise PipelineCancelled("Video generation was cancelled.")
 
-    paragraph_number = int(data.get("paragraphNumber", 1))
+    video_subject = str(data.get("videoSubject") or "").strip()
+    if not video_subject:
+        raise ValueError("videoSubject is required.")
+
+    paragraph_number = _parse_optional_positive_int(
+        data.get("paragraphNumber"), default=1
+    )
     ai_model = data.get("aiModel")
-    n_threads = data.get("threads")
-    subtitles_position = data.get("subtitlesPosition")
+    n_threads = _parse_optional_positive_int(data.get("threads"), default=None)
+    subtitles_position = (
+        str(data.get("subtitlesPosition") or "").strip() or DEFAULT_SUBTITLES_POSITION
+    )
+    custom_prompt = str(data.get("customPrompt") or "")
     text_color = data.get("color")
-    use_music = data.get("useMusic", False)
-    automate_youtube_upload = data.get("automateYoutubeUpload", False)
+    use_music = bool(data.get("useMusic", False))
+    automate_youtube_upload = bool(data.get("automateYoutubeUpload", False))
 
     emit("[Video to be generated]", "info")
-    emit("   Subject: " + data["videoSubject"], "info")
+    emit("   Subject: " + video_subject, "info")
     emit("   AI Model: " + str(ai_model), "info")
-    emit("   Custom Prompt: " + data["customPrompt"], "info")
+    emit("   Custom Prompt: " + custom_prompt, "info")
 
     guard_cancelled()
 
@@ -71,11 +94,11 @@ def run_generation_pipeline(
         voice_prefix = voice[:2]
 
     script = generate_script(
-        data["videoSubject"],
+        video_subject,
         paragraph_number,
         ai_model,
         voice,
-        data["customPrompt"],
+        custom_prompt,
     )
 
     if not script:
@@ -84,7 +107,7 @@ def run_generation_pipeline(
         )
 
     search_terms = get_search_terms(
-        data["videoSubject"], amount_of_stock_videos, script, ai_model
+        video_subject, amount_of_stock_videos, script, ai_model
     )
 
     video_urls = []
@@ -115,13 +138,17 @@ def run_generation_pipeline(
         except Exception:
             emit(f"[-] Could not download video: {video_url}", "error")
 
+    if not video_paths:
+        raise RuntimeError("Could not download any stock videos.")
+
     emit("[+] Videos downloaded!", "success")
     emit("[+] Script generated!", "success")
 
     guard_cancelled()
 
-    sentences = script.split(". ")
-    sentences = list(filter(lambda x: x != "", sentences))
+    sentences = [sentence.strip() for sentence in script.split(". ") if sentence.strip()]
+    if not sentences:
+        raise RuntimeError("Generated script contained no speakable sentences.")
     paths = []
 
     for sentence in sentences:
@@ -179,7 +206,7 @@ def run_generation_pipeline(
         ) from err
 
     title, description, keywords = generate_metadata(
-        data["videoSubject"], script, ai_model
+        video_subject, script, ai_model
     )
 
     emit("[-] Metadata for YouTube upload:", "info")
